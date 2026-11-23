@@ -128,3 +128,6 @@ Why: cache hits, cost, latency and answer quality exist only on DeepSeek. deepse
 - 2026-11-22 22:47 - Q10 probe (41 new calls: 31 map, 9 re-map, 1 reduce; $0.67, peak hours; plan reused): map
   cache-hit share 0.769, followers 0.923; B4 share 0.929 over 25 followers -> `first_chunk` kept and pinned. Q10
   critical path 271 s (#272: 239 s; follower gate wait p50 10.8 s). Evidence `docs/results/w13-prefix-cache/probe/`.
+- 2026-11-22 22:53 - full-run count phase at gate 8f36b7d (0 calls): 412 new round-1 maps (Q10 reused), usd.py
+  ceiling `-MaxCalls 854`; expected about 460 new calls (412 maps + re-maps + 29 reduces), about $8 off-peak.
+  Stopped here: the coordinator starts the full run.
