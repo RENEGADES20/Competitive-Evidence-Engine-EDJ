@@ -174,6 +174,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-23 | Reduce v6 (item refs rendered by code) shipped off by default behind REDUCE_PROMPT; stage 1 (6 calls, $0.394) stopped under rule B1: answer tokens halved but reasoning grew (output p50 24.5k vs 23.6k), default stays v5.2 (#287) | none | next levers on the reasoning: cheaper why-lines, v5.3 on v6, or the split design |
 | 2026-11-23 | Facts table code (FACTS off, no rows) + ADR-022 Deferred; G0 stop: at most 5/485 #272 map calls servable (#288) | DeepSeek balance ran out (402) before the extraction | revisit facts only with more registered metrics or a question mix that asks bare figures |
 | 2026-11-23 | Removed the unused reduce v6 (#284) and facts-table (#285) code, config, scripts and tests; `upgrade.sql` drops the empty `facts` table; results docs, evidence and ADR-022 (Deferred) kept; mock Q1-Q30 and request hashes identical to main (#290) (#290) | none | #283 MAP_PREFIX stays for intersection-first follow-ups |
+| 2026-11-23 | Ask page: answer paragraph with footnotes above the evidence (list for window/recency), streamed claims fade in on top, evidence + SOURCE cards kept on every rerun (#291) (#293) | none | part B: reduce prompt (direct answer + synthesis) |
 
 ## Weekly score (from W6)
 
