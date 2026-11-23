@@ -1,0 +1,489 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "reduce_version": "v5.2",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-10K-2025#125",
+    "MS-10Q-2025Q2#15",
+    "MS-10Q-2025Q3#229",
+    "SCHW-TR-2026Q2#9",
+    "SCHW-DECK-2026-investor-day#180",
+    "SCHW-TRADE-2026-10-27-IN-01#0",
+    "SCHW-TRADE-2026-10-28-WM-01#2",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-10K-2025#18",
+    "SCHW-TR-2025Q4#16",
+    "EDJ-10K-2025#204",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10Q-2025Q3#74",
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#16",
+    "BAC-DECK-2025-investor-day#12",
+    "BAC-DECK-2025-investor-day#9",
+    "BAC-10K-2025#246",
+    "BAC-DECK-2025-investor-day#8",
+    "MER-PR-2026-09-15-01#0",
+    "MER-PR-2026-09-15-01#2",
+    "MER-TRADE-2026-09-29-RB-01#7",
+    "BAC-TR-2026Q3#19",
+    "BAC-PR-2026-10-14-01#12",
+    "RJF-PR-web-independent-ria-custody-services#2",
+    "RJF-10K-2025#52",
+    "RJF-TR-2025Q4#5",
+    "RJF-DECK-2025-investor-day#57",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TR-2025Q3#5",
+    "RJF-TR-2025Q1#61",
+    "CERULLI-MASS-AFFLUENT-2026#0"
+  ],
+  "schema_fallback": [],
+  "enum_values": 198,
+  "at": "2026-11-22T22:44:33.697341-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 15168,
+    "output_tokens": 21158,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 13504,
+    "reasoning_tokens": 14038,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.34
+  },
+  "wall_s": 160.42,
+  "tokens_per_s": 131.89,
+  "ttft_s": 1.34,
+  "reasoning_content": "Let me analyze the evidence matrix and construct the answer.\n\nThe question asks: Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?\n\nThe answer spans multiple aspects. Let me organize.\n\nAspects:\n- a1 [comparison]: comparison claim, part_id a1\n- a2 [fact]: what each firm said\n- a3 [fact]: how each firm describes targeting\n- a4 [fact]: products/services\n- a5 [fact]: how defines mass-affluent segment\n- a6 [recency]: what's new, with why-lines\n\nFirms in order: MS, SCHW, EDJ, MER, RJF.\n\nLet me go through each aspect.\n\n**a1 (comparison)**: needs exactly one comparison claim with part_id a1. It's a comparison aspect. Need to say whether comparison can be made.\n\na1.MS: adjacent (different quantity)\na1.SCHW: code gap\na1.EDJ: code gap\na1.MER: fact\na1.RJF: adjacent\na1.research: code gap\n\nThe comparison: whether and how explicitly each firm names the mass-affluent client segment. Merrill explicitly names \"Mass Affluent\" segment. MS, RJF use adjacent (different segments). SCHW, EDJ not found.\n\nSo the comparison is valid: Merrill is the only one that names \"Mass Affluent\" explicitly. Others don't.\n\nComparison claim with part_id a1: \"This comparison can be made on this evidence: Merrill is the only firm that explicitly names a 'Mass Affluent' client segment... MS and RJF name different segments... SCHW and EDJ don't have statements found.\"\n\nLet me write it citing items.\n\n**a2 (fact)**: What each firm has said about serving mass-affluent clients.\n- a2.MS: code gap (not found)\n- a2.SCHW: adjacent (different quantity)\n- a2.EDJ: adjacent\n- a2.MER: fact\n- a2.RJF: adjacent\n- a2.research: code gap\n\n**a3 (fact)**:\n- a3.MS: code gap\n- a3.SCHW: adjacent\n- a3.EDJ: code gap\n- a3.MER: fact\n- a3.RJF: adjacent\n- a3.research: code gap\n\n**a4 (fact)**:\n- a4.MS: adjacent\n- a4.SCHW: adjacent\n- a4.EDJ: adjacent\n- a4.MER: fact\n- a4.RJF: adjacent\n- a4.research: code gap\n\n**a5 (fact)**:\n- a5.MS: code gap\n- a5.SCHW: code gap\n- a5.EDJ: code gap\n- a5.MER: fact\n- a5.RJF: adjacent\n- a5.research: fact\n\n**a6 (recency)**:\n- a6.MS: code gap\n- a6.SCHW: adjacent\n- a6.EDJ: code gap\n- a6.MER: adjacent\n- a6.RJF: code gap\n- a6.research: code gap\n\nEach a6 item needs why-line.\n\nNow, note the \"Why\" line: \"1a: the asked quantity in a2.MER, a3.MER, a4.MER, a5.MER, a5.research\"\n\nSo the answer focus: Merrill has been most explicit. The facts are in a2.MER, a3.MER, a4.MER, a5.MER, a5.research.\n\nWait, a5.research is a fact (Cerulli definition). That's not a firm. It's industry research.\n\nLet me now write all claims.\n\nNote: also need to handle gaps. Code adds gaps already (listed). I should add a gap of my own only for something those gaps don't name. But the instructions say \"Cells with code gaps get no claim; code adds those gaps.\" So the code gaps are already added. But I also need to include them in the gaps output? Let me re-read.\n\nActually the submit_answer tool has claims, adjacent, gaps. The gaps added by code are listed, and \"do not repeat them\" refers to caveats. Wait let me re-read.\n\n\"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nHmm, so code adds those gaps automatically? Actually I think the gaps need to be included in my gaps output too? Let me think.\n\nActually the structure: I submit claims, adjacent, gaps. The \"Gaps added by code\" are things I should NOT write claims for (they're not found). But do I need to include them in the gaps array?\n\nThe instruction says \"code adds those gaps\". So the code already adds them, and I should not repeat. So my gaps array should only contain gaps of my own that aren't named.\n\nActually wait, re-reading more carefully: \"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code').\"\n\nThis means: for cells with code gaps (not found), I write no claim. Code will add the gaps. I don't need to add them.\n\n\"Add a gap of your own only for something those gaps do not name.\"\n\nSo I should add gaps only for something not covered.\n\nGiven the answer, I think I mostly don't need to add gaps. But let me consider: the comparison claim a1 mentions SCHW and EDJ are \"not found\" \u2014 those are code gaps already.\n\nActually, let me think about whether I need to add any gaps. The caveats are added by code. The gaps are added by code. So maybe I just provide claims and adjacent items, and gaps might be empty or minimal.\n\nActually, I think I should focus on writing the claims and adjacent items correctly.\n\nLet me now also think about ordering. The question has a time window? The question doesn't have explicit time window. Actually, it's about \"most explicit\" and \"most recent\" in a6. There's no explicit time window in the question. So no global newest-first ordering.\n\nWait, let me check: \"With a time window, order claims and adjacent items newest first across the whole answer.\" The question doesn't specify a time window, so I order aspect by aspect, firms in order.\n\nBut a6 is recency aspect, so every a6 item needs a why-line.\n\nLet me now construct everything carefully.\n\nLet me start with a1 comparison claim.\n\n**Comparison claim a1:**\n\"On this evidence the comparison is valid, and Merrill is by far the most explicit: Merrill is the only firm that names a 'Mass Affluent' client segment. Morgan Stanley names its clients only as 'individual investors, including high and ultra-high net worth individuals' (and 'small to medium-sized businesses') and never uses 'mass-affluent' for its own client base; Raymond James names only 'high-net-worth' and 'ultra-high-net-worth' segments (a different, higher wealth tier). Schwab and Edward Jones have no statements naming a mass-affluent segment found in the documents searched.\"\n\nChunk ids: MS-10K-2025#125, MS-10Q-2025Q2#15, BAC-DECK-2025-investor-day#12, RJF-PR-web-independent-ria-custody-services#2.\n\nActually, the comparison claim should cite the items it rests on. Let me cite the key ones: BAC-DECK-2025-investor-day#12 (Merrill fact), MS-10K-2025#125 and MS-10Q-2025Q2#15 (MS adjacent), RJF-PR-web-independent-ria-custody-services#2 (RJF adjacent).\n\nFor SCHW and EDJ, code gaps. I can mention them but they're \"not found\" \u2014 those are gaps.\n\nLet me write the comparison claim.\n\npart_id a1.\n\nNow a2 (fact):\n- a2.MER fact: Merrill's statements. Items 1-4.\n- a2.SCHW adjacent\n- a2.EDJ adjacent\n- a2.RJF adjacent\n\nLet me write a2.MER claims (these are facts, part_id a2.MER).\n\nActually wait \u2014 for fact cells, each item is a claim. But do I write each item as separate claim, or combine? The instruction says \"A fact cell is a claim\". Each item is a claim. So I write multiple claims each with part_id a2.MER.\n\nActually, let me look at how part_id works. Each cell has a part_id (a2.MER). Multiple items within a cell all get part_id a2.MER.\n\nSo for a2.MER, I write claims for items 1, 2, 3, 4, each with part_id a2.MER.\n\nLet me write them.\n\na2.MER item 1: \"Merrill states that it is 'Serving the wealth continuum of clients,' which spans mass-affluent through ultra-high-net-worth clients across Merrill and the Private Bank.\" cite BAC-DECK-2025-investor-day#9\n\nitem 2: \"Merrill states it believes the Wealth Continuum allows it to deliver as one company and is its engine for lasting growth.\" cite BAC-DECK-2025-investor-day#8\n\nitem 3: \"Merrill states it has the capabilities to deliver for every client in the way they want to be served.\" cite BAC-DECK-2025-investor-day#8\n\nitem 4: \"Merrill names the Mass Affluent segment within its Wealth Continuum, defined as $500K - $1MM.\" cite BAC-DECK-2025-investor-day#12\n\nNow the adjacent items for a2.\n\na2.SCHW adjacent, differs_because: 'Schwab does not use the term 'mass-affluent'; it instead speaks about 'affluent' clients and retail clients 'below $5 million' (alongside high-net-worth and ultra-high-net-worth households), which are related but different wealth tiers than 'mass-affluent'.'\n\nItems 1-4 for a2.SCHW. These are adjacent items. Each with part_id a2.SCHW and differs_because.\n\nLet me write them.\n\nitem 1: CEO Rick Wurster said 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships. cite SCHW-TR-2026Q2#9\n\nitem 2: A Schwab investor-day deck states that 68% of affluent investors want and are willing to pay for advice. cite SCHW-DECK-2026-investor-day#180\n\nitem 3: Jon Beatty, head of Schwab Advisor Services, said 68% of affluent Americans say they are willing to pay for advice today, up from 38% in 2010. cite SCHW-TRADE-2026-10-27-IN-01#0\n\nitem 4: CEO Rick Wurster said retail clients below $5 million are well served by the Schwab network. cite SCHW-TRADE-2026-10-28-WM-01#2 [quote not verbatim, so don't quote]\n\na2.EDJ adjacent, differs_because: 'The firm describes serving 'individual investors' and 'tens of millions of long-term investors' broadly, rather than naming or describing a mass-affluent client segment.'\n\nitem 1: Edward Jones states that through its retail brokerage entities it 'primarily serves individual investors in the U.S. and Canada.' cite EDJ-10K-2025#204\n\nitem 2: Edward Jones states it is 'committed to helping improve the financial fulfillment for tens of millions of long-term investors across North America' by providing planning and advice. cite EDJ-10Q-2026Q2#53\n\nitem 3: Edward Jones describes a strategic ambition to 'improve the financial wellness for tens of millions of long-term investors across North America.' cite EDJ-10Q-2025Q3#74\n\na2.RJF adjacent, differs_because: 'RJF's statements describe serving high-net-worth and ultra-high-net-worth clients (a wealthier segment, defined as at least $5 million in investable assets), not the mass-affluent segment (typically $100,000 to $1 million).'\n\nitems 1-6.\n\nitem 1: Raymond James introduced Private Wealth Guided Portfolios... [quote not verbatim, no quotes] cite RJF-TRADE-2026-09-29-WM-01#0\n\nitem 2: Raymond James' Private Wealth Advisor designation program provides training, coaching and a peer network for advisors who specialize in high-net-worth clients, which the firm generally defines as those with at least $5 million in investable assets. cite RJF-TRADE-2026-09-29-IN-01#3\n\nitem 3: CEO Paul Shoukry said the firm's private wealth advisor program and expanded alternative investments platform supports advisors who focus on high-net-worth clients. cite RJF-TR-2025Q4#5\n\nitem 4: In response to growing demand for private investment product alternatives for ultra-high-net-worth clients, the firm further developed its private capital raising expertise... cite RJF-TR-2025Q3#5\n\nitem 5: Raymond James' Wealth Strategies offering is described as bringing 'the best of our firm' to high-net-worth and ultra-high-net-worth clients. cite RJF-PR-web-independent-ria-custody-services#2\n\nitem 6: The firm's securities-based lending deck states that structured lending is offered to High Net Worth / Ultra-High Net Worth Private Client Group clients. cite RJF-DECK-2025-investor-day#57\n\nNow a3 (fact):\n- a3.MER fact: items 1-2.\n- a3.SCHW adjacent\n- a3.RJF adjacent (items 2,3,4)\n\na3.MER item 1: Merrill states that its advisory business provides a high-touch client experience through a network of financial advisors focused on clients with over $250,000 in total investable assets. cite BAC-10K-2025#246 [quote not verbatim]\n\nitem 2: Merrill states that it serves the wealth continuum of clients, positioning Merrill and the Private Bank across the client wealth spectrum that includes the mass-affluent segment. cite BAC-DECK-2025-investor-day#9\n\na3.SCHW adjacent, differs_because: 'Schwab describes targeting and attracting 'affluent' and 'higher net worth' clients (roughly $1 million or more in assets), rather than naming or targeting a specific 'mass-affluent' segment.'\n\nitem 1: Schwab CEO Rick Wurster said about one-third of new clients in 2025 are affluent. cite SCHW-TR-2025Q4#11\n\nitem 2: Schwab CEO Rick Wurster said higher net-worth clients, who comprise 70% of its retail assets, continue to turn to Schwab for their more complex financial and wealth management needs. cite SCHW-TR-2024Q4#11\n\nitem 3: Schwab CEO Rick Wurster described the affluent segment as households with $1 million to $5 million in assets, noting such households using only one financial services firm rose to 22%. cite SCHW-TR-2026Q2#9\n\na3.RJF adjacent, differs_because: 'Raymond James describes targeting and attracting high-net-worth and ultra-high-net-worth clients (a higher wealth segment), not mass-affluent clients; it does not name or describe the mass-affluent segment.'\n\nitem 2: Paul Shoukry said the firm's private wealth advisor program and expanded alternative investments platform support advisors who focus on high-net-worth clients. cite RJF-TR-2025Q4#5\n\nitem 3: Raymond James' Private Wealth Advisor designation program is aimed at advisors specializing in high-net-worth clients, which the firm defines as those with at least $5 million in investable assets. cite RJF-TRADE-2026-09-29-IN-01#3\n\nitem 4: Private Client Group President Tash Elwyn said Raymond James is committed to being a destination for private wealth advisors and clients with significant wealth. cite RJF-TRADE-2026-09-29-WM-01#0 [quote not verbatim]\n\nNow a4 (fact):\n- a4.MER fact: items 1-4.\n- a4.MS adjacent\n- a4.SCHW adjacent\n- a4.EDJ adjacent\n- a4.RJF adjacent\n\na4.MER item 1: Merrill Wealth Management provides tailored solutions through a full set of investment management, brokerage, banking and retirement products to clients with over $250,000 in total investable assets. cite BAC-10K-2025#246 [quote not verbatim]\n\nitem 2: Merrill launched the Tax Efficient Transition Service (TET) and Dollar Cost Averaging Service (DCA), which help clients transition appreciated assets and deploy cash into managed or custom managed strategies within the Merrill Lynch Investment Advisory Program (IAP). cite MER-PR-2026-09-15-01#0\n\nitem 3: The TET and DCA services are available to clients with no additional IAP Program Fees charged. cite MER-PR-2026-09-15-01#2\n\nitem 4: For full-service brokerage, Merrill charges a minimum transaction commission of $75 or $0.04 per share (whichever is greater), capped at a maximum of 5.00% of principal trade value; for fee-based programs it charges 1.00% to 1.40% on assets managed, and as high as 1.75%. cite MER-TRADE-2026-09-29-RB-01#7\n\nNote: item 4 is a trade-press item. \"A trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...').\" So I should attribute as \"trade press reports\".\n\na4.MS adjacent, differs_because: 'The products and services are described for 'individual investors' broadly (which the firm elsewhere characterizes as including high and ultra-high net worth individuals), not for a mass-affluent client segment, which Morgan Stanley does not name or address.'\n\nitem 1: Morgan Stanley's Wealth Management segment provides a comprehensive array of financial services and solutions to individual investors... cite MS-10Q-2025Q3#229, MS-10Q-2025Q2#15\n\na4.SCHW adjacent, differs_because: 'Schwab does not name a 'mass-affluent' client segment; it describes products, services, and tiers for 'higher net worth,' 'high net worth,' and 'ultra-high net worth' clients (typically $1 million and above), which is a different and generally higher segment than mass-affluent.'\n\nitem 1: Schwab describes relationship models and products for clients with 'more substantial needs': Schwab Private Client Services\u2122 for clients with $1 million to $10 million in qualifying assets and Schwab Private Wealth Services\u2122 for clients with more than $10 million... cite SCHW-10K-2025#18\n\nitem 2: Schwab said it is deepening relationships with its higher net worth clients by continuing to strengthen its alternatives offer. cite SCHW-TR-2025Q4#16\n\na4.EDJ adjacent, differs_because: (long) 'Edward Jones describes the products and services it offers to individual investors broadly (and separately targets High Net Worth and Next Generation segments), but none of the passages names or addresses the mass-affluent client segment, so there is no statement of products, services, platforms, or fee levels offered specifically to mass-affluent clients.'\n\nitems 1-4.\n\nitem 1: Edward Jones primarily serves individual investors in the U.S. and Canada and derives revenues from investment advisory and other account services... cite EDJ-10K-2025#204\n\nitem 2: Edward Jones also offers trust services through Edward Jones Trust Company and investment advisory services for the Edward Jones Money Market Fund and the twelve sub-advised Bridge Builder Trust mutual funds. cite EDJ-10K-2025#204 [quote not verbatim]\n\nitem 3: Edward Jones describes recent initiatives including Financial Planning Services... and client-targeting initiatives for High Net Worth, Workplace, and a digital platform for Next Generation investors. cite EDJ-10K-2025#88 [quote not verbatim]\n\nitem 4: Edward Jones states it offers a broad range of quality products, solutions and tools... cite EDJ-10K-2025#16 [quote not verbatim]\n\na4.RJF adjacent, differs_because: 'Raymond James does not use the term 'mass-affluent' anywhere in these passages; the specific products, services and platforms it describes (Private Wealth Guided Portfolios, structured lending, a private investments desk, bespoke private investment alternatives) are all expressly offered to 'high-net-worth' and 'ultra-high-net-worth' clients, a different client segment than mass-affluent.'\n\nitem 3: Raymond James offers a private investments desk for clients with $50 million and above of investable assets. cite RJF-TR-2025Q1#61\n\n(only item 3 listed for a4.RJF)\n\nNow a5 (fact):\n- a5.MER fact: items 1-2.\n- a5.RJF adjacent\n- a5.research fact: item 1.\n\na5.MER item 1: Merrill's 'Wealth Continuum' defines the 'Mass Affluent' segment as clients with $500K to $1MM in assets, with 'High Net Worth' as $1MM to $10MM. cite BAC-DECK-2025-investor-day#12\n\nitem 2: Merrill Wealth Management's advisory business is focused on clients with over $250,000 in total investable assets. cite BAC-10K-2025#246 [quote not verbatim]\n\na5.RJF adjacent, differs_because: 'This defines high-net-worth clients (at least $5 million in investable assets), a different, higher-asset segment than mass-affluent, which the firm does not define by asset or income level.'\n\nitem 1: Raymond James' Private Wealth Advisor designation program supports advisors who specialize in high-net-worth clients, which the firm generally defines as those with at least $5 million in investable assets. cite RJF-TRADE-2026-09-29-IN-01#3\n\na5.research fact: item 1: Cerulli defines middle-market and mass-affluent households as those with between $100,000 and $2 million in financial assets, a segment whose wealth grew from $14 trillion to $25 trillion from 2013 to 2025 and that comprises 46.9 million households. cite CERULLI-MASS-AFFLUENT-2026#0 [quote not verbatim]\n\nThis is a fact (research), part_id a5.research.\n\nNow a6 (recency): every item needs why-line.\n- a6.SCHW adjacent: items 1-2.\n- a6.MER adjacent: items 1-2.\n\na6.SCHW adjacent, differs_because: 'Schwab's most recent statements name 'affluent' clients/investors (and higher net worth / high net worth / ultra-high net worth tiers) rather than a 'mass-affluent' segment specifically; it does not use the term 'mass-affluent.''\n\nitem 1: CEO Rick Wurster said 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships, citing this as the 'bull market for convenience' driving consolidation. cite SCHW-TR-2026Q2#9\n\nwhy-line: from context. The context line says \"...As we go through today's discussion, I will share how these forces are creating opportunity. The bull market for convenience is driving investors to increasingly consolidate their financial lives...\"\n\nWhy it might matter: The source frames this as part of a \"bull market for convenience\" that is driving investors to consolidate their financial lives, with consolidation expected to grow as investors seek one-stop shopping.\n\nActually I need to pick from context or related. The context line gives the reason. Let me write: \"Why it might matter: the source frames this as evidence of a 'bull market for convenience' driving investors to consolidate their financial lives, which Schwab expects to grow.\"\n\nFor the why-line, I should add the chunk id to chunk_ids. The context is from SCHW-TR-2026Q2#9 itself, which is already cited. Hmm, but the instruction says \"then add that passage's chunk id to the claim's chunk_ids.\" So if I use the context from the same passage, the chunk id is already there. But I could also use a related line from a different passage.\n\nActually the why-line should come from either the item's own passage context or related lines. If I use the item's own context, chunk id is already cited. If I use a related passage, I add that chunk id.\n\nLet me use context for item 1 (same chunk id SCHW-TR-2026Q2#9). Actually, to be safe and add value, I could cite a related passage. But let me just use the context which is most direct.\n\nActually, the why-line should end each a6 item. Let me write.\n\nFor a6.SCHW item 1, why-line: The context says this consolidation is part of the \"bull market for convenience\" and Schwab expects it to grow. So why it might matter: it indicates growing consolidation among affluent households, a trend Schwab says it expects to grow.\n\nitem 2: Schwab's investor day materials state that 68% of affluent investors want and are willing to pay for advice, framing this as its advice market share opportunity. cite SCHW-DECK-2026-investor-day#180\n\nwhy-line: context \"Schwab has a tremendous opportunity to grow share with new & existing clients in advice & lending.\" So why it might matter: the source frames this as showing Schwab has a large opportunity to grow its advice market share, given it holds only ~2% of a $37T market.\n\nLet me write it.\n\na6.MER adjacent, differs_because: 'The most recent statements track net new households with $500K+ in assets, which is a broader measure than the mass-affluent segment (defined elsewhere as $500K-$1MM); $500K+ also includes high-net-worth and ultra-high-net-worth households.'\n\nitem 1: In its most recent quarterly results (3Q26), Merrill reported adding about 4,200 net new households with at least $500,000 in assets, up 17%. cite BAC-TR-2026Q3#19\n\nwhy-line: context says \"These results reflect strong demand for advice, and our ability to attract clients and experienced advisers to the platform.\" So why it might matter: the source frames these results as reflecting strong demand for advice and the platform's ability to attract clients and advisers.\n\nitem 2: Merrill's most recent press release (3Q26) reported approximately 4.2K net new $500K+ households added in the quarter. cite BAC-PR-2026-10-14-01#12\n\nwhy-line: context shows this as part of client engagement highlights. Hmm, the context line shows \"Client Engagement \u2022 $4.2 trillion in client balances...\" So why it might matter: this appears among Merrill's client engagement highlights alongside $4.2 trillion in client balances and $1.9 trillion in AUM.\n\nActually let me use a related line. For item 2, related includes BAC-TR-2026Q3#19 (the 4,200 figure) and BAC-DECK-2025-investor-day#12 (the Mass Affluent definition). \n\nWhy it might matter: I could note the related definition that \"Mass Affluent\" is $500K-$1MM, so the $500K+ figure is a broader measure. But that's restating differs_because essentially. Hmm.\n\nActually the why-line should be a reason/purpose/first/record/change/consequence. Let me use the context for item 2 which shows it's part of client engagement metrics.\n\nFor item 2's why-line, I can use related: BAC-DECK-2025-investor-day#12 defines Mass Affluent as $500K-$1MM. So why it might matter: the $500K+ threshold sits at the bottom of the mass-affluent range (which the firm defines elsewhere as $500K-$1MM), so this metric partly reflects mass-affluent household growth.\n\nHmm, but that's kind of restating. Let me think about what's allowed.\n\n\"Why it might matter: \" and one sentence on why it might matter, from one of two places: what the item's own passage says (context line), or factual background from another passage (related lines).\n\nFor item 2, context line is the press release content: \"Client Engagement \u2022 $4.2 trillion in client balances(C) \u2022 $1.9 trillion in AUM balances(C) \u2022 ~4.2K net new $500K+ households added in 3Q26 \u2022 70K digital appointments...\"\n\nSo why it might matter: This is reported as one of Merrill's client engagement highlights in its 3Q26 results, alongside $4.2 trillion in client balances and $1.9 trillion in AUM.\n\nThat works as a why-line (the source frames it as a client engagement highlight). Good.\n\nLet me finalize all why-lines.\n\na6.SCHW item 1 why-line: \"Why it might matter: the source presents this consolidation as part of a 'bull market for convenience' that it says is driving investors to consolidate their financial lives, a trend Schwab says it expects to grow.\" cite already SCHW-TR-2026Q2#9 (same chunk).\n\nActually, I could add related chunk for a richer why. But the context is sufficient. Let me keep it simple and use context.\n\nWait, but the instruction: \"then add that passage's chunk id to the claim's chunk_ids.\" If I use the item's own context, the chunk id is the same as already cited. That's fine, no additional chunk needed.\n\nLet me write final answer now.\n\nFor the comparison claim a1, I need to think about whether it's \"valid\", \"valid only for some firms\", or \"not valid\".\n\nThe comparison is about \"whether and how explicitly each firm names the mass-affluent client segment.\" Merrill names it explicitly (fact). MS and RJF name different segments (adjacent, but still about naming \u2014 they don't name mass-affluent). SCHW and EDJ not found.\n\nSo the comparison can be made: Merrill is most explicit. It's valid. I can rank: Merrill explicitly names \"Mass Affluent\"; MS and RJF name related-but-different segments; SCHW and EDJ have nothing found.\n\nLet me write it clearly.\n\nActually the comparison should state whether it can be made and why, citing items. Since a1.MER is a fact and others are adjacent/gaps, the comparison is valid and Merrill is clearly most explicit.\n\nLet me write:\n\n\"On this evidence, the comparison can be made and Merrill is unambiguously the most explicit: Merrill is the only firm that names a 'Mass Affluent' client segment, in its Wealth Continuum (BAC-DECK-2025-investor-day#12). Morgan Stanley names its clients only as 'individual investors, including high and ultra-high net worth individuals' and 'small to medium-sized businesses' without using the term (MS-10K-2025#125, MS-10Q-2025Q2#15), and Raymond James names only 'high-net-worth and ultra-high-net-worth' clients, a different and higher wealth tier (RJF-PR-web-independent-ria-custody-services#2). Schwab and Edward Jones have no statement naming a mass-affluent segment found in the documents searched.\"\n\nChunk ids: MS-10K-2025#125, MS-10Q-2025Q2#15, BAC-DECK-2025-investor-day#12, RJF-PR-web-independent-ria-custody-services#2.\n\nGood.\n\nNow let me also consider: should the answer include a direct answer to \"which of the five has been most explicit\"? The comparison claim a1 answers this. Merrill is most explicit.\n\nNow let me write everything out and format for submit_answer.\n\nLet me count claims vs adjacent.\n\nClaims (part_id):\n- a1 (comparison claim)\n- a2.MER items 1-4 (4 claims)\n- a3.MER items 1-2 (2 claims)\n- a4.MER items 1-4 (4 claims)\n- a5.MER items 1-2 (2 claims)\n- a5.research item 1 (1 claim)\n\nAdjacent (part_id + differs_because):\n- a1.MS items 1-2 (2 adjacent)\n- a1.RJF items 1-4 (4 adjacent)\n- a2.SCHW items 1-4 (4)\n- a2.EDJ items 1-3 (3)\n- a2.RJF items 1-6 (6)\n- a3.SCHW items 1-3 (3)\n- a3.RJF items 2-4 (3)\n- a4.MS item 1 (1)\n- a4.SCHW items 1-2 (2)\n- a4.EDJ items 1-4 (4)\n- a4.RJF item 3 (1)\n- a5.RJF item 1 (1)\n- a6.SCHW items 1-2 (2)\n- a6.MER items 1-2 (2)\n\nGaps: I think I might need to add some gaps of my own? The code gaps cover everything. Let me check if there's anything not covered.\n\nActually, the instruction says \"Add a gap of your own only for something those gaps do not name.\" I think all the \"not found\" cells are covered by code gaps. So I probably don't need to add gaps.\n\nBut wait \u2014 should I provide the gaps array with the code gaps? The instruction says \"code adds those gaps\". So I should not add them. My gaps array should be empty or only contain new gaps.\n\nHmm, but actually, let me reconsider. The \"Gaps added by code\" list and \"Caveats added by code\" \u2014 these are things code will add to the final output. So in my submit_answer, I should NOT include them (they'll be added automatically). And \"do not repeat them\" refers to caveats.\n\nSo my gaps array should be empty unless I have a new gap.\n\nLet me think if there's any gap I should add. I don't think so. Everything is covered.\n\nActually, wait. Let me reconsider the a6 aspect. The gap \"[a6] The database does not support this today...\" is added by code. So a6 as a whole is a gap for the \"not found\" firms.\n\nI think I'll leave gaps empty. Actually, let me reconsider \u2014 is it required to have gaps non-empty? No, it can be empty array.\n\nActually, let me reconsider whether I should add a gap. The question is about \"most explicit.\" The answer is Merrill. I don't think I need additional gaps.\n\nNow let me carefully write each text with proper dates and attribution.\n\nLet me note date requirements: \"Date every claim from its source line.\" For facts, I should date them.\n\nLet me look at source dates:\n- MS-10K-2025#125: period 2025-12-31, published 2026-02-19\n- MS-10Q-2025Q2#15: period 2025-06-30\n- BAC-DECK-2025-investor-day#12: period n/a, published 2025-11-05\n- BAC-10K-2025#246: period 2025-12-31, published 2026-02-25\n- etc.\n\nFor claims, I should date. Let me add dates.\n\nActually, for the fact claims, let me add date context where the source has a period.\n\nLet me be careful but not overdo it. I'll add dates like \"The 2025 10-K (period ended December 31, 2025) states...\" or \"Merrill's investor-day deck (November 2025) states...\".\n\nActually, let me follow the format. Let me write reasonably.\n\nLet me now write the full answer text for each item.\n\nI'll write concisely.\n\nLet me draft.\n\n### Comparison claim (a1)\nText: \"On this evidence the comparison can be made, and Merrill is the most explicit by a wide margin: Merrill is the only firm that names a 'Mass Affluent' client segment, doing so in its Wealth Continuum (the investor-day deck, November 2025, defines 'Mass Affluent ($500K - $1MM)'). Morgan Stanley names its clients only as 'individual investors, including high and ultra-high net worth individuals' and 'small to medium-sized businesses' and never uses the term for its own client base (2025 10-K and 2Q25 10-Q), while Raymond James names only 'high-net-worth and ultra-high-net-worth clients,' a different, higher wealth tier. Schwab and Edward Jones have no statement naming a mass-affluent segment found in the documents searched.\"\n\nchunk_ids: MS-10K-2025#125, MS-10Q-2025Q2#15, BAC-DECK-2025-investor-day#12, RJF-PR-web-independent-ria-custody-services#2\n\n### a2.MER claims\nItem 1: \"Merrill: Merrill states that it is 'Serving the wealth continuum of clients,' which spans mass-affluent through ultra-high-net-worth clients across Merrill and the Private Bank (investor-day deck, November 2025).\"\nchunk_ids: BAC-DECK-2025-investor-day#9\n\nItem 2: \"Merrill: Merrill states it believes the Wealth Continuum allows it to deliver as one company and is its engine for lasting growth (investor-day deck, November 2025).\"\nchunk_ids: BAC-DECK-2025-investor-day#8\n\nItem 3: \"Merrill: Merrill states it has the capabilities to deliver for every client in the way they want to be served (investor-day deck, November 2025).\"\nchunk_ids: BAC-DECK-2025-investor-day#8\n\nItem 4: \"Merrill: Merrill names the Mass Affluent segment within its Wealth Continuum, defined as $500K - $1MM (investor-day deck, November 2025).\"\nchunk_ids: BAC-DECK-2025-investor-day#12\n\n### a2.SCHW adjacent\nItem 1: \"Charles Schwab: CEO Rick Wurster said 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships (2Q26 earnings call, period ended June 30, 2026).\"\nchunk_ids: SCHW-TR-2026Q2#9\ndiffers_because: \"Schwab does not use the term 'mass-affluent'; it instead speaks about 'affluent' clients and retail clients 'below $5 million' (alongside high-net-worth and ultra-high-net-worth households), which are related but different wealth tiers than 'mass-affluent'.\"\n\nItem 2: \"Charles Schwab: A Schwab investor-day deck (May 2026) states that 68% of affluent investors want and are willing to pay for advice.\"\nchunk_ids: SCHW-DECK-2026-investor-day#180\n\nItem 3: \"Charles Schwab: Jon Beatty, head of Schwab Advisor Services, said 68% of affluent Americans say they are willing to pay for advice today, up from 38% in 2010 (October 2026).\"\nchunk_ids: SCHW-TRADE-2026-10-27-IN-01#0\n\nItem 4: \"Charles Schwab: CEO Rick Wurster said retail clients below $5 million are well served by the Schwab network (October 2026).\"\nchunk_ids: SCHW-TRADE-2026-10-28-WM-01#2\n\n### a2.EDJ adjacent\nItem 1: \"Edward Jones: Edward Jones states that through its retail brokerage entities it 'primarily serves individual investors in the U.S. and Canada.' (2025 10-K, period ended December 31, 2025)\"\nchunk_ids: EDJ-10K-2025#204\n\nItem 2: \"Edward Jones: Edward Jones states it is 'committed to helping improve the financial fulfillment for tens of millions of long-term investors across North America' by providing planning and advice (2Q26 10-Q, period ended June 26, 2026).\"\nchunk_ids: EDJ-10Q-2026Q2#53\n\nItem 3: \"Edward Jones: Edward Jones describes a strategic ambition to 'improve the financial wellness for tens of millions of long-term investors across North America.' (3Q25 10-Q, period ended September 26, 2025)\"\nchunk_ids: EDJ-10Q-2025Q3#74\n\n### a2.RJF adjacent\nItem 1: \"Raymond James: Raymond James introduced Private Wealth Guided Portfolios integrating traditional and alternative investments for financial advisors serving high-net-worth and ultra-high-net-worth clients, with Private Client Group President Tash Elwyn stating the firm is 'committed to being a destination for private wealth advisors and the clients they serve' (September 2026).\"\nchunk_ids: RJF-TRADE-2026-09-29-WM-01#0\n\nItem 2: \"Raymond James: Raymond James' Private Wealth Advisor designation program provides training, coaching and a peer network for advisors who specialize in high-net-worth clients, which the firm generally defines as those with at least $5 million in investable assets (September 2026).\"\nchunk_ids: RJF-TRADE-2026-09-29-IN-01#3\n\nItem 3: \"Raymond James: CEO Paul Shoukry said the firm's private wealth advisor program and expanded alternative investments platform supports advisors who focus on high-net-worth clients (4Q25 earnings call, period ended December 31, 2025).\"\nchunk_ids: RJF-TR-2025Q4#5\n\nItem 4: \"Raymond James: In response to growing demand for private investment product alternatives for ultra-high-net-worth clients, the firm further developed its private capital raising expertise and brought in bespoke private investment alternatives for such clients (3Q25, period ended September 30, 2025).\"\nchunk_ids: RJF-TR-2025Q3#5\n\nItem 5: \"Raymond James: Raymond James' Wealth Strategies offering is described as bringing 'the best of our firm' to high-net-worth and ultra-high-net-worth clients (company web page, page content as of July 2026).\"\nchunk_ids: RJF-PR-web-independent-ria-custody-services#2\n\nItem 6: \"Raymond James: The firm's securities-based lending deck states that structured lending is offered to High Net Worth / Ultra-High Net Worth Private Client Group clients (investor-day deck, June 2025).\"\nchunk_ids: RJF-DECK-2025-investor-day#57\n\n### a3.MER claims\nItem 1: \"Merrill: Merrill states that its advisory business provides a high-touch client experience through a network of financial advisors focused on clients with over $250,000 in total investable assets (2025 10-K, period ended December 31, 2025).\"\nchunk_ids: BAC-10K-2025#246\n\nItem 2: \"Merrill: Merrill states that it serves the wealth continuum of clients, positioning Merrill and the Private Bank across the client wealth spectrum that includes the mass-affluent segment (investor-day deck, November 2025).\"\nchunk_ids: BAC-DECK-2025-investor-day#9\n\n### a3.SCHW adjacent\ndiffers_because: \"Schwab describes targeting and attracting 'affluent' and 'higher net worth' clients (roughly $1 million or more in assets), rather than naming or targeting a specific 'mass-affluent' segment.\"\n\nItem 1: \"Charles Schwab: Schwab CEO Rick Wurster said about one-third of new clients in 2025 are affluent (4Q25 earnings call, period ended December 31, 2025).\"\nchunk_ids: SCHW-TR-2025Q4#11\n\nItem 2: \"Charles Schwab: Schwab CEO Rick Wurster said higher net-worth clients, who comprise 70% of its retail assets, continue to turn to Schwab for their more complex financial and wealth management needs (4Q24 earnings call, period ended December 31, 2024).\"\nchunk_ids: SCHW-TR-2024Q4#11\n\nItem 3: \"Charles Schwab: Schwab CEO Rick Wurster described the affluent segment as households with $1 million to $5 million in assets, noting such households using only one financial services firm rose to 22% (2Q26 earnings call, period ended June 30, 2026).\"\nchunk_ids: SCHW-TR-2026Q2#9\n\n### a3.RJF adjacent\ndiffers_because: \"Raymond James describes targeting and attracting high-net-worth and ultra-high-net-worth clients (a higher wealth segment), not mass-affluent clients; it does not name or describe the mass-affluent segment.\"\n\nItem 2: \"Raymond James: Paul Shoukry said the firm's private wealth advisor program and expanded alternative investments platform support advisors who focus on high-net-worth clients (4Q25 earnings call, period ended December 31, 2025).\"\nchunk_ids: RJF-TR-2025Q4#5\n\nItem 3: \"Raymond James: Raymond James' Private Wealth Advisor designation program is aimed at advisors specializing in high-net-worth clients, which the firm defines as those with at least $5 million in investable assets (September 2026).\"\nchunk_ids: RJF-TRADE-2026-09-29-IN-01#3\n\nItem 4: \"Raymond James: Private Client Group President Tash Elwyn said Raymond James is committed to being a destination for private wealth advisors and clients with significant wealth (September 2026).\"\nchunk_ids: RJF-TRADE-2026-09-29-WM-01#0\n\n### a4.MER claims\nItem 1: \"Merrill: Merrill Wealth Management provides tailored solutions through a full set of investment management, brokerage, banking and retirement products to clients with over $250,000 in total investable assets (2025 10-K, period ended December 31, 2025).\"\nchunk_ids: BAC-10K-2025#246\n\nItem 2: \"Merrill: Merrill launched the Tax Efficient Transition Service (TET) and Dollar Cost Averaging Service (DCA), which help clients transition appreciated assets and deploy cash into managed or custom managed strategies within the Merrill Lynch Investment Advisory Program (IAP) (press release, September 2026).\"\nchunk_ids: MER-PR-2026-09-15-01#0\n\nItem 3: \"Merrill: The TET and DCA services are available to clients with no additional IAP Program Fees charged (press release, September 2026).\"\nchunk_ids: MER-PR-2026-09-15-01#2\n\nItem 4: \"Merrill: Trade press reports that, for full-service brokerage, Merrill charges a minimum transaction commission of $75 or $0.04 per share (whichever is greater), capped at a maximum of 5.00% of principal trade value; for fee-based programs it charges 1.00% to 1.40% on assets managed, and as high as 1.75% (September 2026).\"\nchunk_ids: MER-TRADE-2026-09-29-RB-01#7\n\nNote item 4 is trade press. \"A trade-press item is a claim when its cell is a fact, attributed ('trade press reports ...').\" So attribute as trade press reports.\n\n### a4.MS adjacent\ndiffers_because: \"The products and services are described for 'individual investors' broadly (which the firm elsewhere characterizes as including high and ultra-high net worth individuals), not for a mass-affluent client segment, which Morgan Stanley does not name or address.\"\n\nItem 1: \"Morgan Stanley: Morgan Stanley's Wealth Management segment provides a comprehensive array of financial services and solutions to individual investors (and small to medium-sized businesses and institutions), covering financial advisor-led brokerage, custody, administrative and investment advisory services; self-directed brokerage; financial and wealth planning; workplace/stock plan administration; securities-based lending, residential and commercial real estate loans and other lending; banking; and retirement plan services (2025 10-K / 3Q25 and 2Q25 10-Qs).\"\nchunk_ids: MS-10Q-2025Q3#229, MS-10Q-2025Q2#15\n\n### a4.SCHW adjacent\ndiffers_because: \"Schwab does not name a 'mass-affluent' client segment; it describes products, services, and tiers for 'higher net worth,' 'high net worth,' and 'ultra-high net worth' clients (typically $1 million and above), which is a different and generally higher segment than mass-affluent.\"\n\nItem 1: \"Charles Schwab: Schwab describes relationship models and products for clients with 'more substantial needs': Schwab Private Client Services\u2122 for clients with $1 million to $10 million in qualifying assets and Schwab Private Wealth Services\u2122 for clients with more than $10 million, providing dedicated service teams, specialized expertise, expedited processing, pricing advantages, and access to exclusive product offerings (2025 10-K, period ended December 31, 2025).\"\nchunk_ids: SCHW-10K-2025#18\n\nItem 2: \"Charles Schwab: Schwab said it is deepening relationships with its higher net worth clients by continuing to strengthen its alternatives offer (4Q25 earnings call, period ended December 31, 2025).\"\nchunk_ids: SCHW-TR-2025Q4#16\n\n### a4.EDJ adjacent\ndiffers_because: \"Edward Jones describes the products and services it offers to individual investors broadly (and separately targets High Net Worth and Next Generation segments), but none of the passages names or addresses the mass-affluent client segment, so there is no statement of products, services, platforms, or fee levels offered specifically to mass-affluent clients.\"\n\nItem 1: \"Edward Jones: Edward Jones primarily serves individual investors in the U.S. and Canada and derives revenues from investment advisory and other account services, fees for assets held by clients, and commissions for distributing mutual fund shares and insurance products and for buying or selling securities (2025 10-K, period ended December 31, 2025).\"\nchunk_ids: EDJ-10K-2025#204\n\nItem 2: \"Edward Jones: Edward Jones also offers trust services through Edward Jones Trust Company and investment advisory services for the Edward Jones Money Market Fund and the twelve sub-advised Bridge Builder Trust mutual funds (2025 10-K, period ended December 31, 2025).\"\nchunk_ids: EDJ-10K-2025#204\n\nItem 3: \"Edward Jones: Edward Jones describes recent initiatives including Financial Planning Services (a more personalized experience with additional planning capabilities) and client-targeting initiatives for High Net Worth, Workplace, and a digital platform for Next Generation investors (2025 10-K, period ended December 31, 2025).\"\nchunk_ids: EDJ-10K-2025#88\n\nItem 4: \"Edward Jones: Edward Jones states it offers a broad range of quality products, solutions and tools, and planning, advice, products and services, to help clients achieve their financial goals (2025 10-K, period ended December 31, 2025).\"\nchunk_ids: EDJ-10K-2025#16\n\n### a4.RJF adjacent\ndiffers_because: \"Raymond James does not use the term 'mass-affluent' anywhere in these passages; the specific products, services and platforms it describes (Private Wealth Guided Portfolios, structured lending, a private investments desk, bespoke private investment alternatives) are all expressly offered to 'high-net-worth' and 'ultra-high-net-worth' clients, a different client segment than mass-affluent.\"\n\nItem 3: \"Raymond James: Raymond James offers a private investments desk for clients with $50 million and above of investable assets (3Q25 earnings call, period ended March 31, 2025).\"\nchunk_ids: RJF-TR-2025Q1#61\n\nWait, the item says \"period 2025-03-31\" and source RJF-TR-2025Q1#61 \"period 2025-03-31, published 2025-04-23\". So this is the 2Q25 (fiscal Q2) earnings call? Actually RJF has fiscal year ending September. RJF-TR-2025Q1#61 period 2025-03-31. So it's fiscal 2Q25. Let me just say \"period ended March 31, 2025\".\n\n### a5.MER claims\nItem 1: \"Merrill: Merrill's 'Wealth Continuum' defines the 'Mass Affluent' segment as clients with $500K to $1MM in assets, with 'High Net Worth' as $1MM to $10MM (investor-day deck, November 2025).\"\nchunk_ids: BAC-DECK-2025-investor-day#12\n\nItem 2: \"Merrill: Merrill Wealth Management's advisory business is focused on clients with over $250,000 in total investable assets (2025 10-K, period ended December 31, 2025).\"\nchunk_ids: BAC-10K-2025#246\n\n### a5.RJF adjacent\ndiffers_because: \"This defines high-net-worth clients (at least $5 million in investable assets), a different, higher-asset segment than mass-affluent, which the firm does not define by asset or income level.\"\n\nItem 1: \"Raymond James: Raymond James' Private Wealth Advisor designation program supports advisors who specialize in high-net-worth clients, which the firm generally defines as those with at least $5 million in investable assets (September 2026).\"\nchunk_ids: RJF-TRADE-2026-09-29-IN-01#3\n\n### a5.research claim\nItem 1: \"Industry research: Cerulli (March 2026) defines middle-market and mass-affluent households as those with between $100,000 and $2 million in financial assets, a segment whose wealth grew from $14 trillion to $25 trillion from 2013 to 2025 and that comprises 46.9 million households.\"\nchunk_ids: CERULLI-MASS-AFFLUENT-2026#0\n\n### a6.SCHW adjacent (with why-lines)\ndiffers_because: \"Schwab's most recent statements name 'affluent' clients/investors (and higher net worth / high net worth / ultra-high net worth tiers) rather than a 'mass-affluent' segment specifically; it does not use the term 'mass-affluent.'\"\n\nItem 1: \"Charles Schwab: CEO Rick Wurster said 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships, citing this as the 'bull market for convenience' driving consolidation (2Q26 earnings call, period ended June 30, 2026). Why it might matter: the source frames this consolidation as part of a 'bull market for convenience' that it says is driving investors to consolidate their financial lives, a trend Schwab says it expects to grow.\"\nchunk_ids: SCHW-TR-2026Q2#9\n\nItem 2: \"Charles Schwab: Schwab's investor-day materials (May 2026) state that 68% of affluent investors want and are willing to pay for advice, framing this as its advice market share opportunity. Why it might matter: the source presents this as evidence of a large opportunity to grow advice market share, noting Schwab's ~2% share of a $37 trillion market.\"\nchunk_ids: SCHW-DECK-2026-investor-day#180\n\n### a6.MER adjacent (with why-lines)\ndiffers_because: \"The most recent statements track net new households with $500K+ in assets, which is a broader measure than the mass-affluent segment (defined elsewhere as $500K-$1MM); $500K+ also includes high-net-worth and ultra-high-net-worth households.\"\n\nItem 1: \"Merrill: In its most recent quarterly results (3Q26), Merrill reported adding about 4,200 net new households with at least $500,000 in assets, up 17% (October 2026). Why it might matter: the source says these results reflect strong demand for advice and Merrill's ability to attract clients and experienced advisers to the platform.\"\nchunk_ids: BAC-TR-2026Q3#19\n\nItem 2: \"Merrill: Merrill's most recent press release (3Q26) reported approximately 4.2K net new $500K+ households added in the quarter (October 2026). Why it might matter: the source presents this among Merrill's client engagement highlights alongside $4.2 trillion in client balances and $1.9 trillion in AUM balances.\"\nchunk_ids: BAC-PR-2026-10-14-01#12\n\nNow let me assemble everything.\n\nFor the a1 comparison, I need to double check: is it a comparison aspect requiring \"same_basis\" to rank? The instruction: \"Compare or rank figures across firms only when the aspect is marked same_basis.\"\n\nThe a1 aspect is not marked same_basis. So I should be careful. But a1 is about \"whether and how explicitly each firm names the mass-affluent client segment\" \u2014 this is a qualitative comparison, not a figure comparison. The instruction about same_basis applies to \"Compare or rank figures across firms.\" Here I'm comparing explicitness of naming, not figures.\n\nActually, let me re-read: \"For each aspect marked comparison, write exactly one claim... that answers the comparison itself: whether it can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests on.\"\n\nSo the comparison claim should say whether the comparison can be made and why. Then \"Compare or rank figures across firms only when the aspect is marked same_basis.\"\n\na1 is not marked same_basis, so I shouldn't rank figures. But \"most explicit\" is a qualitative ranking, not a figure ranking. I think I can say Merrill is most explicit as the qualitative conclusion, since that's what the comparison is about.\n\nActually, let me be careful. The comparison is \"Whether and how explicitly each firm names the mass-affluent client segment.\" This is inherently a qualitative comparison. I can state the comparison is valid and Merrill names it most explicitly (as a fact), while others name different segments or nothing. This isn't comparing figures.\n\nI'll write it clearly stating the comparison can be made, and Merrill is the only one that names \"Mass Affluent\" explicitly.\n\nLet me finalize.\n\nNow, about the \"gaps\" \u2014 I'll provide an empty array since code adds gaps. Actually wait, let me reconsider. Let me re-read once more.\n\n\"Cells with code gaps get no claim; code adds those gaps (listed under 'Gaps added by code'). Add a gap of your own only for something those gaps do not name.\"\n\nI think this means: the code gaps are already going to be added by the system, so I don't write claims for those cells, and I don't need to add them to my gaps array. But actually, maybe I DO need to include them? The phrasing \"code adds those gaps\" suggests the code handles it. And \"do not repeat them\" for caveats suggests I shouldn't repeat caveats.\n\nHmm, but there's ambiguity. Let me think about what's safe. The submit_answer schema has a gaps field. The \"Gaps added by code\" are listed with part_ids. \n\nI think the safest interpretation: the code gaps are added automatically by code, so I should NOT include them in my gaps array (that would be repeating). My gaps array should contain only NEW gaps I identify.\n\nBut actually, re-reading even more carefully: the gaps listed under \"Gaps added by code\" have part_ids like [a2.MS], [a2.SCHW], etc. These correspond to the \"not found (code gap)\" cells. The code will add these. I should not write claims for them (which I'm not), and I should not add them to gaps (code does it).\n\nSo my gaps array = empty (or any new gap I find).\n\nI don't find new gaps. So gaps = [].\n\nActually, wait. Let me reconsider. Is there any value in me adding the code gaps? The instruction is pretty clear: \"code adds those gaps.\" So no.\n\nLet me set gaps to empty array.\n\nActually, I realize I should double-check: does the answer need to actually answer \"which has been most explicit and what have they said\"? The behavior is \"answer\". The claims provide the answer. The comparison claim a1 says Merrill is most explicit. The fact claims a2.MER, a3.MER, a4.MER, a5.MER detail what Merrill has said. This all flows.\n\nLet me finalize and write the tool call.\n\nOne more consideration: the recency why-lines. I need to make sure each a6 item ends with \"Why it might matter: ...\".\n\nAlso I should double check: \"Never write a why-line on any other item.\" So only a6 items get why-lines. Correct.\n\nAlso for a6.SCHW and a6.MER, these are adjacent items (different quantity). Adjacent items don't need why-lines normally, but since they're under the recency aspect (a6), the instruction says \"for every item of an aspect marked recency... end the claim with 'Why it might matter...'\". \n\nWait, but adjacent items aren't claims. Let me re-read.\n\n\"Recency and order\n- For every item of an aspect marked recency, and every item when the question has a time window, end the claim with 'Why it might matter: '...\"\n\nHmm, it says \"end the claim\". Adjacent items \u2014 are they claims? The instruction uses \"claim\" loosely. But a6.SCHW and a6.MER are marked \"different quantity (adjacent only)\". \n\nThe instruction says \"For every item of an aspect marked recency... end the claim with why-line.\" Since a6 is recency, every item in a6 needs a why-line, including adjacent items.\n\nThe evidence matrix shows the a6.SCHW and a6.MER items have \"context\" and \"related\" lines, which are used for why-lines. So yes, these adjacent items get why-lines too.\n\nSo I've added why-lines to a6.SCHW items and a6.MER items. Good.\n\nNow let me also double-check the why-line chunk ids. For a6.SCHW item 1, I used context from SCHW-TR-2026Q2#9 (same chunk). For item 2, context from SCHW-DECK-2026-investor-day#180 (same chunk). So no additional chunk ids needed. But the instruction says \"then add that passage's chunk id to the claim's chunk_ids\" \u2014 if it's the same chunk, it's already there.\n\nActually, let me reconsider. Should I add a related chunk id to enrich? The instruction allows using related lines from another passage, then add that chunk id. But it's optional; using the item's own context is fine, and the chunk id is already cited.\n\nI'll keep it simple with the item's own context (chunk already cited).\n\nLet me finalize everything and write the submit_answer call.\n\nLet me also verify part_ids. Allowed part_ids include \"a1\", \"a2\", \"a3\", \"a4\", \"a5\", \"a6\", and \"a1.MS\", ..., \"a6.research\".\n\nFor the comparison claim: part_id \"a1\".\nFor facts: a2.MER, a3.MER, a4.MER, a5.MER, a5.research.\nFor adjacent: a1.MS, a1.RJF, a2.SCHW, a2.EDJ, a2.RJF, a3.SCHW, a3.RJF, a4.MS, a4.SCHW, a4.EDJ, a4.RJF, a5.RJF, a6.SCHW, a6.MER.\n\nAll these are in the allowed enum. Good.\n\nNow write the full tool call.\n\nLet me carefully produce the final JSON.\n\nI'll write all claims and adjacent items.\n\nLet me finalize the answerable field: true.\n\nLet me write it all out now.",
+  "first_claim_s": 118.72,
+  "stream_items": {
+    "first_claim_s": 118.72,
+    "shown": 14,
+    "held": 38
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "On this evidence the comparison can be made, and Merrill is unambiguously the most explicit: Merrill is the only firm that names a 'Mass Affluent' client segment, doing so in its Wealth Continuum, where the investor-day deck (November 2025) defines 'Mass Affluent ($500K - $1MM)'. Morgan Stanley names its clients only as 'individual investors, including high and ultra-high net worth individuals' and 'small to medium-sized businesses' and never uses the term for its own client base, while Raymond James names only 'high-net-worth and ultra-high-net-worth clients', a different and higher wealth tier. Schwab and Edward Jones have no statement naming a mass-affluent segment found in the documents searched.",
+        "chunk_ids": [
+          "MS-10K-2025#125",
+          "MS-10Q-2025Q2#15",
+          "BAC-DECK-2025-investor-day#12",
+          "RJF-PR-web-independent-ria-custody-services#2"
+        ],
+        "part_id": "a1"
+      },
+      {
+        "text": "Merrill: Merrill states that it is 'Serving the wealth continuum of clients,' which spans mass-affluent through ultra-high-net-worth clients across Merrill and the Private Bank (investor-day deck, November 2025).",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#9"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: Merrill states it believes the Wealth Continuum allows it to deliver as one company and is its engine for lasting growth (investor-day deck, November 2025).",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#8"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: Merrill states it has the capabilities to deliver for every client in the way they want to be served (investor-day deck, November 2025).",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#8"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: Merrill names the Mass Affluent segment within its Wealth Continuum, defined as $500K - $1MM (investor-day deck, November 2025).",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill: Merrill states that its advisory business provides a high-touch client experience through a network of financial advisors focused on clients with over $250,000 in total investable assets (2025 10-K, period ended December 31, 2025).",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: Merrill states that it serves the wealth continuum of clients, positioning Merrill and the Private Bank across the client wealth spectrum that includes the mass-affluent segment (investor-day deck, November 2025).",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#9"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill: Merrill Wealth Management provides tailored solutions through a full set of investment management, brokerage, banking and retirement products to clients with over $250,000 in total investable assets (2025 10-K, period ended December 31, 2025).",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a4.MER"
+      },
+      {
+        "text": "Merrill: Merrill launched the Tax Efficient Transition Service (TET) and Dollar Cost Averaging Service (DCA), which help clients transition appreciated assets and deploy cash into managed or custom managed strategies within the Merrill Lynch Investment Advisory Program (IAP) (press release, September 2026).",
+        "chunk_ids": [
+          "MER-PR-2026-09-15-01#0"
+        ],
+        "part_id": "a4.MER"
+      },
+      {
+        "text": "Merrill: The TET and DCA services are available to clients with no additional IAP Program Fees charged (press release, September 2026).",
+        "chunk_ids": [
+          "MER-PR-2026-09-15-01#2"
+        ],
+        "part_id": "a4.MER"
+      },
+      {
+        "text": "Merrill: Trade press reports that, for full-service brokerage, Merrill charges a minimum transaction commission of $75 or $0.04 per share (whichever is greater), capped at a maximum of 5.00% of principal trade value; for fee-based programs it charges 1.00% to 1.40% on assets managed, and as high as 1.75% (September 2026).",
+        "chunk_ids": [
+          "MER-TRADE-2026-09-29-RB-01#7"
+        ],
+        "part_id": "a4.MER"
+      },
+      {
+        "text": "Merrill: Merrill's 'Wealth Continuum' defines the 'Mass Affluent' segment as clients with $500K to $1MM in assets, with 'High Net Worth' as $1MM to $10MM (investor-day deck, November 2025).",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12"
+        ],
+        "part_id": "a5.MER"
+      },
+      {
+        "text": "Merrill: Merrill Wealth Management's advisory business is focused on clients with over $250,000 in total investable assets (2025 10-K, period ended December 31, 2025).",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a5.MER"
+      },
+      {
+        "text": "Industry research: Cerulli (March 2026) defines middle-market and mass-affluent households as those with between $100,000 and $2 million in financial assets, a segment whose wealth grew from $14 trillion to $25 trillion from 2013 to 2025 and that comprises 46.9 million households.",
+        "chunk_ids": [
+          "CERULLI-MASS-AFFLUENT-2026#0"
+        ],
+        "part_id": "a5.research"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Morgan Stanley: Morgan Stanley's Wealth Management segment description (2025 10-K, period ended December 31, 2025) names its clients as 'individual investors, including high and ultra-high net worth individuals, and businesses and institutions,' rather than naming a 'mass-affluent' segment.",
+        "chunk_ids": [
+          "MS-10K-2025#125"
+        ],
+        "part_id": "a1.MS",
+        "differs_because": "The firm names related but different client segments - 'individual investors, including high and ultra-high net worth individuals' (and 'small to medium-sized businesses') - and never uses the term 'mass-affluent' to describe its own client base. The only occurrence of 'mass-affluent' is a third-party Cerulli Associates statistic about 401(k) participants, not Morgan Stanley's own segment naming."
+      },
+      {
+        "text": "Morgan Stanley: Morgan Stanley's Wealth Management segment description (2Q25 10-Q, period ended June 30, 2025) names its clients as 'individual investors and small to medium-sized businesses and institutions,' without naming a 'mass-affluent' segment.",
+        "chunk_ids": [
+          "MS-10Q-2025Q2#15"
+        ],
+        "part_id": "a1.MS",
+        "differs_because": "The firm names related but different client segments - 'individual investors, including high and ultra-high net worth individuals' (and 'small to medium-sized businesses') - and never uses the term 'mass-affluent' to describe its own client base. The only occurrence of 'mass-affluent' is a third-party Cerulli Associates statistic about 401(k) participants, not Morgan Stanley's own segment naming."
+      },
+      {
+        "text": "Raymond James: Raymond James names its client segments as 'high-net-worth and ultra-high-net-worth clients,' not a mass-affluent segment (company web page, page content as of July 2026).",
+        "chunk_ids": [
+          "RJF-PR-web-independent-ria-custody-services#2"
+        ],
+        "part_id": "a1.RJF",
+        "differs_because": "Raymond James consistently names the higher wealth tiers 'high-net-worth' and 'ultra-high-net-worth' client segments, but never names a 'mass-affluent' segment (mass-affluent is a distinct, lower wealth tier than high-net-worth)."
+      },
+      {
+        "text": "Raymond James: Raymond James describes its UK subsidiaries as providing investment and financial planning services to predominantly high-net-worth individuals (2025 10-K, period ended September 30, 2025).",
+        "chunk_ids": [
+          "RJF-10K-2025#52"
+        ],
+        "part_id": "a1.RJF",
+        "differs_because": "Raymond James consistently names the higher wealth tiers 'high-net-worth' and 'ultra-high-net-worth' client segments, but never names a 'mass-affluent' segment (mass-affluent is a distinct, lower wealth tier than high-net-worth)."
+      },
+      {
+        "text": "Raymond James: Raymond James states that its private wealth advisor program and expanded alternative investments platform support advisors who focus on high-net-worth clients (4Q25 earnings call, period ended December 31, 2025).",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#5"
+        ],
+        "part_id": "a1.RJF",
+        "differs_because": "Raymond James consistently names the higher wealth tiers 'high-net-worth' and 'ultra-high-net-worth' client segments, but never names a 'mass-affluent' segment (mass-affluent is a distinct, lower wealth tier than high-net-worth)."
+      },
+      {
+        "text": "Raymond James: Raymond James describes structured lending as offered to High Net Worth / Ultra-High Net Worth Private Client Group clients (investor-day deck, June 2025).",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#57"
+        ],
+        "part_id": "a1.RJF",
+        "differs_because": "Raymond James consistently names the higher wealth tiers 'high-net-worth' and 'ultra-high-net-worth' client segments, but never names a 'mass-affluent' segment (mass-affluent is a distinct, lower wealth tier than high-net-worth)."
+      },
+      {
+        "text": "Charles Schwab: CEO Rick Wurster said 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships (2Q26 earnings call, period ended June 30, 2026).",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#9"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Schwab does not use the term 'mass-affluent'; it instead speaks about 'affluent' clients and retail clients 'below $5 million' (alongside high-net-worth and ultra-high-net-worth households), which are related but different wealth tiers than 'mass-affluent'."
+      },
+      {
+        "text": "Charles Schwab: A Schwab investor-day deck (May 2026) states that 68% of affluent investors want and are willing to pay for advice.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#180"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Schwab does not use the term 'mass-affluent'; it instead speaks about 'affluent' clients and retail clients 'below $5 million' (alongside high-net-worth and ultra-high-net-worth households), which are related but different wealth tiers than 'mass-affluent'."
+      },
+      {
+        "text": "Charles Schwab: Jon Beatty, head of Schwab Advisor Services, said 68% of affluent Americans say they are willing to pay for advice today, up from 38% in 2010 (October 2026).",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-27-IN-01#0"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Schwab does not use the term 'mass-affluent'; it instead speaks about 'affluent' clients and retail clients 'below $5 million' (alongside high-net-worth and ultra-high-net-worth households), which are related but different wealth tiers than 'mass-affluent'."
+      },
+      {
+        "text": "Charles Schwab: CEO Rick Wurster said retail clients below $5 million are well served by the Schwab network (October 2026).",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#2"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Schwab does not use the term 'mass-affluent'; it instead speaks about 'affluent' clients and retail clients 'below $5 million' (alongside high-net-worth and ultra-high-net-worth households), which are related but different wealth tiers than 'mass-affluent'."
+      },
+      {
+        "text": "Edward Jones: Edward Jones states that through its retail brokerage entities it 'primarily serves individual investors in the U.S. and Canada' (2025 10-K, period ended December 31, 2025).",
+        "chunk_ids": [
+          "EDJ-10K-2025#204"
+        ],
+        "part_id": "a2.EDJ",
+        "differs_because": "The firm describes serving 'individual investors' and 'tens of millions of long-term investors' broadly, rather than naming or describing a mass-affluent client segment."
+      },
+      {
+        "text": "Edward Jones: Edward Jones states it is 'committed to helping improve the financial fulfillment for tens of millions of long-term investors across North America' by providing planning and advice (2Q26 10-Q, period ended June 26, 2026).",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#53"
+        ],
+        "part_id": "a2.EDJ",
+        "differs_because": "The firm describes serving 'individual investors' and 'tens of millions of long-term investors' broadly, rather than naming or describing a mass-affluent client segment."
+      },
+      {
+        "text": "Edward Jones: Edward Jones describes a strategic ambition to 'improve the financial wellness for tens of millions of long-term investors across North America' (3Q25 10-Q, period ended September 26, 2025).",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#74"
+        ],
+        "part_id": "a2.EDJ",
+        "differs_because": "The firm describes serving 'individual investors' and 'tens of millions of long-term investors' broadly, rather than naming or describing a mass-affluent client segment."
+      },
+      {
+        "text": "Raymond James: Raymond James introduced Private Wealth Guided Portfolios integrating traditional and alternative investments for financial advisors serving high-net-worth and ultra-high-net-worth clients, with Private Client Group President Tash Elwyn stating the firm is 'committed to being a destination for private wealth advisors and the clients they serve' (September 2026).",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-WM-01#0"
+        ],
+        "part_id": "a2.RJF",
+        "differs_because": "RJF's statements describe serving high-net-worth and ultra-high-net-worth clients (a wealthier segment, defined as at least $5 million in investable assets), not the mass-affluent segment (typically $100,000 to $1 million)."
+      },
+      {
+        "text": "Raymond James: Raymond James' Private Wealth Advisor designation program provides training, coaching and a peer network for advisors who specialize in high-net-worth clients, which the firm generally defines as those with at least $5 million in investable assets (September 2026).",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#3"
+        ],
+        "part_id": "a2.RJF",
+        "differs_because": "RJF's statements describe serving high-net-worth and ultra-high-net-worth clients (a wealthier segment, defined as at least $5 million in investable assets), not the mass-affluent segment (typically $100,000 to $1 million)."
+      },
+      {
+        "text": "Raymond James: CEO Paul Shoukry said the firm's private wealth advisor program and expanded alternative investments platform supports advisors who focus on high-net-worth clients (4Q25 earnings call, period ended December 31, 2025).",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#5"
+        ],
+        "part_id": "a2.RJF",
+        "differs_because": "RJF's statements describe serving high-net-worth and ultra-high-net-worth clients (a wealthier segment, defined as at least $5 million in investable assets), not the mass-affluent segment (typically $100,000 to $1 million)."
+      },
+      {
+        "text": "Raymond James: In response to growing demand for private investment product alternatives for ultra-high-net-worth clients, the firm further developed its private capital raising expertise and brought in bespoke private investment alternatives for such clients (3Q25, period ended September 30, 2025).",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#5"
+        ],
+        "part_id": "a2.RJF",
+        "differs_because": "RJF's statements describe serving high-net-worth and ultra-high-net-worth clients (a wealthier segment, defined as at least $5 million in investable assets), not the mass-affluent segment (typically $100,000 to $1 million)."
+      },
+      {
+        "text": "Raymond James: Raymond James' Wealth Strategies offering is described as bringing 'the best of our firm' to high-net-worth and ultra-high-net-worth clients (company web page, page content as of July 2026).",
+        "chunk_ids": [
+          "RJF-PR-web-independent-ria-custody-services#2"
+        ],
+        "part_id": "a2.RJF",
+        "differs_because": "RJF's statements describe serving high-net-worth and ultra-high-net-worth clients (a wealthier segment, defined as at least $5 million in investable assets), not the mass-affluent segment (typically $100,000 to $1 million)."
+      },
+      {
+        "text": "Raymond James: The firm's securities-based lending deck states that structured lending is offered to High Net Worth / Ultra-High Net Worth Private Client Group clients (investor-day deck, June 2025).",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#57"
+        ],
+        "part_id": "a2.RJF",
+        "differs_because": "RJF's statements describe serving high-net-worth and ultra-high-net-worth clients (a wealthier segment, defined as at least $5 million in investable assets), not the mass-affluent segment (typically $100,000 to $1 million)."
+      },
+      {
+        "text": "Charles Schwab: Schwab CEO Rick Wurster said about one-third of new clients in 2025 are affluent (4Q25 earnings call, period ended December 31, 2025).",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#11"
+        ],
+        "part_id": "a3.SCHW",
+        "differs_because": "Schwab describes targeting and attracting 'affluent' and 'higher net worth' clients (roughly $1 million or more in assets), rather than naming or targeting a specific 'mass-affluent' segment."
+      },
+      {
+        "text": "Charles Schwab: Schwab CEO Rick Wurster said higher net-worth clients, who comprise 70% of its retail assets, continue to turn to Schwab for their more complex financial and wealth management needs (4Q24 earnings call, period ended December 31, 2024).",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#11"
+        ],
+        "part_id": "a3.SCHW",
+        "differs_because": "Schwab describes targeting and attracting 'affluent' and 'higher net worth' clients (roughly $1 million or more in assets), rather than naming or targeting a specific 'mass-affluent' segment."
+      },
+      {
+        "text": "Charles Schwab: Schwab CEO Rick Wurster described the affluent segment as households with $1 million to $5 million in assets, noting such households using only one financial services firm rose to 22% (2Q26 earnings call, period ended June 30, 2026).",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#9"
+        ],
+        "part_id": "a3.SCHW",
+        "differs_because": "Schwab describes targeting and attracting 'affluent' and 'higher net worth' clients (roughly $1 million or more in assets), rather than naming or targeting a specific 'mass-affluent' segment."
+      },
+      {
+        "text": "Raymond James: Paul Shoukry said the firm's private wealth advisor program and expanded alternative investments platform support advisors who focus on high-net-worth clients (4Q25 earnings call, period ended December 31, 2025).",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#5"
+        ],
+        "part_id": "a3.RJF",
+        "differs_because": "Raymond James describes targeting and attracting high-net-worth and ultra-high-net-worth clients (a higher wealth segment), not mass-affluent clients; it does not name or describe the mass-affluent segment."
+      },
+      {
+        "text": "Raymond James: Raymond James' Private Wealth Advisor designation program is aimed at advisors specializing in high-net-worth clients, which the firm defines as those with at least $5 million in investable assets (September 2026).",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#3"
+        ],
+        "part_id": "a3.RJF",
+        "differs_because": "Raymond James describes targeting and attracting high-net-worth and ultra-high-net-worth clients (a higher wealth segment), not mass-affluent clients; it does not name or describe the mass-affluent segment."
+      },
+      {
+        "text": "Raymond James: Private Client Group President Tash Elwyn said Raymond James is committed to being a destination for private wealth advisors and clients with significant wealth (September 2026).",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-WM-01#0"
+        ],
+        "part_id": "a3.RJF",
+        "differs_because": "Raymond James describes targeting and attracting high-net-worth and ultra-high-net-worth clients (a higher wealth segment), not mass-affluent clients; it does not name or describe the mass-affluent segment."
+      },
+      {
+        "text": "Morgan Stanley: Morgan Stanley's Wealth Management segment provides a comprehensive array of financial services and solutions to individual investors (and small to medium-sized businesses and institutions), covering financial advisor-led brokerage, custody, administrative and investment advisory services; self-directed brokerage; financial and wealth planning; workplace/stock plan administration; securities-based lending, residential and commercial real estate loans and other lending; banking; and retirement plan services (2025 10-K / 3Q25 and 2Q25 10-Qs).",
+        "chunk_ids": [
+          "MS-10Q-2025Q3#229",
+          "MS-10Q-2025Q2#15"
+        ],
+        "part_id": "a4.MS",
+        "differs_because": "The products and services are described for 'individual investors' broadly (which the firm elsewhere characterizes as including high and ultra-high net worth individuals), not for a mass-affluent client segment, which Morgan Stanley does not name or address."
+      },
+      {
+        "text": "Charles Schwab: Schwab describes relationship models and products for clients with 'more substantial needs': Schwab Private Client Services\u2122 for clients with $1 million to $10 million in qualifying assets and Schwab Private Wealth Services\u2122 for clients with more than $10 million, providing dedicated service teams, specialized expertise, expedited processing, pricing advantages, and access to exclusive product offerings (2025 10-K, period ended December 31, 2025).",
+        "chunk_ids": [
+          "SCHW-10K-2025#18"
+        ],
+        "part_id": "a4.SCHW",
+        "differs_because": "Schwab does not name a 'mass-affluent' client segment; it describes products, services, and tiers for 'higher net worth,' 'high net worth,' and 'ultra-high net worth' clients (typically $1 million and above), which is a different and generally higher segment than mass-affluent."
+      },
+      {
+        "text": "Charles Schwab: Schwab said it is deepening relationships with its higher net worth clients by continuing to strengthen its alternatives offer (4Q25 earnings call, period ended December 31, 2025).",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#16"
+        ],
+        "part_id": "a4.SCHW",
+        "differs_because": "Schwab does not name a 'mass-affluent' client segment; it describes products, services, and tiers for 'higher net worth,' 'high net worth,' and 'ultra-high net worth' clients (typically $1 million and above), which is a different and generally higher segment than mass-affluent."
+      },
+      {
+        "text": "Edward Jones: Edward Jones primarily serves individual investors in the U.S. and Canada and derives revenues from investment advisory and other account services, fees for assets held by clients, and commissions for distributing mutual fund shares and insurance products and for buying or selling securities (2025 10-K, period ended December 31, 2025).",
+        "chunk_ids": [
+          "EDJ-10K-2025#204"
+        ],
+        "part_id": "a4.EDJ",
+        "differs_because": "Edward Jones describes the products and services it offers to individual investors broadly (and separately targets High Net Worth and Next Generation segments), but none of the passages names or addresses the mass-affluent client segment, so there is no statement of products, services, platforms, or fee levels offered specifically to mass-affluent clients."
+      },
+      {
+        "text": "Edward Jones: Edward Jones also offers trust services through Edward Jones Trust Company and investment advisory services for the Edward Jones Money Market Fund and the twelve sub-advised Bridge Builder Trust mutual funds (2025 10-K, period ended December 31, 2025).",
+        "chunk_ids": [
+          "EDJ-10K-2025#204"
+        ],
+        "part_id": "a4.EDJ",
+        "differs_because": "Edward Jones describes the products and services it offers to individual investors broadly (and separately targets High Net Worth and Next Generation segments), but none of the passages names or addresses the mass-affluent client segment, so there is no statement of products, services, platforms, or fee levels offered specifically to mass-affluent clients."
+      },
+      {
+        "text": "Edward Jones: Edward Jones describes recent initiatives including Financial Planning Services (a more personalized experience with additional planning capabilities) and client-targeting initiatives for High Net Worth, Workplace, and a digital platform for Next Generation investors (2025 10-K, period ended December 31, 2025).",
+        "chunk_ids": [
+          "EDJ-10K-2025#88"
+        ],
+        "part_id": "a4.EDJ",
+        "differs_because": "Edward Jones describes the products and services it offers to individual investors broadly (and separately targets High Net Worth and Next Generation segments), but none of the passages names or addresses the mass-affluent client segment, so there is no statement of products, services, platforms, or fee levels offered specifically to mass-affluent clients."
+      },
+      {
+        "text": "Edward Jones: Edward Jones states it offers a broad range of quality products, solutions and tools, and planning, advice, products and services, to help clients achieve their financial goals (2025 10-K, period ended December 31, 2025).",
+        "chunk_ids": [
+          "EDJ-10K-2025#16"
+        ],
+        "part_id": "a4.EDJ",
+        "differs_because": "Edward Jones describes the products and services it offers to individual investors broadly (and separately targets High Net Worth and Next Generation segments), but none of the passages names or addresses the mass-affluent client segment, so there is no statement of products, services, platforms, or fee levels offered specifically to mass-affluent clients."
+      },
+      {
+        "text": "Raymond James: Raymond James offers a private investments desk for clients with $50 million and above of investable assets (period ended March 31, 2025).",
+        "chunk_ids": [
+          "RJF-TR-2025Q1#61"
+        ],
+        "part_id": "a4.RJF",
+        "differs_because": "Raymond James does not use the term 'mass-affluent' anywhere in these passages; the specific products, services and platforms it describes (Private Wealth Guided Portfolios, structured lending, a private investments desk, bespoke private investment alternatives) are all expressly offered to 'high-net-worth' and 'ultra-high-net-worth' clients, a different client segment than mass-affluent."
+      },
+      {
+        "text": "Raymond James: Raymond James' Private Wealth Advisor designation program supports advisors who specialize in high-net-worth clients, which the firm generally defines as those with at least $5 million in investable assets (September 2026).",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#3"
+        ],
+        "part_id": "a5.RJF",
+        "differs_because": "This defines high-net-worth clients (at least $5 million in investable assets), a different, higher-asset segment than mass-affluent, which the firm does not define by asset or income level."
+      },
+      {
+        "text": "Charles Schwab: CEO Rick Wurster said 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships, citing this as the 'bull market for convenience' driving consolidation (2Q26 earnings call, period ended June 30, 2026). Why it might matter: the source frames this consolidation as part of a 'bull market for convenience' that it says is driving investors to consolidate their financial lives, a trend Schwab says it expects to grow.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#9"
+        ],
+        "part_id": "a6.SCHW",
+        "differs_because": "Schwab's most recent statements name 'affluent' clients/investors (and higher net worth / high net worth / ultra-high net worth tiers) rather than a 'mass-affluent' segment specifically; it does not use the term 'mass-affluent.'"
+      },
+      {
+        "text": "Charles Schwab: Schwab's investor-day materials (May 2026) state that 68% of affluent investors want and are willing to pay for advice, framing this as its advice market share opportunity. Why it might matter: the source presents this as evidence of a large opportunity to grow advice market share, noting Schwab's roughly 2% share of a $37 trillion market.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#180"
+        ],
+        "part_id": "a6.SCHW",
+        "differs_because": "Schwab's most recent statements name 'affluent' clients/investors (and higher net worth / high net worth / ultra-high net worth tiers) rather than a 'mass-affluent' segment specifically; it does not use the term 'mass-affluent.'"
+      },
+      {
+        "text": "Merrill: In its most recent quarterly results (3Q26), Merrill reported adding about 4,200 net new households with at least $500,000 in assets, up 17% (October 2026). Why it might matter: the source says these results reflect strong demand for advice and Merrill's ability to attract clients and experienced advisers to the platform.",
+        "chunk_ids": [
+          "BAC-TR-2026Q3#19"
+        ],
+        "part_id": "a6.MER",
+        "differs_because": "The most recent statements track net new households with $500K+ in assets, which is a broader measure than the mass-affluent segment (defined elsewhere as $500K-$1MM); $500K+ also includes high-net-worth and ultra-high-net-worth households."
+      },
+      {
+        "text": "Merrill: Merrill's most recent press release (3Q26) reported approximately 4.2K net new $500K+ households added in the quarter (October 2026). Why it might matter: the source presents this among Merrill's client engagement highlights alongside $4.2 trillion in client balances and $1.9 trillion in AUM balances.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#12"
+        ],
+        "part_id": "a6.MER",
+        "differs_because": "The most recent statements track net new households with $500K+ in assets, which is a broader measure than the mass-affluent segment (defined elsewhere as $500K-$1MM); $500K+ also includes high-net-worth and ultra-high-net-worth households."
+      }
+    ],
+    "gaps": []
+  }
+}

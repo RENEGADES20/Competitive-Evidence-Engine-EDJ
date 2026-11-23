@@ -122,3 +122,9 @@ Why: cache hits, cost, latency and answer quality exist only on DeepSeek. deepse
   from `w12-latency/b-fts/raw` map records.
 - 2026-11-22 23:05 - review round 1 CHANGES REQUESTED; TL ruling: B1-B4 and NB1-4, NB6 binding, written in as
   "TL conditions". Build starts; full run waits for the coordinator after the Q10 probe.
+- 2026-11-22 22:30 - built (e79ad3d): pytest 1192 passed; mock Q1-Q30 fts 30/30 identical to clean main (rule plans
+  and #272 plans; `docs/results/w13-prefix-cache/mock-compare.txt`). Mock map calls 454 -> 442: firms under the
+  ceiling are no longer batched (Q7, Q12, Q15, Q25), so the full run expects about 442 maps, not 454.
+- 2026-11-22 22:47 - Q10 probe (41 new calls: 31 map, 9 re-map, 1 reduce; $0.67, peak hours; plan reused): map
+  cache-hit share 0.769, followers 0.923; B4 share 0.929 over 25 followers -> `first_chunk` kept and pinned. Q10
+  critical path 271 s (#272: 239 s; follower gate wait p50 10.8 s). Evidence `docs/results/w13-prefix-cache/probe/`.

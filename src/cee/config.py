@@ -128,7 +128,8 @@ def _positive_int(name: str, default: int | None) -> int | None:
 
 # #283 (plans/0283-prefix-cache.md): the firm block ceiling (estimate from the #272 test B map records: map cache-hit
 # share about 0.73 at 150000, largest call about 147k tokens; 0.90 with no ceiling but calls up to 372k), and the
-# leader-first gate. MAP_PREFIX_GATE is pinned from the Q10 probe by the plan's fixed rule (TL condition B4).
+# leader-first gate. MAP_PREFIX_GATE is pinned from the Q10 probe by the plan's fixed rule (TL condition B4): Q10 on
+# 2026-11-22, 25 followers, cache-hit share of their prefix 0.929 >= 0.50 -> first_chunk (docs/results/w13-prefix-cache/).
 MAP_PREFIX_TOKENS_DEFAULT = 150000
 MAP_PREFIX_GATES = ("first_chunk", "done", "off")
 MAP_PREFIX_GATE_DEFAULT = "first_chunk"
