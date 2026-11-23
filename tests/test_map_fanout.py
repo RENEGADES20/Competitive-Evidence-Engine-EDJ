@@ -112,6 +112,7 @@ def test_batch_merge_precedence():
 
 def test_run_map_batches_and_reports_each_call_as_it_lands(monkeypatch):
     monkeypatch.setenv("MAP_CALL_TOKENS", "1500")
+    monkeypatch.setenv("MAP_PREFIX_TOKENS", "1")   # #283: the firm block over its ceiling -> per-cell layout
     plan = plan_for(firms=("EDJ",))
     hits = [hit(f"EDJ#{i}", part="a1.EDJ", text="advisors " * 300) for i in range(4)] + \
         [hit("EDJ#9", part="a2.EDJ")]

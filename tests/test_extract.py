@@ -76,8 +76,10 @@ def test_schemas_meet_strict_rules_on_every_provider():
     loose = extract.extraction_schema(spec)
     assert loose["properties"]["cells"]["minItems"] == 1
     assert anthropic.transform_schema(loose) == loose
-    enum = loose["properties"]["cells"]["items"]["properties"]["subquestion_id"]["enum"]
-    assert enum == ["a1.EDJ", "a2.EDJ"]
+    # #283: one schema for every map call: no enum of cell ids (checked by code in parse_output)
+    sid = loose["properties"]["cells"]["items"]["properties"]["subquestion_id"]
+    assert sid == {"type": "string"}
+    assert extract.extraction_schema(specs[0]) == extract.extraction_schema(spec_edj()[1][0])
 
 
 def test_plan_v31_schema_has_required_boolean_proxy():

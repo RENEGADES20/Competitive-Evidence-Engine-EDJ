@@ -77,17 +77,18 @@ def test_request_version_names_only_its_own_stage(monkeypatch):
     for v in ("DEEPSEEK_EFFORT_PLAN", "DEEPSEEK_EFFORT_MAP", "DEEPSEEK_EFFORT_REDUCE", "DEEPSEEK_STREAM"):
         monkeypatch.delenv(v, raising=False)
     base = {s: llm.request_version("deepseek", s) for s in llm.DEEPSEEK_STAGES}
-    assert base["map"] == "ds-strict-2-map-low-c128000-s1"   # the #272 defaults: plan off, map low, reduce low
+    # the #272 defaults: plan off, map low, reduce low; #283: the map names its shared-prefix ceiling
+    assert base["map"] == "ds-strict-2-map-low-c128000-s1-pf150000"
     assert base["plan"] == "ds-strict-2-plan-off-c8000-s1" and base["reduce"] == "ds-strict-2-reduce-low-c128000-s1"
     monkeypatch.setenv("DEEPSEEK_EFFORT_MAP", "max")
-    assert llm.request_version("deepseek", "map") == "ds-strict-2-map-max-c128000-s1"
+    assert llm.request_version("deepseek", "map") == "ds-strict-2-map-max-c128000-s1-pf150000"
     assert llm.request_version("deepseek", "plan") == base["plan"]
     assert llm.request_version("deepseek", "reduce") == base["reduce"]
     monkeypatch.setenv("DEEPSEEK_EFFORT_PLAN", "high")
     assert llm.request_version("deepseek", "plan") == "ds-strict-2-plan-high-c128000-s1"
     monkeypatch.setenv("DEEPSEEK_EFFORT_PLAN", "off")
     monkeypatch.setenv("DEEPSEEK_STREAM", "nothink")
-    assert llm.request_version("deepseek", "map").endswith("-s0")
+    assert llm.request_version("deepseek", "map").endswith("-s0-pf150000")
     assert llm.request_version("deepseek", "plan").endswith("-s1")
 
 

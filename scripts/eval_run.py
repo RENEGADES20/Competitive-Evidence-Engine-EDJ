@@ -564,12 +564,15 @@ def map_cache_key(q: dict, snapshot: str, provider: str, model: str, max_tokens:
                   request: str | None, spec, window=None) -> str:
     """#246: one extraction call: question, extract version, snapshot, provider, model, the map cap,
     the request version (thinking mode), the call id, its cells (id, text, kind, metric, proxy), the
-    input chunk ids in order and the window."""
+    input chunk ids in order and the window; #283: a shared-prefix call adds its firm block (cells, chunk ids)."""
     from cee.answer.extract import EXTRACT_VERSION
     cells = [[c.id, c.text, c.aspect.kind, c.aspect.metric, bool(getattr(c.aspect, "proxy", False))]
              for c in spec.cells]
     parts = [q["id"], q["text"], EXTRACT_VERSION, snapshot, provider, model, max_tokens, request, spec.id,
              cells, [h.chunk_id for h in spec.hits], [str(w) for w in window] if window else None]
+    prefix = getattr(spec, "prefix", None)
+    if prefix is not None:   # #283: the shared firm block (its sub-questions and passages) is part of the request
+        parts.append([[c.id, c.text] for c in prefix.cells] + [h.chunk_id for h in prefix.hits])
     return hashlib.sha256(json.dumps(parts, default=str).encode()).hexdigest()[:24]
 
 
@@ -976,7 +979,9 @@ class RealRunner:
                     "call_id": spec.id, "round": spec.round, "entity": spec.entity, "cells": spec.cell_ids,
                     "snapshot": self.snapshot, "provider": self.provider, "model": self.map_model,
                     "max_tokens": self.map_max_tokens, "request_version": self.map_version,
-                    "chunk_ids": [h.chunk_id for h in spec.hits], "at": now_iso()}
+                    "chunk_ids": [h.chunk_id for h in spec.hits], "at": now_iso(),
+                    # #283: prefix_group, prefix_role, gate_wait_s, prefix_chars, request_chars (run_round)
+                    **(extract.PREFIX_INFO.get() or {})}
             got: dict = {}
             t0 = time.monotonic()
             try:

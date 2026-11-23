@@ -12,6 +12,11 @@ Per question:
   shows the first checked claim of the final answer while the reduce streams); "-" for records without it.
 Per stage: p50 / p90 / max of wall time, time to first token, output tokens and the reasoning share.
 A record reused from an earlier run keeps the time it was made with.
+#283: a map call's time is gate_wait_s (waiting for its prefix leader) + wall_s, in the critical path and first
+evidence. Cache table: input tokens and the DeepSeek cache-hit share per stage and per map prefix role (leader,
+follower, solo, cell), and the probe metric of plans/0283-prefix-cache.md (TL condition B4): follower share =
+sum(cache_hit_tokens) / sum(input_tokens x prefix_chars / request_chars) over followers whose leader was not reused;
+>= 0.50 -> first_chunk, < 0.50 -> done, fewer than 5 such followers -> done (inconclusive).
 
   python scripts/latency_report.py <run>/raw [--questions Q5,Q10] [--title "C1"] [--json out.json]
 """
@@ -46,7 +51,11 @@ def load(raw_dir: Path, questions: set[str] | None = None) -> list[dict]:
                      "out": usage.get("output_tokens"), "reasoning": usage.get("reasoning_tokens"),
                      "cut": rec.get("stop_reason") == "length", "invalid": bool(rec.get("invalid")),
                      "failed": bool(rec.get("failed_call")), "model": rec.get("model"),
-                     "request_version": rec.get("request_version"), "first_claim_s": rec.get("first_claim_s")})
+                     "request_version": rec.get("request_version"), "first_claim_s": rec.get("first_claim_s"),
+                     "input": usage.get("input_tokens"), "hit": usage.get("cache_hit_tokens"),
+                     "role": rec.get("prefix_role"), "gate_wait_s": rec.get("gate_wait_s"),
+                     "leader_cached": rec.get("leader_cached"), "prefix_chars": rec.get("prefix_chars"),
+                     "request_chars": rec.get("request_chars")})
     return rows
 
 
@@ -66,8 +75,8 @@ def per_question(rows: list[dict]) -> list[dict]:
     for q in sorted({r["q"] for r in rows}, key=lambda x: int(x[1:])):
         rs = [r for r in rows if r["q"] == q]
 
-        def walls(stage):
-            return [r["wall_s"] or 0.0 for r in rs if r["stage"] == stage]
+        def walls(stage):   # #283: a map call waits for its prefix leader's gate first
+            return [(r["wall_s"] or 0.0) + (r.get("gate_wait_s") or 0.0) for r in rs if r["stage"] == stage]
         plan, maps, remaps, reduce = sum(walls("plan")), walls("map"), walls("remap"), sum(walls("reduce"))
         crit = plan + (max(maps) if maps else 0) + (max(remaps) if remaps else 0) + reduce
         first = plan + min(maps) if maps else None
@@ -101,6 +110,49 @@ def per_stage(rows: list[dict]) -> list[dict]:
     return out
 
 
+def _share(hit: int, total: float) -> float | None:
+    return round(hit / total, 3) if total else None
+
+
+def cache_table(rows: list[dict]) -> list[dict]:
+    """#283: input tokens, cache-hit tokens and share per stage, then per map prefix role (round 1)."""
+    out = []
+    groups = [(st, [r for r in rows if r["stage"] == st]) for st in STAGES]
+    groups.append(("all", list(rows)))
+    roles = sorted({r.get("role") for r in rows if r["stage"] == "map" and r.get("role")})
+    groups += [(f"map {role}", [r for r in rows if r["stage"] == "map" and r.get("role") == role]) for role in roles]
+    for name, rs in groups:
+        if not rs:
+            continue
+        inp = sum(r.get("input") or 0 for r in rs)
+        hit = sum(r.get("hit") or 0 for r in rs)
+        waits = [r["gate_wait_s"] for r in rs if r.get("gate_wait_s") is not None]
+        out.append({"group": name, "calls": len(rs), "input": inp, "hit": hit, "share": _share(hit, inp),
+                    "gate_wait_p50": pct(waits, 50), "gate_wait_max": pct(waits, 100)})
+    return out
+
+
+PROBE_MIN_FOLLOWERS = 5
+PROBE_SHARE = 0.50
+
+
+def probe_rule(rows: list[dict]) -> dict:
+    """#283 (TL condition B4): the follower share of the prefix and the gate it decides."""
+    fs = [r for r in rows if r["stage"] == "map" and r.get("role") == "follower" and not r.get("leader_cached")
+          and r.get("input") and r.get("prefix_chars") and r.get("request_chars")]
+    prefix = sum(r["input"] * r["prefix_chars"] / r["request_chars"] for r in fs)
+    hit = sum(r.get("hit") or 0 for r in fs)
+    share = _share(hit, prefix)
+    if len(fs) < PROBE_MIN_FOLLOWERS or share is None:
+        gate, why = "done", f"inconclusive: {len(fs)} followers (< {PROBE_MIN_FOLLOWERS})"
+    elif share >= PROBE_SHARE:
+        gate, why = "first_chunk", f"share {share} >= {PROBE_SHARE}"
+    else:
+        gate, why = "done", f"share {share} < {PROBE_SHARE}"
+    return {"followers": len(fs), "prefix_tokens": round(prefix), "hit_tokens": hit, "share": share,
+            "gate": gate, "why": why}
+
+
 def summary(qs: list[dict]) -> dict:
     crit = [q["critical_s"] for q in qs]
     first = [q["first_evidence_s"] for q in qs if q["first_evidence_s"] is not None]
@@ -119,7 +171,8 @@ def _f(v) -> str:
     return f"{v:,.0f}" if isinstance(v, (int, float)) and abs(v) >= 100 else (f"{v:g}" if isinstance(v, float) else str(v))
 
 
-def markdown(title: str, qs: list[dict], stages: list[dict], s: dict) -> str:
+def markdown(title: str, qs: list[dict], stages: list[dict], s: dict, cache: list[dict] | None = None,
+             probe: dict | None = None) -> str:
     lines = [f"### {title}", "",
              f"{s['questions']} questions, {s['calls']} call records: critical path p50 {_f(s['critical_p50'])} s, "
              f"p90 {_f(s['critical_p90'])} s, max {_f(s['critical_max'])} s; first evidence p50 "
@@ -138,6 +191,16 @@ def markdown(title: str, qs: list[dict], stages: list[dict], s: dict) -> str:
         lines.append(f"| {st['stage']} | {st['calls']} | {_f(st['wall_p50'])} | {_f(st['wall_p90'])} | "
                      f"{_f(st['wall_max'])} | {_f(st['ttft_p50'])} | {_f(st['ttft_p90'])} | {_f(st['out_p50'])} | "
                      f"{_f(st['out_max'])} | {_f(st['reasoning_share'])} |")
+    if cache:
+        lines += ["", "| Calls | n | input tokens | cache-hit tokens | hit share | gate wait p50 s | gate wait max s |",
+                  "|---|---|---|---|---|---|---|"]
+        for c in cache:
+            lines.append(f"| {c['group']} | {c['calls']} | {_f(c['input'])} | {_f(c['hit'])} | {_f(c['share'])} | "
+                         f"{_f(c['gate_wait_p50'])} | {_f(c['gate_wait_max'])} |")
+    if probe:
+        lines += ["", f"Probe rule (plans/0283-prefix-cache.md, B4): {probe['followers']} followers, prefix tokens "
+                      f"{_f(probe['prefix_tokens'])}, cache-hit tokens {_f(probe['hit_tokens'])}, share "
+                      f"{_f(probe['share'])} -> MAP_PREFIX_GATE={probe['gate']} ({probe['why']})."]
     return "\n".join(lines) + "\n"
 
 
@@ -156,9 +219,12 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     qs, stages = per_question(rows), per_stage(rows)
     s = summary(qs)
-    sys.stdout.write(markdown(a.title or str(raw), qs, stages, s))
+    cache = cache_table(rows)
+    probe = probe_rule(rows) if any(r.get("role") for r in rows) else None
+    sys.stdout.write(markdown(a.title or str(raw), qs, stages, s, cache, probe))
     if a.json:
-        a.json.write_text(json.dumps({"summary": s, "questions": qs, "stages": stages}, indent=2), encoding="utf-8")
+        a.json.write_text(json.dumps({"summary": s, "questions": qs, "stages": stages, "cache": cache,
+                                      "probe": probe}, indent=2), encoding="utf-8")
     return 0
 
 

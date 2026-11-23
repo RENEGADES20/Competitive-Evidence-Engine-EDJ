@@ -112,6 +112,18 @@ and the reduce step (below) writes the answer from it. The eval maps unless `--l
   makes the cell `failed` (a failed batch next to a fact adds the flag `batch_failed`). The merged cells have
   the per-firm shape, so the matrix and the reduce input are unchanged. Prompt `extract-v1.2` (#272: the pool
   passages line; otherwise `extract-v1.1`).
+  **#283 shared prefix (`extract-v1.3`, `plans/0283-prefix-cache.md`).** When the firm call's message is at most
+  `MAP_PREFIX_TOKENS` (default 150000), every cell call of that firm sends it unchanged as the start of its message
+  (every sub-question of the firm, incl. cells with nothing citable, and the passages grouped by sub-question),
+  then the cell's own part: "Answer in this call: sub-question <id> only", and the pool passages listed under a
+  sibling that it may also cite. Such calls are not batched; a firm over the ceiling keeps the per-cell layout
+  above. The tool schema is the same for every map call (no enum of cell ids), so system prompt, tool and firm
+  block form one byte-identical prefix for DeepSeek's cache. The cell's citable set is unchanged and code still
+  rejects any other chunk id (`unmatched_citation`); an output cell for another sub-question of the question is
+  dropped (flag `foreign_cell`), one with an id of no sub-question likewise (`unknown_cell`), and a derivation
+  whose inputs name a cell outside the call is dropped (`unknown_ref`). On DeepSeek one leader call per firm runs
+  first; the firm's other calls start when its first streamed chunk arrives (`MAP_PREFIX_GATE=first_chunk`) or
+  when it ends (`done`), plus `MAP_PREFIX_WAIT_S`; the map request version ends in `-pf<ceiling>`.
   `extract-v1.1` (#247 added one rule-3 sentence: the asked quantity for periods other than
   those asked is a fact for the periods it covers, never `different_quantity`); tool `submit_extraction`, strict on anthropic / openai / deepseek (every property
   required, no extra properties, `""` for none, `minItems` only on Anthropic; DeepSeek strict mode
