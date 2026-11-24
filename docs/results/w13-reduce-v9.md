@@ -37,15 +37,43 @@ New, from #295's effort-caused errors: when items give several periods for the s
 the question asks for a series (Q12); a figure keeps the label its item gives it (what it measures) (Q15); when the
 question separates kinds of evidence, say which kind each statement is (filing, management on a call, survey with its
 sample and date, research, trade press) and keep a deployed, named tool apart from a stated intention (Q17, Q18, Q20).
+From the Q22 / Q23 passes_if (plan review): each firm's own definition of the metric goes alongside its figure or
+series; a firm that does not report the asked metric on that basis is said not to report it, never shown as zero and
+never replaced by a near-neighbour metric (that one goes in adjacent); a definition change mid-series is stated as a
+break, never smoothed.
 
 ## Coverage rule (code, v9 only)
 | Cell | Uncited by any sentence | Why |
 |---|---|---|
 | holds a fact / accepted derivation; aspect fact or series, not proxy; role named, all or research | `part_gap` | the question asked for it (aspect from the question, firm named or theme / research row) |
-| role competitor (home-firm "competitors kept" widening, Q19) | no gap, `evidence_list` | the question did not name that firm |
+| role competitor, firm in the aspect's `asked_firms` (Q19 a7) | `part_gap` | the planner asked for that competitor |
+| role competitor, firm not in `asked_firms` (home-firm "competitors kept" widening, Q19 a1-a4) | no gap, `evidence_list` | the question did not ask for that firm there |
 | comparison aspect | no part gap | `comparison_missing` checks the verdict sentence |
 | proxy aspect, adjacent-only cell | no part gap | goes in adjacent (adjacent path) |
 | no fact (empty, different quantity) / code gap | code gap as today | unchanged |
+
+The rule checks that a cell's chunks are cited, not what the sentence says (a sentence citing a series may state
+one quarter and pass); completeness of a series rests on the prompt and the scorers (plan, Risks).
+
+## Q19 roles (plan review finding 3; 0 calls, from `ev295\g3-runeport.json`, the #272 plan and maps)
+Q19's passes_if asks for "competitor moves aimed at [the cohort]". Matrix aspects and holding cells by role:
+| Aspect | Kind | `asked_firms` | Holding cells |
+|---|---|---|---|
+| a1 product / service / channel preferences | fact | (none) | a1.EDJ named, a1.SCHW competitor, a1.research |
+| a2 communication channels | fact | (none) | a2.EDJ named, a2.SCHW competitor |
+| a3 advice / service model preferences | fact | (none) | a3.EDJ named, a3.SCHW competitor, a3.research |
+| a4 growth in younger clients | series | (none) | a4.SCHW competitor |
+| a5 EDJ offerings vs preferences | fact | EDJ | a5.EDJ named |
+| a6 EDJ strategy for younger clients | fact | EDJ | a6.EDJ named, a6.SCHW competitor (not asked) |
+| a7 competitor offerings and strategies | fact | MS, SCHW, MER, RJF | a7.SCHW competitor |
+| a8 EDJ vs competitors | comparison | (none) | a8.EDJ named, a8.SCHW competitor |
+
+- a7.SCHW carries the passes_if part "competitor moves" and has role `competitor`. Under a rule that exempts every
+  competitor cell it would sit only in the evidence list, so the rule asks for competitor cells whose firm is in the
+  aspect's `asked_firms` (a7.SCHW is asked).
+- a1.SCHW-a4.SCHW come from the home-firm widening (no `asked_firms`) and a6.SCHW is outside a6's `asked_firms` (EDJ), so they are not asked. The research rows
+  a1 / a3 (cohort preferences) are asked.
+- Step 2 checks this again on the count report (same plan and maps).
 
 ## passes_if mapping (Q1-Q30): what the v9 shape must put in the answer text
 | Q | Shape | Must land in the text |
@@ -92,7 +120,11 @@ sample and date, research, trade press) and keep a deployed, named tool apart fr
   v5.2-low reduces). Count first: 517 reused, 28 new reduce keys; else stop. `--max-calls` = the count.
 - Cost basis (`w13-reduce-effort-off/reduce-table.md`): v8-low Q5 Q8 Q22 Q24 $0.267 at peak (mean $0.067); v5.2-low
   30 questions $3.111 at peak ($0.104 each). 28 calls: about $1.9-2.9 at peak (CNY 14-21).
-- Decision rule and scoring: plan.
+- Scoring: the 28 new answers are scored; Q26 and Q27 carry #272's adjudicated verdicts (PASS, PASS), since their
+  records are identical. Borderline, the second read and the decision rule: plan (step 6, "Decision rule"). #272's
+  24/30 was not scored under the text-only rule, so v9 meets a stricter bar.
+- The result is filled only from saved raw outputs and the merged verdicts sha256; cost is the actual cost per call
+  from the report, not this estimate (v9 has no reasoning cap).
 
 ## Result
 Not run yet.
