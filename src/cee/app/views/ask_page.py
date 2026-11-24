@@ -184,12 +184,15 @@ def footnote_items(cards: list[dict], claims, by_id: dict) -> list[dict]:
     return items
 
 
-def evidence_cards(lines: list[dict], claims, hits) -> tuple[list[dict], list[dict]]:
+def evidence_cards(lines: list[dict], claims, hits, computations=()) -> tuple[list[dict], list[dict]]:
     """#291: (cards, items): the evidence cards (the run's evidence lines in order, then the extra SOURCE cards) and
     the answer items with footnotes into them. No evidence lines (MAP=off, a code-built answer, an answer from the
-    run cache): the cards are the answer's cited chunks."""
+    run cache): the cards are the answer's cited chunks. #292 v8: the computability statements follow as items
+    marked box=True (drawn as the Computability box, not in the answer paragraph)."""
     cards = [line_card(line) for line in lines]
-    return cards, footnote_items(cards, claims, {h.chunk_id: h for h in hits})
+    by_id = {h.chunk_id: h for h in hits}
+    items = footnote_items(cards, claims, by_id)
+    return cards, items + [{**it, "box": True} for it in footnote_items(cards, list(computations), by_id)]
 
 
 @dataclass
@@ -359,7 +362,7 @@ def ask_with_trace(question: str, filters: dict | None = None, cache: RunCache |
         run.status, run.result = "done", payload
         # #291: the final answer replaces the streamed claims in the same slot; the evidence slot becomes the full
         # list (with the SOURCE cards the final answer needs); the footer and feedback follow (render).
-        cards, items = evidence_cards(run.evidence, payload.answer.claims, payload.hits)
+        cards, items = evidence_cards(run.evidence, payload.answer.claims, payload.hits, payload.answer.computations)
         with answer_slot.container():
             answer_body(payload, filters, items, fade=not stream["claims"])
         with ev_slot.container():
@@ -557,13 +560,17 @@ def answer_body(r: Result, filters: dict, items: list[dict], fade: bool = False)
         st.warning(a.incomplete_note)
     if a.behavior in ("refuse", "gap_with_adjacent") and filters_text(filters) != "none":
         st.info(FILTERS_HINT)
-    if items:
-        ui.answer_block(items, list_form(r.query, answer_aspects(r)), fade_from=None, block_fade=fade)
+    sentences = [it for it in items if not it.get("box")]
+    if sentences:
+        ui.answer_block(sentences, list_form(r.query, answer_aspects(r)), fade_from=None, block_fade=fade)
     for i, c in enumerate(a.adjacent, start=1):
         ui.claim_card(i, c.text, _chips(r, c.chunk_ids), "", c.flags,
                       label="ADJACENT EVIDENCE", note=c.differs_because)
     if a.withheld:
         ui.withheld_box(WITHHELD_NOTICE)
+    for it in items:   # #292 v8: the code's computability statements, next to the caveats
+        if it.get("box"):
+            ui.computability_box(it)
     for cav in a.caveats:
         ui.caveat_box(cav)
     for g in a.gaps:
@@ -582,7 +589,7 @@ def answer_footer(r: Result, filters: dict) -> None:
 def show_answer(r: Result, filters: dict, evidence: list[dict] | None = None) -> None:
     """#291: a finished answer from session state: answer, boxes, the full evidence list (the run's evidence lines
     plus SOURCE cards; without evidence lines, the answer's cited chunks), footer and feedback. No run, no call."""
-    cards, items = evidence_cards(evidence or [], r.answer.claims, r.hits)
+    cards, items = evidence_cards(evidence or [], r.answer.claims, r.hits, r.answer.computations)
     answer_body(r, filters, items)
     evidence_list(cards)
     answer_footer(r, filters)

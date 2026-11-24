@@ -18,12 +18,12 @@ def load(p):
 def items(r):
     a = r.get("answer") or {}
     return [(k, x.get("text") or x.get("what"), x.get("chunk_ids"), x.get("part_id"), x.get("flags"))
-            for k in ("claims", "adjacent", "gaps") for x in (a.get(k) or [])]
+            for k in ("claims", "adjacent", "gaps", "computations") for x in (a.get(k) or [])]
 
 
 def flags(r):
     a = r.get("answer") or {}
-    return Counter(f for k in ("claims", "adjacent", "gaps") for x in (a.get(k) or []) for f in (x.get("flags") or []))
+    return Counter(f for k in ("claims", "adjacent", "gaps", "computations") for x in (a.get(k) or []) for f in (x.get("flags") or []))
 
 
 def main(new_p, old_p, identical_only=False):

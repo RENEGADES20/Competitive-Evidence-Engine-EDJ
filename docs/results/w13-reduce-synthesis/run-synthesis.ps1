@@ -3,10 +3,11 @@
 # w13-reduce-short/run-short.ps1 (#284). count: --max-calls 0, no key (shows which records are reused and which are new).
 # run: the key comes from -EnvFile (the main repo's .env), copied into the worktree inside try and removed in finally;
 # never read or printed here. Run from a clean worktree at the gate commit.
-#   powershell -File run-synthesis.ps1 -Wt <worktree> -Out <name> -Cache <dir> -Phase count|run -GateSha <sha> [-MaxCalls 4]
+#   powershell -File run-synthesis.ps1 -Wt <worktree> -Out <name> -Cache <dir> -Phase count|run -GateSha <sha> [-MaxCalls 4] [-ReducePrompt v7|v8] [-EffortReduce low|off]
 param([Parameter(Mandatory)][string]$Wt, [Parameter(Mandatory)][string]$Out, [Parameter(Mandatory)][string]$Cache,
       [Parameter(Mandatory)][ValidateSet('count', 'run')][string]$Phase, [Parameter(Mandatory)][string]$GateSha,
       [int]$MaxCalls = 4, [string]$Questions = 'Q5,Q8,Q22,Q24', [string]$ReducePrompt = 'v7',
+      [ValidateSet('off', 'low', 'high', 'max')][string]$EffortReduce = 'low',
       [string]$EnvFile = 'D:\ALLPROJECTS\EDJ\repo\.env', [string]$EvDir = 'D:\ALLPROJECTS\EDJ\cache\ev292',
       [string]$Py = 'D:\ALLPROJECTS\EDJ\repo\.venv\Scripts\python.exe')
 $h = Join-Path $EvDir "$Out.head-log.txt"; $outDir = Join-Path $EvDir $Out
@@ -31,10 +32,10 @@ try {
   $env:LLM_PROVIDER = 'deepseek'; $env:PLANNER = 'on'; $env:SUBQUESTION_TOKENS = '40000'; $env:MAP = 'on'
   $env:MAP_CONCURRENCY = '24'; $env:MAP_CALL_TOKENS = '60000'; $env:PYTHONPATH = "$Wt\src"
   $env:DEEPSEEK_MODEL = 'deepseek-v4-pro'; $env:DEEPSEEK_BASE_URL = 'https://api.deepseek.com/beta'
-  $env:DEEPSEEK_EFFORT_PLAN = 'off'; $env:DEEPSEEK_EFFORT_MAP = 'low'; $env:DEEPSEEK_EFFORT_REDUCE = 'low'
+  $env:DEEPSEEK_EFFORT_PLAN = 'off'; $env:DEEPSEEK_EFFORT_MAP = 'low'; $env:DEEPSEEK_EFFORT_REDUCE = $EffortReduce
   $env:DEEPSEEK_STREAM = 'on'; $env:DEEPSEEK_IDLE_S = '120'; $env:REDUCE_PROMPT = $ReducePrompt; $env:PYTHONHASHSEED = '0'
   $env:MAP_PREFIX = 'off'
-  "settings: model deepseek-v4-pro effort plan off map low reduce low stream on idle 120 reduce prompt $ReducePrompt PYTHONHASHSEED=0 mode fts PLANNER=on SUBQUESTION_TOKENS=40000 MAP=on MAP_CONCURRENCY=24 MAP_CALL_TOKENS=60000 MAP_PREFIX=off; args $($a -join ' ')" | Add-Content $h
+  "settings: model deepseek-v4-pro effort plan off map low reduce $EffortReduce stream on idle 120 reduce prompt $ReducePrompt PYTHONHASHSEED=0 mode fts PLANNER=on SUBQUESTION_TOKENS=40000 MAP=on MAP_CONCURRENCY=24 MAP_CALL_TOKENS=60000 MAP_PREFIX=off; args $($a -join ' ')" | Add-Content $h
   if ($Phase -eq 'count') { $env:DEEPSEEK_API_KEY = '' } else { Copy-Item $EnvFile "$Wt\.env" }
   & $Py -B scripts\eval_run.py @a *> "$outDir.log"
   "$Phase $Out exit $LASTEXITCODE" | Add-Content $h

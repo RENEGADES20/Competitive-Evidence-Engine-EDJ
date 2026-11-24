@@ -240,6 +240,14 @@ answer plus a short cited synthesis.** `REDUCE_PROMPT` = `v5.2` | `v5.3` | `v7`.
   aspect), skipped when it cites the same chunks as claim 1; derived cells, comparison claims and adjacent items
   as in v5.2.
 
+#292 v8 (plan "v8 amendment"): **prompt v8, a brief answer.** `REDUCE_PROMPT` also takes `v8` (a synthesis version,
+same form rule). Claim 1 answers the question directly and must cite; at most 5 short sentences (aim <= 35 words),
+no lists inside a sentence, the most important evidence only (the evidence list under the answer shows every item);
+one comparison sentence per comparison aspect; no why-lines. Code, v8 only: a holding cell the answer does not cite
+gets no part gap (`part_coverage` state `evidence_list`); empty cells and code gaps keep theirs; computability
+statements go to the Computability box (see "Computation claims"); other checks as v7. The mock writes claim 1, the
+comparison claims, then one sentence per further aspect, at most 5.
+
 #277 (plans/0277-stop-retry.md): **Stop and Retry on the Ask page.**
 - Cancel token (`cee.answer.cancel`): `ask(..., token=...)` makes it active in a context variable; every model call
   checks it first (planner, map, reduce, legacy answer, `llm.deepseek_create`), `ask()` checks it at each stage
@@ -397,7 +405,10 @@ First version (prompt v5.1):
   or not, why, the inputs, each population source quoted, dated when an input falls in another quarter
   than the source's `valid_from`). One claim per firm must cite both inputs and the sources; missing ->
   code adds it before the citation check: `COMPUTED` / `NOT_COMPUTED` (standard wording), flag
-  `code_computability`.
+  `code_computability`. #292 v8 (`REDUCE_PROMPT=v8`, brief form): the statement is not a claim; code writes one
+  per derivation proposal into `Answer.computations` (always, also when a model sentence states the verdict),
+  citation / number / date checked like a claim, drawn as a "Computability" box next to the caveats with
+  footnotes into the evidence list.
 - **Basis breaks**: `matrix.basis_breaks` flags a holding cell of a series / registered-metric fact
   aspect whose items cover more than one (scope, population); the caveat `BASIS_BREAK` lists each basis
   with its periods and is inserted by code; the input tells the reduce to keep the bases apart.

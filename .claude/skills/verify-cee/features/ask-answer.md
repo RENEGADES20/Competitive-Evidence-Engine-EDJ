@@ -33,6 +33,8 @@ A user types a question and gets an answer whose claims each link to a stored pa
   `tests/test_part_check.py`, not driven here.
   With `REDUCE_PROMPT=v7` (#292) a synthesis sentence whose part_id is an aspect id covers each cell of that aspect
   whose chunk it cites (`part_coverage` state `aspect`); the driver reads the cells from `filters.map.cells`.
+  With `REDUCE_PROMPT=v8` a holding cell the answer does not cite is covered by the evidence list (no part gap;
+  `part_coverage` state `evidence_list`); the driver treats every fact or derived cell as covered.
 - `ask-theme-gap`: a question about several firms on one theme (Q21) gets a coverage line
   "No passages on the theme (...) for X" naming each firm with no passage on it (#117).
 

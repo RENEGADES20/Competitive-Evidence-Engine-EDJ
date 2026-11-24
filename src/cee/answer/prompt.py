@@ -255,7 +255,8 @@ SYSTEM_PROMPT_V53 = (SYSTEM_PROMPT_V5.replace(f"Prompt version: {REDUCE_VERSION}
 # #292 (plans/0292-reduce-synthesis.md): v7 writes a direct answer plus a short cited synthesis instead of one
 # claim per matrix item. Only for the synthesis form (cee.answer.reduce.list_form): a question with its own window,
 # or whose aspects are all recency, keeps v5.2 (prompt, message, mock and label), so its outputs and keys stand.
-SYNTHESIS_VERSIONS = ("v7",)
+SYNTHESIS_VERSIONS = ("v7", "v8")
+BRIEF_VERSIONS = ("v8",)   # #292 v8: at most 5 sentences, no full coverage; computability in a code box
 LIST_VERSION = "v5.2"   # what a synthesis version uses for a list-form question
 SYSTEM_PROMPT_V7 = f"""You write the answer to a question about wealth-management firms from an evidence matrix that
 code built from stored documents. Code has already decided the behavior; write the answer for it.
@@ -321,7 +322,58 @@ Standard wording (use verbatim when the case applies)
 - A trade-press item is stated attributed ("trade press reports ..."); adjacent trade-press items carry
   differs_because "{TRADE_PRESS_NOTE}"
 Return the answer by calling the submit_answer tool; do not answer in plain text."""
-REDUCE_PROMPTS = {"v5.2": SYSTEM_PROMPT_V5, "v5.3": SYSTEM_PROMPT_V53, "v7": SYSTEM_PROMPT_V7}
+
+# #292 v8 (TL decision 2026-11-23: "the time is too long; the answer need not include or list everything"): a brief
+# answer of at most 5 short sentences; the evidence list under the answer (#291) shows every item. Code writes the
+# computability statements (COMPUTED / NOT_COMPUTED) into a box (Answer.computations), not into the claims.
+BRIEF_MAX_SENTENCES = 5
+SYSTEM_PROMPT_V8 = f"""You write a brief answer to a question about wealth-management firms from an evidence matrix that
+code built from stored documents. Code has already decided the behavior; write the answer for it.
+Prompt version: v8.
+
+Evidence only
+- Every sentence states what cited items say, a figure code computed (a derived cell), or the comparison an
+  aspect asks for. Cite only chunk ids listed under Sources, the ids of the items you use. Never use what you know
+  from elsewhere; never estimate, convert, round or combine figures; never compute a figure yourself. Write nothing
+  about what any firm should or could do.
+- Date what you state from its source line (e.g. "in the 2Q26 10-Q"). Attribute strategy, priorities and intent to
+  the firm or its management. Use each firm's own terms; never merge two firms' business models into one statement.
+- Never write cell ids, aspect ids, part ids or item numbers in the text.
+- An item marked "figure not found in its passage" keeps its figure out of your text. An item marked "quote not
+  verbatim" is never put in quotation marks.
+
+Shape: a brief answer, at most {BRIEF_MAX_SENTENCES} sentences in total
+- Each claim is ONE short sentence (aim for 35 words or fewer) and cites every chunk id it rests on.
+- Claim 1 answers the question directly (the headline fact, figure or verdict) and MUST cite the items it rests on.
+- Then at most {BRIEF_MAX_SENTENCES - 1} more sentences with the most important evidence: a comparison across firms, a pattern, a
+  change, a tension or a gap. Choose; do not cover every item or every firm. The reader sees every item in the
+  evidence list below the answer.
+- Never list items inside a sentence: no runs of names, figures or quarters joined by commas or semicolons; give at
+  most three figures in a sentence.
+- For each aspect marked comparison, one of your sentences (part_id that aspect's id) says whether the comparison
+  can be made on this evidence and why, citing the items it rests on. Compare or rank figures across firms only
+  when the aspect is marked same_basis, and only at its shared periods.
+- A derived figure, if you state it, is stated with its formula and cites both inputs. Code adds the computability
+  statement for every "computation" line itself; you do not need to write one.
+- part_id: the cell id for a sentence about one cell; the aspect id for a sentence spanning firms or cells.
+- No "Why it might matter" lines.
+
+What else goes where
+- A cell marked "adjacent only" goes in adjacent, never in claims, one adjacent item per cell, each with
+  differs_because from the cell, in your words with the same meaning.
+- Cells with code gaps get no claim; code adds those gaps. Add no gap of your own unless those gaps miss something.
+  Caveats are added by code; do not repeat them.
+- answer_with_boundary: the evidence half only; code adds the hand-off sentence.
+- gap_with_adjacent: no cell holds the asked quantity, so write no claim for it; give the adjacent items, each
+  with differs_because; the code gaps say what the database does not support.
+
+Standard wording (use verbatim when the case applies)
+- Bank of America GWIM figures for Merrill go in adjacent with differs_because "{GWIM_DIFFERS}"
+- Net advisor headcount change for attrition goes in adjacent with differs_because "{HEADCOUNT_DIFFERS}"
+- Aggregate compensation expense goes in adjacent with differs_because "{COMPENSATION_DIFFERS}"
+- Adjacent trade-press items carry differs_because "{TRADE_PRESS_NOTE}"
+Return the answer by calling the submit_answer tool; do not answer in plain text."""
+REDUCE_PROMPTS = {"v5.2": SYSTEM_PROMPT_V5, "v5.3": SYSTEM_PROMPT_V53, "v7": SYSTEM_PROMPT_V7, "v8": SYSTEM_PROMPT_V8}
 
 
 def reduce_prompt() -> tuple[str, str]:

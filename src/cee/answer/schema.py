@@ -49,6 +49,9 @@ class Answer(BaseModel):
     adjacent: list[Adjacent] = Field(default_factory=list)
     gaps: list[Gap] = Field(default_factory=list)
     caveats: list[str] = Field(default_factory=list)  # inserted by code
+    # #292 v8: code-owned computability statements (COMPUTED / NOT_COMPUTED, cited inputs and population sources),
+    # shown as a box next to the caveats, not as answer sentences; empty in older records and other versions
+    computations: list[Claim] = Field(default_factory=list)
     coverage_note: str = ""                            # built by code from the retrieved hits
     withheld: list[Withheld] = Field(default_factory=list)  # normative claims, not shown (#118)
     incomplete_note: str = ""                          # code-owned (#247): an extraction failed; shown as a warning

@@ -1045,6 +1045,9 @@ list form is a question with its own window or with only recency aspects, and it
 (one claim per item, a why-line on each, newest first). Every other question gets a direct first sentence and a
 short cited synthesis: a recency aspect's items are dated in their sentences, with no why-line and no re-sort.
 Under v5.2 / v5.3 the #291 rule stands (own window or any recency aspect -> list) and rule 5 is unchanged.
+v8 (the brief form, #292 v8 amendment, approved in issue #292 comment 7118166000) keeps the #247 computability
+commitment: code writes each `COMPUTED` / `NOT_COMPUTED` statement (both inputs and the population sources cited
+and quoted) into a Computability box next to the caveats (`Answer.computations`), outside the answer's 5 sentences.
 
 
 ## ADR-022: Facts table: metric figures extracted once at ingest by a model, stored as data, served by SQL

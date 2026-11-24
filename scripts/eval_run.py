@@ -1423,7 +1423,8 @@ def main(argv: list[str] | None = None) -> int:
                 from cee.answer import reduce as R
                 from cee.answer.validate import part_coverage
                 r["part_coverage"] = part_coverage(Answer(**answer), plan, every, matrix,
-                                                   R.synthesis(matrix, query) if matrix is not None else False)
+                                                   R.synthesis(matrix, query) if matrix is not None else False,
+                                                   R.brief(matrix, query) if matrix is not None else False)
             r["llm_calls"]["answer"] = int(how in ("called", "cached", "invalid", "failed"))
             r["stop_reason"], r["output_tokens"] = real.last_stop if not capped else (None, None)   # #230
             if real.bad_request:   # #247: a 400 on the reduce call: the run stops, every record saved
@@ -1442,7 +1443,8 @@ def main(argv: list[str] | None = None) -> int:
             from cee.answer.validate import part_coverage
             r["reduce"] = {**info, "how": "code_built" if info.get("code_built") else "mock"}
             r["answer"], r["answer_behavior"] = a.model_dump(), a.behavior
-            r["part_coverage"] = part_coverage(a, plan, every, matrix, R.synthesis(matrix, query))
+            r["part_coverage"] = part_coverage(a, plan, every, matrix, R.synthesis(matrix, query),
+                                               R.brief(matrix, query))
         if args.baseline:
             r["change"] = compare(r, base.get(q["id"]))
         r["cost"] = question_cost(price_rows(real.ledger[start:], args.naive_tz) if real else [])

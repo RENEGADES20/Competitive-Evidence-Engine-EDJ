@@ -350,6 +350,9 @@ def check_part_gaps(rec, page, what: str) -> None:
     parts = [p["id"] for p in row["parts"] or []]
     # #247: the reduce answers a part with a claim, an adjacent item or a matrix gap (code-built)
     cited = {c.get("part_id") for c in [*row["answer"]["claims"], *row["answer"]["adjacent"]]}
+    if row.get("version") == "v8":   # #292 v8: a holding cell is covered by the evidence list under the answer
+        cited |= {cid for cid, cell in (row.get("cells") or {}).items()
+                  if cell.get("label") == "derived" or (cell.get("effective_label") == "fact")}
     if row.get("version") == "v7":   # #292: a sentence with an aspect id covers each cell of it whose chunk it cites
         for cid, cell in (row.get("cells") or {}).items():
             own = {k for i in cell.get("items") or [] for k in i.get("chunk_ids") or []}
@@ -430,14 +433,41 @@ def check_reduce_version(rec, page, qid: str, want_list: bool) -> None:
     and any other gets v7, its paragraph opening with the mock's direct sentence ("In short: "); else the configured
     version (default v5.2)."""
     configured = os.environ.get("REDUCE_PROMPT", "").strip() or "v5.2"
-    want = "v5.2" if (configured == "v7" and want_list) else configured
+    synth = configured in ("v7", "v8")
+    want = "v5.2" if (synth and want_list) else configured
     got = psql(VERIFY_DB, "SELECT coalesce(filters->'reduce'->>'version', 'none') FROM query_log ORDER BY query_id DESC LIMIT 1")
     first = page.evaluate("() => { const e = document.querySelector('.cee-answer p, .cee-answer li');"
                           " return e ? e.innerText.slice(0, 60) : ''; }")
-    direct = (not (configured == "v7" and not want_list)) or first.startswith("In short: ")
+    direct = (not (synth and not want_list)) or first.startswith("In short: ")
     rec.step(f"{qid}: read the reduce version of the newest query_log row (REDUCE_PROMPT={configured})",
-             f"version {want}" + ("; the paragraph opens with the direct sentence" if want == "v7" else ""),
+             f"version {want}" + ("; the paragraph opens with the direct sentence" if want in ("v7", "v8") else ""),
              got == want and direct, f"version={got}; answer starts {first!r}")
+    if want == "v8":
+        check_computability_box(rec, page, qid)
+
+
+BOX_JS = """() => {
+  const boxes = [...document.querySelectorAll('.cee-computability')];
+  const hrefs = boxes.flatMap(b => [...b.querySelectorAll('a[href^="#cee-ev-"]')].map(a => a.getAttribute('href')));
+  return {boxes: boxes.length, footnotes: hrefs.length, missing: hrefs.filter(h => !document.getElementById(h.slice(1))),
+          sentences: document.querySelectorAll('.cee-answer .cee-sent').length,
+          text: boxes.map(b => b.innerText.slice(0, 90))};
+}"""
+
+
+def check_computability_box(rec, page, qid: str) -> None:
+    """#292 v8: at most 5 answer sentences; one Computability box per `answer.computations` entry of the newest
+    query_log row (code-written COMPUTED / NOT_COMPUTED, inputs and population sources cited), each with footnotes
+    that resolve to evidence cards."""
+    n = int(psql(VERIFY_DB, "SELECT coalesce(jsonb_array_length((answer::jsonb)->'computations'), 0) FROM query_log "
+                            "WHERE answer IS NOT NULL ORDER BY query_id DESC LIMIT 1") or 0)
+    box = page.evaluate(BOX_JS)
+    ok = (box["boxes"] == n and box["sentences"] <= 5 and not box["missing"]
+          and (n == 0 or box["footnotes"] >= n))
+    rec.step(f"{qid}: read the Computability box (v8)",
+             f"{n} box(es) as logged, each with resolving footnotes; at most 5 answer sentences",
+             ok, f"boxes={box['boxes']} logged={n} footnotes={box['footnotes']} missing={box['missing']} "
+                 f"sentences={box['sentences']} text={box['text']}")
 
 
 def feature_ask_layout(page, base, rec, ctx):

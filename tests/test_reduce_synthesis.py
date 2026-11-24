@@ -149,3 +149,87 @@ def test_aspect_sentence_on_adjacent_only_cells_is_flagged(v7):
         {"text": "Schwab serves 16,000 RIA client firms.", "chunk_ids": ["SCHW-TR#10"], "part_id": "a3"}]}
     a, _ = run_finish(m, raw, query=q)
     assert "claim_from_adjacent" in next(c for c in a.claims if "SCHW-TR#10" in c.chunk_ids).flags
+
+
+# --- v8: brief answer, no full coverage, computability box (#292 v8 amendment) ----------------------
+
+@pytest.fixture
+def v8(monkeypatch):
+    monkeypatch.setenv("REDUCE_PROMPT", "v8")
+
+
+def test_v8_is_a_brief_synthesis_version_and_list_form_stays_v52(v8):
+    m = two_firm()
+    assert R.brief(m, query_of(m)) and R.prompt_version(m, query_of(m)) == "v8"
+    assert R.system_prompt(m, query_of(m)) == P.SYSTEM_PROMPT_V8 and "Prompt version: v8." in P.SYSTEM_PROMPT_V8
+    assert not R.brief(m, query_of(m, WINDOW)) and R.prompt_version(m, query_of(m, WINDOW)) == "v5.2"
+
+
+def test_mock_v8_is_at_most_five_cited_sentences_and_uncited_holding_cells_get_no_part_gap(v8):
+    m = two_firm()
+    raw = R.mock_reduce(m, query_of(m))
+    assert 1 <= len(raw["claims"]) <= P.BRIEF_MAX_SENTENCES and all(c["chunk_ids"] for c in raw["claims"])
+    only_first = {**raw, "claims": raw["claims"][:1]}
+    a, info = run_finish(m, only_first, query=query_of(m))
+    assert info["version"] == "v8" and info["part_gaps"] == 0   # a1.RJF, a2.MS, a3.RJF: in the evidence list
+    assert {g.part_id for g in a.gaps if "part_gap" in g.flags} == set()
+
+
+def test_every_uncited_holding_cell_is_in_the_evidence_list(v8):
+    from types import SimpleNamespace
+    from cee.ask import evidence_lines
+    from cee.answer.matrix import holds
+    m = two_firm()
+    raw = R.mock_reduce(m, query_of(m))
+    a, _ = run_finish(m, {**raw, "claims": raw["claims"][:1]}, query=query_of(m))
+    cited = {k for c in a.claims for k in c.chunk_ids}
+    lines = evidence_lines(SimpleNamespace(hits=list(m.hits.values())), list(m.cells.values()))
+    listed = {k for line in lines for k in line["chunk_ids"]}
+    for c in m.cells.values():
+        if holds(c) and not ({k for i in c.counting_items for k in i.chunk_ids} & cited):
+            assert {k for i in c.counting_items for k in i.chunk_ids} <= listed, c.id
+
+
+def test_v8_computability_goes_to_the_box_with_inputs_and_population_sources(v8):
+    m = q24_shaped()
+    q = Query(question=m.question, entities=["EDJ", "SCHW", "MS"])
+    d = m.cells["a1.EDJ"].derivation
+    need = set(d["input_chunk_ids"]) | set(d.get("population_chunk_ids") or [])
+    # the model's own sentence already states the verdict, citing every input: the box is still added
+    raw = {"answerable": True, "behavior": m.behavior, "adjacent": [], "gaps": [], "claims": [
+        {"text": "Client assets per advisor cannot be compared across the five.", "chunk_ids": sorted(need),
+         "part_id": "a1"},
+        {"text": "Comparison is valid only for Edward Jones.", "chunk_ids": ["MS-10K#5"], "part_id": "a4"}]}
+    a, info = run_finish(m, raw, query=q)
+    assert info["code_computability"] == ["a1.EDJ"] and len(a.claims) == 2
+    box = a.computations[0]
+    assert box.text.startswith("Edward Jones: ") and ("computed by code" in box.text or "not computed" in box.text)
+    assert need <= set(box.chunk_ids) and "code_computability" in box.flags
+    assert not any("code_computability" in c.flags for c in a.claims)
+
+
+def test_mock_v8_q24_shape_keeps_the_box(v8):
+    m = q24_shaped()
+    q = Query(question=m.question, entities=["EDJ", "SCHW", "MS"])
+    a, info = run_finish(m, R.mock_reduce(m, q), query=q)
+    assert a.computations and info["comparison_missing"] == [] and len(a.claims) <= P.BRIEF_MAX_SENTENCES
+
+
+def test_computations_default_empty_so_old_records_load():
+    from cee.answer.schema import Answer
+    old = {"answerable": True, "behavior": "answer", "claims": [{"text": "x", "chunk_ids": ["a#1"]}],
+           "adjacent": [], "gaps": [], "caveats": []}
+    a = Answer(**old)
+    assert a.computations == [] and Answer(**a.model_dump()).computations == []
+
+
+def test_ask_page_draws_the_box_outside_the_paragraph_with_footnotes(v8):
+    from cee.app import components as ui
+    from cee.answer.schema import Claim
+    h = H("EDJ-10Q#60")
+    cards, items = AP.evidence_cards([], [Claim(text="A.", chunk_ids=["EDJ-10Q#60"])], [h],
+                                     [Claim(text="Edward Jones: not computed.", chunk_ids=["EDJ-10Q#60"],
+                                            flags=["code_computability"])])
+    assert [i.get("box", False) for i in items] == [False, True] and len(cards) == 1
+    html = ui.computability_html(items[1])
+    assert "Computability:" in html and 'href="#cee-ev-1"' in html and "code_computability" not in html

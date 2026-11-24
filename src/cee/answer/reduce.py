@@ -49,6 +49,11 @@ def synthesis(m: EvidenceMatrix | None, query) -> bool:
     return v in P.SYNTHESIS_VERSIONS and m is not None and not list_form(m.aspects, query, v)
 
 
+def brief(m: EvidenceMatrix | None, query) -> bool:
+    """#292 v8: the brief synthesis form (at most 5 sentences, no full coverage, computability in a code box)."""
+    return synthesis(m, query) and settings().reduce_prompt in P.BRIEF_VERSIONS
+
+
 def prompt_version(m: EvidenceMatrix | None = None, query=None) -> str:
     """The reduce prompt version in use (REDUCE_PROMPT: v5.2 | v5.3 | v7, #275, #292). With a matrix: the version
     this question's call uses (a synthesis version answers a list-form question with v5.2)."""
@@ -602,6 +607,8 @@ def mock_reduce(m: EvidenceMatrix, query=None) -> dict:
     cancel.sleep (a Stop cuts it)."""
     from cee.answer import cancel
     cancel.sleep(settings().mock_delay_s)
+    if brief(m, query):
+        return mock_brief(m, query)
     if synthesis(m, query):
         return mock_synthesis(m, query)
     claims = []
@@ -669,6 +676,32 @@ def mock_synthesis(m: EvidenceMatrix, query=None) -> dict:
         c.pop("direct", None)
     return {"answerable": m.behavior in ("answer", "answer_with_boundary"), "behavior": m.behavior,
             "claims": claims, "adjacent": _adjacent_items(m, query), "gaps": []}
+
+
+def mock_brief(m: EvidenceMatrix, query=None) -> dict:
+    """#292, the mock in the brief form (v8), deterministic, 0 calls: claim 1 = "In short: <first holding item>." (part_id
+    its aspect); the comparison claims as in v5.2; then one short sentence per further aspect from its first holding
+    cell's first item, at most BRIEF_MAX_SENTENCES claims (comparison claims are never dropped). No computation
+    claims (code writes the box); adjacent items as in v5.2."""
+    full = mock_synthesis(m, query)
+    kinds = {a.id: a.kind for a in m.aspects}
+    comps = [c for c in full["claims"] if kinds.get(c["part_id"]) == "comparison"]
+    first, rest = None, []
+    for a in m.aspects:
+        if a.kind == "comparison" or getattr(a, "proxy", False):
+            continue
+        c = next((c for c in m.cells.values() if c.aspect_id == a.id and holds(c) and c.counting_items), None)
+        if c is None:
+            continue
+        i = c.counting_items[0]
+        if first is None:
+            first = {"text": f"In short: {_q(i.text).rstrip('.')}.", "chunk_ids": list(i.chunk_ids), "part_id": a.id}
+        elif not set(i.chunk_ids) <= set(first["chunk_ids"]):
+            rest.append({"text": _firm_prefix(m, c) + _q(i.text).rstrip(".") + ".", "chunk_ids": list(i.chunk_ids),
+                         "part_id": c.id})
+    claims = ([first] if first else []) + comps
+    claims += rest[:max(0, P.BRIEF_MAX_SENTENCES - len(claims))]
+    return {**full, "claims": claims}
 
 
 def code_answer(m: EvidenceMatrix, query=None) -> Answer:
@@ -835,10 +868,11 @@ def _cites_background(m: EvidenceMatrix, x) -> bool:
     return bool(items) and not any(cited <= set(i.chunk_ids) for i in items)
 
 
-def check_computability(answer: Answer, m: EvidenceMatrix, synth: bool = False) -> list[str]:
+def check_computability(answer: Answer, m: EvidenceMatrix, synth: bool = False, box: bool = False) -> list[str]:
     """TL D5 / condition 1: for each derivation proposal with cited inputs, a claim on that cell citing
     every input and population source chunk; missing -> code adds it (COMPUTED / NOT_COMPUTED, the
-    sources quoted), flag code_computability. Returns the cells it added a claim for."""
+    sources quoted), flag code_computability. #292 v8 (box): the statement goes to answer.computations (the
+    Computability box), for every proposal, whatever the model's sentences say. Returns the cells it added one for."""
     from cee.answer.matrix import _aspect_text
     from cee.answer.schema import Claim
     added = []
@@ -848,7 +882,7 @@ def check_computability(answer: Answer, m: EvidenceMatrix, synth: bool = False) 
         d = c.derivation
         need = set(d.get("input_chunk_ids") or []) | set(d.get("population_chunk_ids") or [])
         own = (c.id, c.aspect_id) if synth else (c.id,)
-        if any(x.part_id in own and need <= set(x.chunk_ids) for x in answer.claims):
+        if not box and any(x.part_id in own and need <= set(x.chunk_ids) for x in answer.claims):
             continue   # #292: a synthesis sentence with the aspect id counts too
         a = m.aspect(c.aspect_id)
         firm = f"{row_name(c)}: "
@@ -861,6 +895,10 @@ def check_computability(answer: Answer, m: EvidenceMatrix, synth: bool = False) 
                                          why=_why_words(d.get("why", "")), sources=srcs)
         ids = list(dict.fromkeys([*(d.get("input_chunk_ids") or []), *(d.get("population_chunk_ids") or [])]))
         claim = Claim(text=text, chunk_ids=ids, part_id=c.id, flags=["code_computability"])
+        if box:
+            answer.computations.append(claim)
+            added.append(c.id)
+            continue
         same = [n for n, x in enumerate(answer.claims)
                 if (synth and x.part_id == c.aspect_id) or (x.part_id in m.cells and m.cells[x.part_id].aspect_id == c.aspect_id)]
         answer.claims.insert((max(same) + 1) if same else len(answer.claims), claim)
@@ -1067,16 +1105,21 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     allowed = [by_id[c] for c in citable(m) if c in by_id]
     # #247 part 2: code computability claims and the why-line clean-up come before the citation check,
     # so the citation, number and date checks run on them like on the model's claims (TL condition 1)
-    info["code_computability"] = check_computability(answer, m, synthesis(m, query))
+    short = brief(m, query)
+    info["code_computability"] = check_computability(answer, m, synthesis(m, query), box=short)
     why_log = clean_why_lines(answer, m, query)
     info["why_line_removed"], info["why_line_restated"] = len(why_log["removed"]), len(why_log["restated"])
     info["why_line_unsaid"] = len(why_log["unsaid"])
     info["why_lines_log"] = why_log
     answer = check_citations(answer, allowed, derived=derived_values(m))
     info["behavior_rejudged"] = answer.behavior != decided
+    if answer.computations:   # #292 v8: the box gets the citation, number and date checks of a claim
+        box = check_citations(Answer(answerable=True, behavior="answer", claims=answer.computations), allowed,
+                              derived=derived_values(m))
+        answer.computations = box.claims
     ok_ids = set(citable(m))
     outside = 0
-    for x in [*answer.claims, *answer.adjacent]:
+    for x in [*answer.claims, *answer.adjacent, *answer.computations]:
         if any(c not in ok_ids for c in x.chunk_ids):
             outside += 1
             if "outside_matrix" not in x.flags:
@@ -1092,14 +1135,14 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     answer.caveats = list(dict.fromkeys([*answer.caveats, *m.caveats]))
     union = list(by_id.values())
     synth = synthesis(m, query)
-    answer = check_parts(answer, plan, union, question, matrix=m, synthesis=synth)
+    answer = check_parts(answer, plan, union, question, matrix=m, synthesis=synth, brief=short)
     # #247 part 2: duplicates removed after the part check; then the comparison and computability
     # checks run again on the reduced list (round-1 note 6), new code claims citation-checked
     info["duplicates_removed"] = dedupe_claims(answer, keep_first=synth)
     if info["duplicates_removed"]:
         info["comparison_missing"] = sorted(set(info["comparison_missing"]) | set(check_comparisons(answer, m)))
         before = {id(x) for x in answer.claims}
-        late = check_computability(answer, m, synth)
+        late = [] if short else check_computability(answer, m, synth)
         if late:
             fresh = Answer(answerable=answer.answerable, behavior=answer.behavior,
                            claims=[x for x in answer.claims if id(x) not in before])
@@ -1110,7 +1153,7 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     answer = fill_suggested_sources(answer, query)
     answer.coverage_note = coverage_note(query, list(hits or []))
     flags: dict[str, int] = {}
-    for x in [*answer.claims, *answer.adjacent, *answer.gaps]:
+    for x in [*answer.claims, *answer.adjacent, *answer.gaps, *answer.computations]:
         for f in x.flags:
             flags[f] = flags.get(f, 0) + 1
     info["flags"] = flags
