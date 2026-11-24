@@ -53,13 +53,13 @@ Unchanged: citation, outside_matrix, number, date, normative, comparison, gaps, 
 - **Evidence:** `D:\ALLPROJECTS\EDJ\cache\ev292\`, committed copies in `docs/results/w13-reduce-synthesis/`.
 
 ## Acceptance
-- [ ] pytest green (CI `gh pr checks`).
-- [ ] Mock eval (step 2); Q26, Q27 byte-identical to v5.2.
-- [ ] Real: 4 calls; per question v5.2 vs v7 text, output / reasoning tokens, cost, wall time, tokens/s. Every shown
+- [x] pytest green (1210 local; CI on the PR).
+- [x] Mock eval (step 2); Q26, Q27 byte-identical to v5.2.
+- [x] Real: 4 calls (done; the quality items failed on Q5, Q22, Q24, see the results doc); per question v5.2 vs v7 text, output / reasoning tokens, cost, wall time, tokens/s. Every shown
       sentence cited (no_citation 0, outside_matrix 0); sentence 1 answers the question; no item-by-item restatement
       (sentences <= 5 + comparison + computation + per-firm figure sentences, and each read).
-- [ ] verify-cee on mock (step 3): answer paragraph above evidence, footnotes resolve.
-- [ ] **Default rule:** v7 becomes the default only if every real item passes on all four and no question has more
+- [x] verify-cee on mock (step 3): answer paragraph above evidence, footnotes resolve.
+- [x] **Default rule** (applied: not adopted, default stays v5.2): v7 becomes the default only if every real item passes on all four and no question has more
       part_gap / comparison_missing / number_not_found than its v5.2 record and none is invalid or cut. Else it stays
       behind `REDUCE_PROMPT=v7` and the results doc says why. Cost is reported, not a gate. If switched, the PR
       proposes the 30-question scored run (Gate 3, TL go-ahead); not part of #292.
@@ -70,3 +70,8 @@ Unchanged: citation, outside_matrix, number, date, normative, comparison, gaps, 
   form helper for reduce, streamed and final view (tested), PR to the TL for the ADR-021 amendment.
 - 2026-11-23 - code + 10 tests (6d821a9); pytest 1200 + 10 pass locally. Mock rule plans: v5.2 = main 30/30; v7:
   Q26, Q27 identical, 28 changed, worse 0.
+- 2026-11-23 - mock #272 plans: v5.2 = main 30/30; v7: Q26, Q27 identical, worse 0. verify-cee v7: ask-answer part-gap
+  step expected cell ids only; driver now reads aspect-id sentences (787514a); then PASS.
+- 2026-11-23 23:43 UTC - count at gate 8e5172c: 42 reused, 4 new reduce keys (= plan).
+- 2026-11-23 23:50-23:59 UTC - paid run g-v7: 4 calls, $0.221 off-peak, none failed. Default rule fails on Q5
+  (10 sentences), Q22 (no synthesis, 11 > 10), Q24 (claim 1 uncited); v7 stays behind the flag.
