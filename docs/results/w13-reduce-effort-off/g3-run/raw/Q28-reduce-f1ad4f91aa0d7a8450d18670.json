@@ -1,0 +1,111 @@
+{
+  "question_id": "Q28",
+  "question": "What is Edward Jones's advisor attrition rate compared to Merrill's?",
+  "reduce_version": "v8",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-2-reduce-off-c64000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "EDJ-10Q-2025Q3#70",
+    "EDJ-10Q-2025Q2#67",
+    "EDJ-10Q-2025Q3#68",
+    "EDJ-10Q-2025Q2#66",
+    "EDJ-10Q-2025Q3#69",
+    "EDJ-10K-2025#27",
+    "BAC-TR-2026Q2#63",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-DECK-2025-investor-day#9"
+  ],
+  "schema_fallback": [],
+  "enum_values": 70,
+  "at": "2026-11-23T21:43:14.347297-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 5670,
+    "output_tokens": 654,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 4518,
+    "reasoning_tokens": null,
+    "tool_calls": 1,
+    "thinking": "off",
+    "effort": "off",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.44
+  },
+  "wall_s": 7.25,
+  "tokens_per_s": 90.21,
+  "ttft_s": 1.44,
+  "reasoning_content": null,
+  "first_claim_s": 2.28,
+  "stream_items": {
+    "first_claim_s": 2.28,
+    "shown": 5,
+    "held": 2
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Edward Jones reported financial advisor attrition of 6.1% for the third quarter of 2025.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#70"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Merrill does not disclose a numeric advisor attrition rate; its CFO stated in the second quarter of 2026 that adviser attrition is at near historic lows.",
+        "chunk_ids": [
+          "BAC-TR-2026Q2#63"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Edward Jones's attrition rate cannot be compared to Merrill's on this evidence, because Merrill discloses only a qualitative statement rather than a numeric attrition rate.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#70",
+          "BAC-TR-2026Q2#63"
+        ],
+        "part_id": "a5"
+      },
+      {
+        "text": "Edward Jones reported attrition of 6.1% in the third quarter of 2025 and 4.7% in the third quarter of 2024.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q3#68"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones defines attrition as the annualized number of financial advisors that left or retired during the period compared to total financial advisors at period end.",
+        "chunk_ids": [
+          "EDJ-10Q-2025Q2#66",
+          "EDJ-10Q-2025Q3#69"
+        ],
+        "part_id": "a1.EDJ"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Merrill's parent Bank of America reports 18,916 total wealth advisors at period end for the fourth quarter of 2023, a figure that includes advisors across all wealth management businesses in GWIM and Consumer Banking, not Merrill advisors alone.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a4.MER",
+        "differs_because": "Closest disclosed measures are wider than Merrill's own advisor headcount (total wealth advisors include Consumer Banking), or state attrition only qualitatively rather than as a numeric headcount or rate."
+      },
+      {
+        "text": "A Bank of America investor-day deck states Merrill and the Private Bank together have more than 15,000 wealth advisors, combining Merrill and Private Bank rather than Merrill alone.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#9"
+        ],
+        "part_id": "a4.MER",
+        "differs_because": "The >15K figure combines Merrill and the Private Bank, not Merrill alone."
+      }
+    ],
+    "gaps": []
+  }
+}

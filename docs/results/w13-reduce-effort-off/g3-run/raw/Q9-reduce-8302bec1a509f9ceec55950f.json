@@ -1,0 +1,132 @@
+{
+  "question_id": "Q9",
+  "question": "How do Morgan Stanley and Merrill differ in how they segment clients by wealth tier?",
+  "reduce_version": "v8",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-2-reduce-off-c64000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-10Q-2026Q1#16",
+    "MS-10Q-2026Q2#16",
+    "MS-10K-2025#125",
+    "MS-10K-2025#419",
+    "MS-10K-2025#190",
+    "MS-10Q-2026Q2#381",
+    "MS-TR-2026Q3#33",
+    "MS-TR-2025Q1#37",
+    "MS-10K-2025#349",
+    "MS-DECK-2026-strategic-update#31",
+    "MS-SUPP-2026Q3#38",
+    "MS-SUPP-2026Q3#16",
+    "MS-SUPP-2026Q2#16",
+    "MS-SUPP-2026Q1#14",
+    "MS-SUPP-2025Q4#15",
+    "MS-10Q-2026Q2#61",
+    "MS-TR-2026Q3#34",
+    "BAC-DECK-2025-investor-day#12",
+    "BAC-10K-2025#246",
+    "BAC-DECK-2025-investor-day#18",
+    "BAC-DECK-2026Q3#31",
+    "BAC-PR-2026-10-14-01#13",
+    "BAC-TR-2026Q3#19",
+    "MER-PR-web-becoming-a-merrill-lynch-advisor#0",
+    "MER-TRADE-2026-09-08-WM-01#0",
+    "BAC-PR-2026-04-15-01#11",
+    "BAC-PR-2026-07-14-01#11",
+    "BAC-PR-2026-10-14-01#12",
+    "BAC-PR-2026-01-14-01#13"
+  ],
+  "schema_fallback": [],
+  "enum_values": 119,
+  "at": "2026-11-23T21:34:39.734695-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10046,
+    "output_tokens": 678,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 8894,
+    "reasoning_tokens": null,
+    "tool_calls": 1,
+    "thinking": "off",
+    "effort": "off",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.12
+  },
+  "wall_s": 7.83,
+  "tokens_per_s": 86.59,
+  "ttft_s": 1.12,
+  "reasoning_content": null,
+  "first_claim_s": 2.25,
+  "stream_items": {
+    "first_claim_s": 2.25,
+    "shown": 5,
+    "held": 2
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Morgan Stanley describes its Wealth Management business as serving high and ultra-high net worth individuals but discloses no dollar thresholds or formal tier definitions for those tiers.",
+        "chunk_ids": [
+          "MS-10K-2025#419"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Merrill segments clients through its Wealth Continuum into Mass Affluent ($500K-$1MM) and High Net Worth ($1MM-$10MM) tiers.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill's advisory business focuses on clients with over $250,000 in total investable assets, and it includes households with $250K+ in investable assets excluding stock plan and banking-only households.",
+        "chunk_ids": [
+          "BAC-10K-2025#246",
+          "BAC-DECK-2026Q3#31"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill labels tiers as Mass Affluent ($500K-$1MM) and High Net Worth ($1MM-$10MM), while Morgan Stanley uses only the labels high and ultra-high net worth.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12",
+          "MS-10K-2025#125"
+        ],
+        "part_id": "a7"
+      },
+      {
+        "text": "Merrill reports 750K households with $500K+ in assets and 54K households with $10MM+ in assets, whereas Morgan Stanley reports households by service channel rather than wealth tier.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#18",
+          "MS-SUPP-2026Q3#16"
+        ],
+        "part_id": "a6.MER"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Morgan Stanley's Wealth Management supports clients through three channels\u2014Advisor-Led, Self-Directed and Workplace\u2014rather than segmenting by wealth tier.",
+        "chunk_ids": [
+          "MS-10Q-2026Q2#16"
+        ],
+        "part_id": "a5.MS",
+        "differs_because": "Morgan Stanley segments clients by service channel and by whether a financial advisor is assigned, not by wealth tier; the passages contain no wealth-tier thresholds or tier-specific service models."
+      },
+      {
+        "text": "Morgan Stanley reported 8.8 million self-directed households at September 30, 2026.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q3#16"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Morgan Stanley does not segment clients by wealth tier; it reports households by service channel such as self-directed, which is a different segmentation from wealth tiers."
+      }
+    ],
+    "gaps": []
+  }
+}
