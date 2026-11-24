@@ -54,6 +54,11 @@ def brief(m: EvidenceMatrix | None, query) -> bool:
     return synthesis(m, query) and settings().reduce_prompt in P.BRIEF_VERSIONS
 
 
+def asked(m: EvidenceMatrix | None, query) -> bool:
+    """#297 v9: the synthesis form whose length follows the question; every asked cell is covered (validate.asked_cell)."""
+    return synthesis(m, query) and settings().reduce_prompt in P.ASKED_VERSIONS
+
+
 def prompt_version(m: EvidenceMatrix | None = None, query=None) -> str:
     """The reduce prompt version in use (REDUCE_PROMPT: v5.2 | v5.3 | v7, #275, #292). With a matrix: the version
     this question's call uses (a synthesis version answers a list-form question with v5.2)."""
@@ -607,6 +612,8 @@ def mock_reduce(m: EvidenceMatrix, query=None) -> dict:
     cancel.sleep (a Stop cuts it)."""
     from cee.answer import cancel
     cancel.sleep(settings().mock_delay_s)
+    if asked(m, query):
+        return mock_asked(m, query)
     if brief(m, query):
         return mock_brief(m, query)
     if synthesis(m, query):
@@ -701,6 +708,33 @@ def mock_brief(m: EvidenceMatrix, query=None) -> dict:
                          "part_id": c.id})
     claims = ([first] if first else []) + comps
     claims += rest[:max(0, P.BRIEF_MAX_SENTENCES - len(claims))]
+    return {**full, "claims": claims}
+
+
+def mock_asked(m: EvidenceMatrix, query=None) -> dict:
+    """#297, the mock in the v9 form, deterministic, 0 calls: claim 1 = "In short: <first holding item>." (part_id its
+    aspect); the comparison claims as in v5.2; then one sentence per asked cell (validate.asked_cell) from its first
+    counting item (part_id the cell id), skipped when claim 1 already cites its chunks. No cap, no computation claims
+    (code writes the box); adjacent items as in v5.2."""
+    from cee.answer.validate import asked_cell
+    full = mock_synthesis(m, query)
+    kinds = {a.id: a.kind for a in m.aspects}
+    comps = [c for c in full["claims"] if kinds.get(c["part_id"]) == "comparison"]
+    derived = [c for c in full["claims"] if c["part_id"] in m.cells and asked_cell(c["part_id"], m)
+               and m.cells[c["part_id"]].label == "derived"]
+    first, rest = None, list(derived)
+    for a in m.aspects:
+        for c in (c for c in m.cells.values() if c.aspect_id == a.id):
+            if not asked_cell(c.id, m) or not c.counting_items or c.label == "derived":
+                continue
+            i = c.counting_items[0]
+            if first is None:
+                first = {"text": f"In short: {_q(i.text).rstrip('.')}.", "chunk_ids": list(i.chunk_ids),
+                         "part_id": a.id}
+            elif not set(i.chunk_ids) <= set(first["chunk_ids"]):
+                rest.append({"text": _firm_prefix(m, c) + _q(i.text).rstrip(".") + ".", "chunk_ids": list(i.chunk_ids),
+                             "part_id": c.id})
+    claims = ([first] if first else []) + comps + rest
     return {**full, "claims": claims}
 
 
@@ -1135,7 +1169,7 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     answer.caveats = list(dict.fromkeys([*answer.caveats, *m.caveats]))
     union = list(by_id.values())
     synth = synthesis(m, query)
-    answer = check_parts(answer, plan, union, question, matrix=m, synthesis=synth, brief=short)
+    answer = check_parts(answer, plan, union, question, matrix=m, synthesis=synth, brief=short, asked=asked(m, query))
     # #247 part 2: duplicates removed after the part check; then the comparison and computability
     # checks run again on the reduced list (round-1 note 6), new code claims citation-checked
     info["duplicates_removed"] = dedupe_claims(answer, keep_first=synth)

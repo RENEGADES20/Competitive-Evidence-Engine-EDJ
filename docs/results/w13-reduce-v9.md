@@ -55,7 +55,7 @@ break, never smoothed.
 The rule checks that a cell's chunks are cited, not what the sentence says (a sentence citing a series may state
 one quarter and pass); completeness of a series rests on the prompt and the scorers (plan, Risks).
 
-## Q19 roles (plan review finding 3; 0 calls, from `ev295\g3-runeport.json`, the #272 plan and maps)
+## Q19 roles (plan review finding 3; 0 calls, from `ev295\g3-run\report.json`, the #272 plan and maps)
 Q19's passes_if asks for "competitor moves aimed at [the cohort]". Matrix aspects and holding cells by role:
 | Aspect | Kind | `asked_firms` | Holding cells |
 |---|---|---|---|

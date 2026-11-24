@@ -235,3 +235,98 @@ def test_ask_page_draws_the_box_outside_the_paragraph_with_footnotes(v8):
     assert [i.get("box", False) for i in items] == [False, True] and len(cards) == 1
     html = ui.computability_html(items[1])
     assert "Computability:" in html and 'href="#cee-ev-1"' in html and "code_computability" not in html
+
+
+# --- #297 v9: length follows the question; every asked cell is covered ---------------------------------
+
+@pytest.fixture
+def v9(monkeypatch):
+    monkeypatch.setenv("REDUCE_PROMPT", "v9")
+
+
+def test_v9_is_a_synthesis_version_with_the_box_and_list_form_stays_v52(v9):
+    m = two_firm()
+    assert R.asked(m, query_of(m)) and R.brief(m, query_of(m)) and R.prompt_version(m, query_of(m)) == "v9"
+    assert R.system_prompt(m, query_of(m)) == P.SYSTEM_PROMPT_V9 and "Prompt version: v9." in P.SYSTEM_PROMPT_V9
+    assert "at most" not in P.SYSTEM_PROMPT_V9.split("Shape:")[1].split("\n")[0]   # no sentence cap
+    assert not R.asked(m, query_of(m, WINDOW)) and R.prompt_version(m, query_of(m, WINDOW)) == "v5.2"
+
+
+def test_mock_v9_writes_one_sentence_per_asked_cell_and_no_part_gap(v9):
+    m = two_firm()
+    raw = R.mock_reduce(m, query_of(m))
+    claims = raw["claims"]
+    assert claims[0]["text"].startswith("In short: ") and claims[0]["part_id"] == "a1"
+    assert [c["part_id"] for c in claims[1:]] == ["a1.RJF", "a2.MS", "a3.RJF"] and all(c["chunk_ids"] for c in claims)
+    a, info = run_finish(m, raw, query=query_of(m))
+    assert info["version"] == "v9" and info["part_gaps"] == 0 and all(not c.flags for c in a.claims)
+
+
+def test_v9_an_asked_cell_no_sentence_covers_gets_its_part_gap(v9):
+    m = two_firm()
+    raw = R.mock_reduce(m, query_of(m))
+    a, info = run_finish(m, {**raw, "claims": raw["claims"][:1]}, query=query_of(m))
+    assert {g.part_id for g in a.gaps if "part_gap" in g.flags} == {"a1.RJF", "a2.MS", "a3.RJF"}
+    monkeypatch_v8 = pytest.MonkeyPatch()
+    monkeypatch_v8.setenv("REDUCE_PROMPT", "v8")   # the same answer under v8: the evidence list covers them
+    try:
+        _, info8 = run_finish(m, {**raw, "claims": raw["claims"][:1]}, query=query_of(m))
+        assert info8["part_gaps"] == 0
+    finally:
+        monkeypatch_v8.undo()
+
+
+def _home_firm_with_competitors():
+    """Q19's shape: home firm EDJ; a1 asked of EDJ (competitors kept by the widening), a2 asks about competitors
+    (asked_firms SCHW), a3 a comparison."""
+    a1 = Aspect("a1", "What younger investors prefer.")
+    a2 = Aspect("a2", "What competitors offer younger investors.", asked_firms=["SCHW"])
+    a3 = Aspect("a3", "How Edward Jones compares with competitors.", kind="comparison")
+    hits = [H("EDJ-10Q#1", text="Edward Jones serves younger clients."),
+            H("SCHW-TR#1", "SCHW", text="Schwab says younger clients prefer apps."),
+            H("SCHW-TR#2", "SCHW", text="Schwab offers a starter kit.")]
+    cells = [cell("a1.EDJ", "fact", [item("EDJ-10Q#1", "Edward Jones serves younger clients.")]),
+             cell("a1.SCHW", "fact", [item("SCHW-TR#1", "Schwab says younger clients prefer apps.")]),
+             cell("a2.SCHW", "fact", [item("SCHW-TR#2", "Schwab offers a starter kit.")]),
+             cell("a3.EDJ", "fact", [item("EDJ-10Q#1", "Edward Jones serves younger clients.")]),
+             cell("a3.SCHW", "fact", [item("SCHW-TR#2", "Schwab offers a starter kit.")])]
+    for c in cells:
+        if c.entity == "SCHW":
+            c.role = "competitor"
+    return matrix("How should younger investors shape Edward Jones's offerings?", [a1, a2, a3], cells, hits)
+
+
+def test_v9_asked_cell_rule_competitors_only_when_asked_for(v9):
+    from cee.answer.validate import asked_cell
+    m = _home_firm_with_competitors()
+    assert asked_cell("a1.EDJ", m) and asked_cell("a2.SCHW", m)
+    assert not asked_cell("a1.SCHW", m)   # the home-firm widening: the question did not ask for Schwab there
+    assert not asked_cell("a3.EDJ", m) and not asked_cell("a3.SCHW", m)   # comparison: comparison_missing guards it
+    raw = {"answerable": True, "behavior": "answer", "adjacent": [], "gaps": [], "claims": [
+        {"text": "Edward Jones serves younger clients.", "chunk_ids": ["EDJ-10Q#1"], "part_id": "a1.EDJ"}]}
+    a, _ = run_finish(m, raw, query=Query(question=m.question, entities=["EDJ"]))
+    assert {g.part_id for g in a.gaps if "part_gap" in g.flags} == {"a2.SCHW"}
+
+
+def test_v9_coverage_is_a_citation_check_not_a_content_check(v9):
+    """Documents the limit (plan Risks): a series cell cited by a sentence that states only its latest quarter is
+    covered; whether the sentence gives every quarter is left to the prompt and the scorers."""
+    a1 = Aspect("a1", "Net new assets by quarter.", kind="series")
+    hits = [H("EDJ-10Q#7", text="Net new assets were $10 billion in 2Q26."),
+            H("EDJ-10Q#8", text="Net new assets were $9 billion in 1Q26.")]
+    m = matrix("Net new assets by quarter for Edward Jones.", [a1], [
+        cell("a1.EDJ", "fact", [item("EDJ-10Q#7", "Net new assets were $10 billion in 2Q26.", period="2026-06-26"),
+                                item("EDJ-10Q#8", "Net new assets were $9 billion in 1Q26.", period="2026-03-27")])],
+        hits)
+    raw = {"answerable": True, "behavior": "answer", "adjacent": [], "gaps": [], "claims": [
+        {"text": "Edward Jones reported net new assets of $10 billion in 2Q26.", "chunk_ids": ["EDJ-10Q#7"],
+         "part_id": "a1.EDJ"}]}
+    a, info = run_finish(m, raw, query=Query(question=m.question, entities=["EDJ"]))
+    assert info["part_gaps"] == 0   # 1Q26 is not stated, and no code check notices
+
+
+def test_mock_v9_q24_shape_keeps_the_box_and_the_comparison(v9):
+    m = q24_shaped()
+    q = Query(question=m.question, entities=["EDJ", "SCHW", "MS"])
+    a, info = run_finish(m, R.mock_reduce(m, q), query=q)
+    assert a.computations and info["comparison_missing"] == [] and info["version"] == "v9"

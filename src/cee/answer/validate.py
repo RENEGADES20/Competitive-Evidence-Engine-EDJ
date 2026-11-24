@@ -230,7 +230,7 @@ def _matrix_state(pid: str, answer: Answer, matrix, known: dict) -> str | None:
 
 
 def part_coverage(answer: Answer, plan, hits: list[Hit], matrix=None, synthesis: bool = False,
-                  brief: bool = False) -> dict[str, str]:
+                  brief: bool = False, asked: bool = False) -> dict[str, str]:
     """{part_id: model | citation | handoff | code_gap | comparison | proxy | proxy_by_design | none}
     for the plan's parts (#215; the matrix states #247 B3).
     model: a cited claim / adjacent item or a gap names the part; citation: an item without a valid
@@ -238,7 +238,9 @@ def part_coverage(answer: Answer, plan, hits: list[Hit], matrix=None, synthesis:
     a boundary answer, covered by the hand-off sentence; code_gap: check_parts added a gap.
     #292 synthesis (prompt v7): aspect: a cited sentence with the part's aspect id cites one of the cell's counting
     items or derivation inputs (one sentence may cover several cells). #292 brief (v8): evidence_list: a holding cell the answer does not
-    cite is covered by the evidence list under the answer (#291), so it gets no part gap."""
+    cite is covered by the evidence list under the answer (#291), so it gets no part gap. #297 asked (v9): only a
+    holding cell the question did not ask for (asked_cell) gets evidence_list; an asked one no sentence covers is
+    "none" (a part gap). The check is on citations, not on what the sentence says."""
     ids = [p.id for p in plan.parts]
     known = {h.chunk_id: h for h in hits}
 
@@ -265,7 +267,7 @@ def part_coverage(answer: Answer, plan, hits: list[Hit], matrix=None, synthesis:
             out[p.id] = "handoff"
         elif synthesis and _aspect_sentence(p.id, items, matrix, known):
             out[p.id] = "aspect"
-        elif brief and _holds(p.id, matrix):
+        elif brief and _holds(p.id, matrix) and not (asked and asked_cell(p.id, matrix)):
             out[p.id] = "evidence_list"
         else:
             out[p.id] = _matrix_state(p.id, answer, matrix, known) or "none"
@@ -278,6 +280,21 @@ def _holds(pid: str, matrix) -> bool:
     return cell is not None and holds(cell)
 
 
+def asked_cell(pid: str, matrix) -> bool:
+    """#297 v9: the question asked for this cell: it holds a fact or an accepted derivation, its aspect is not a
+    comparison and not a proxy, and its role is named, all or research, or competitor with the firm in the aspect's
+    asked_firms (the planner asked for that competitor, Q19 a7; not the home-firm "competitors kept" widening)."""
+    cell = matrix.cells.get(pid) if matrix is not None else None
+    if cell is None or not _holds(pid, matrix):
+        return False
+    a = matrix.aspect(cell.aspect_id)
+    if a is None or a.kind == "comparison" or getattr(a, "proxy", False):
+        return False
+    if cell.role in ("named", "all", "research"):
+        return True
+    return cell.role == "competitor" and cell.entity in (getattr(a, "asked_firms", None) or [])
+
+
 def _aspect_sentence(pid: str, items, matrix, known: dict) -> bool:
     """#292: a claim with the cell's aspect id as part_id cites a retrieved chunk of the cell's own evidence."""
     cell = matrix.cells.get(pid) if matrix is not None else None
@@ -288,7 +305,7 @@ def _aspect_sentence(pid: str, items, matrix, known: dict) -> bool:
 
 
 def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "", matrix=None,
-                synthesis: bool = False, brief: bool = False) -> Answer:
+                synthesis: bool = False, brief: bool = False, asked: bool = False) -> Answer:
     """Every planned part has a cited claim, a cited adjacent item or a gap; a part with none gets
     a code-built gap flagged part_gap (#215, ground rule 3). The wording comes from the part's
     candidate pool before exclusion: 0 -> "No evidence retrieved for", else (or unknown) "Not
@@ -298,7 +315,7 @@ def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "", matri
         return answer
     pools = _part_pools(plan)
     for p in plan.parts:
-        if part_coverage(answer, plan, hits, matrix, synthesis, brief)[p.id] != "none":
+        if part_coverage(answer, plan, hits, matrix, synthesis, brief, asked)[p.id] != "none":
             continue
         wording = PART_NO_EVIDENCE if pools.get(p.id) == 0 else PART_NOT_ANSWERED
         answer.gaps.append(Gap(what=wording.format(part=_part_label(p, question)),

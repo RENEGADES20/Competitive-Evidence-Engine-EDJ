@@ -156,7 +156,8 @@ def _nonneg_float(name: str, default: float) -> float:
 
 
 DEEPSEEK_IDLE_S_DEFAULT = 120.0   # #275: seconds without a streamed chunk before a call is aborted
-REDUCE_PROMPTS = ("v5.2", "v5.3", "v7", "v8")   # #292: v7 = direct answer plus cited synthesis; v8 = brief
+REDUCE_PROMPTS = ("v5.2", "v5.3", "v7", "v8", "v9")   # #292: v7 = direct answer plus cited synthesis; v8 = brief;
+# #297: v9 = length follows the question, asked cells covered
 REDUCE_PROMPT_DEFAULT = "v8"   # #292: v8 passed the plan rule at reduce effort low (docs/results/w13-reduce-synthesis.md)
 
 
