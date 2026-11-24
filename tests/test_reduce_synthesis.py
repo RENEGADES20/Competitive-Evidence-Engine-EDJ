@@ -64,9 +64,9 @@ def test_ask_page_uses_the_same_rule_for_the_streamed_and_the_final_answer(v7):
 
 # --- version, prompt and message --------------------------------------------------------------------
 
-def test_v52_request_is_unchanged_and_the_default_is_v8(monkeypatch):
+def test_v52_request_is_unchanged_and_the_default_is_v52(monkeypatch):
     monkeypatch.delenv("REDUCE_PROMPT", raising=False)
-    assert R.prompt_version() == "v8"   # #292: v8 passed the plan rule at reduce effort low
+    assert R.prompt_version() == "v5.2"   # #297: v9 failed Gate 3 (19/30), the default is v5.2 again
     monkeypatch.setenv("REDUCE_PROMPT", "v5.2")
     m = two_firm()
     assert R.prompt_version(m, query_of(m)) == "v5.2" and R.system_prompt(m, query_of(m)) == P.SYSTEM_PROMPT_V5

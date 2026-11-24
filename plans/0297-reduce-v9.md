@@ -85,8 +85,8 @@ code (per-form effort, fallback) is not needed at uniform `low` and is not taken
 - Asked-but-uncited cells now show visible "Not answered ..." gaps, which scorers may penalise.
 
 ## Acceptance
-- [ ] pytest green (CI), with the step-1 tests. Mock eval and Q19 check as step 2; verify-cee on mock as step 3.
-- [ ] Gate 3 scored, decision rule applied, latency / tokens / cost reported as step 7.
+- [x] pytest green (1223 local; CI on the PR), with the step-1 tests. Mock eval and Q19 check as step 2; verify-cee on mock as step 3.
+- [x] Gate 3 scored, decision rule applied, latency / tokens / cost reported as step 7.
 
 ## Paid calls
 - **28** new `deepseek-v4-pro` reduce calls (Q1-Q30 minus Q26, Q27), one run, `--max-calls` = the count. No plan,
@@ -101,3 +101,13 @@ code (per-form effort, fallback) is not needed at uniform `low` and is not taken
 - 2026-11-23 - plan review CHANGES REQUESTED (issue comment 7123145488): Q26 / Q27 carry #272 verdicts; borderline
   and second read defined; stricter bar stated; Risks added; Q19 roles dumped (0 calls), competitor cells in
   `asked_firms` are asked; Q22 / Q23 rules in the prompt; citation-not-content test. Amended. 0 calls.
+- 2026-11-23 - plan approved (issue comment 7123192555). Code + 6 tests (f8edf82); pytest 1223 passed.
+- 2026-11-23 23:59 - mock fts Q1-Q30 (cmp_mock.py of #292): v8 gate = main 30/30 on rule and #272 plans; v9 vs v8:
+  Q26, Q27 identical, worse 0 on both. verify-cee on mock, `REDUCE_PROMPT=v9`: ask-answer, ask-layout, ask-progress
+  PASS (`.verify-runs/20261123-235950-f42762e`). Q19 roles: a7.SCHW asked, none missed.
+- 2026-11-24 00:06 - count g3-count at gate f8edf82: 517 reused, 28 new reduce keys (= plan). Paid run g3-run
+  started, `--max-calls 28`, not waiting for off-peak (TL instruction).
+- 2026-11-24 01:32 (07:32 UTC, peak) - g3-run done: 28 calls, $2.028, none failed; reduce wall p50 185 s / p90 254 s.
+- 2026-11-24 - blind scoring (four fresh Sonnet scorers): 19/30, text-only 19/30; borderline FAILs Q3, Q8, Q28, so
+  at most 22/30. Fail: default back to `v5.2` (decision rule); v9 behind `REDUCE_PROMPT`. Tests that assumed the v8
+  default re-pinned to v5.2.

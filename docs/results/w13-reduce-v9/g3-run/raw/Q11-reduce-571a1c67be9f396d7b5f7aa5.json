@@ -1,0 +1,273 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "reduce_version": "v9",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-SUPP-2020Q4#1",
+    "MS-ADV1A-2026#1",
+    "SCHW-ADV1A-2026#1",
+    "SCHW-10Q-2026Q1#22",
+    "SCHW-10Q-2026Q2#25",
+    "SCHW-10K-2025#18",
+    "SCHW-TR-2026Q1#4",
+    "SCHW-10Q-2026Q2#71",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q3#86",
+    "EDJ-10Q-2026Q1#61",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10K-2025#148",
+    "EDJ-10Q-2026Q1#62",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-DECK-2025-investor-day#9",
+    "RJF-10K-2025#227",
+    "RJF-10K-2025#12",
+    "RJF-10K-2025#228",
+    "RJF-10K-2025#24",
+    "RJF-10K-2025#23"
+  ],
+  "schema_fallback": [],
+  "enum_values": 140,
+  "at": "2026-11-24T00:31:18.202199-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 16234,
+    "output_tokens": 12947,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 14570,
+    "reasoning_tokens": 10802,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.09
+  },
+  "wall_s": 157.64,
+  "tokens_per_s": 82.13,
+  "ttft_s": 2.09,
+  "reasoning_content": "Let me work through this carefully. I need to write the answer following the strict rules.\n\nThe question asks about how each of the five firms define and report advisor headcount, and what each definition includes/excludes.\n\nThe behavior is \"answer\", with the answerable quantity in the listed cells. I need to write claims for the cells with facts, adjacent items for \"adjacent only\" cells, and let code gaps handle \"not found\" cells (I don't repeat them).\n\nLet me go through each aspect and firm.\n\nAspects:\n- a1: How the firm defines advisor headcount\n- a2: The advisor headcount figure the firm reports\n- a3: What the definition includes\n- a4: What the definition excludes\n- a5: How the firm reports and discloses advisor headcount\n\nFirms: MS, SCHW, EDJ, MER, RJF\n\nLet me map cells:\n\na1 (definition):\n- a1.MS: code gap (not found)\n- a1.SCHW: code gap (not found)\n- a1.EDJ: code gap (not found)\n- a1.MER: fact (BAC-SUPP-2023Q4#2)\n- a1.RJF: fact (multiple items)\n\na2 (figure):\n- a2.MS: fact (MS-SUPP-2020Q4#1)\n- a2.SCHW: adjacent only (different quantity)\n- a2.EDJ: fact\n- a2.MER: fact\n- a2.RJF: fact\n\na3 (includes):\n- a3.MS: adjacent only\n- a3.SCHW: fact\n- a3.EDJ: code gap (not found)\n- a3.MER: fact\n- a3.RJF: fact\n\na4 (excludes):\n- a4.MS: adjacent only\n- a4.SCHW: code gap\n- a4.EDJ: code gap\n- a4.MER: code gap\n- a4.RJF: fact\n\na5 (reporting):\n- a5.MS: fact\n- a5.SCHW: fact\n- a5.EDJ: fact\n- a5.MER: fact\n- a5.RJF: fact\n\nSo I need to write claims for all the \"fact\" cells, adjacent items for \"adjacent only\" cells, and NOT write gaps (code adds those).\n\nLet me organize my answer.\n\nFirst, claim 1 answers the question directly. Then one sentence per aspect/firm.\n\nLet me write the claims carefully. Each claim is one sentence citing chunk ids.\n\nLet me think about the structure. The question asks: \"How does each of the five define and report advisor headcount -- and what does each definition include or exclude?\"\n\nSo I need to cover a1-a5 for each firm.\n\nLet me write claims.\n\nClaim 1 (headline answer): This needs to cite items. The answer is essentially that the five firms define advisor headcount differently. I'll write a summary sentence citing key items.\n\nActually, let me just start with a headline answer then go through each aspect.\n\nLet me be careful about part_ids. Each claim needs a part_id. The part_id for a sentence about one cell is the cell id (e.g., a1.MER). The part_id for a sentence spanning firms is the aspect id (e.g., a1).\n\nLet me structure:\n\nHeadline claim (part_id \"\" or a1?): Actually the instruction says \"Claim 1 answers the question directly... MUST cite the items it rests on.\" The part_id could be \"\" (empty). Let me use \"\" for the headline.\n\nActually looking at the enum, \"\" is an option for part_id. Let me use \"\" for the headline sentence.\n\nThen for each cell, write a claim with that cell's part_id.\n\nLet me write everything.\n\nHeadline: The five firms define and report advisor headcount differently \u2014 Morgan Stanley reports \"Wealth Management representatives,\" Edward Jones reports \"Financial advisors (actual),\" Merrill (Bank of America) reports \"Total wealth advisors\" across GWIM and Consumer Banking, Raymond James reports \"Total advisors\" as employee plus independent contractor advisors, and Schwab publishes no dedicated advisor headcount figure.\n\nLet me cite the items. This spans firms. I'll cite the relevant chunks: MS-SUPP-2020Q4#1, EDJ-10K-2025#130, BAC-SUPP-2023Q4#2, RJF-10K-2025#227, SCHW-ADV1A-2026#1 (or the adjacent). Actually Schwab's adjacent is the Form ADV figure. Let me cite what's relevant.\n\nLet me now write each cell's claim.\n\n**a1.MS**: gap (skip, code adds)\n\n**a1.SCHW**: gap (skip)\n\n**a1.EDJ**: gap (skip)\n\n**a1.MER**: Bank of America reports a \"Total wealth advisors\" figure at period end, defined as including advisors across all wealth management businesses in GWIM and Consumer Banking. Cite BAC-SUPP-2023Q4#2. part_id a1.MER.\n\n**a1.RJF**: Raymond James reports \"Total advisors\" as the sum of employee financial advisors (\"Employees\") and independent contractor advisors (\"Independent contractors\"). Cite RJF-10K-2025#227. part_id a1.RJF.\n\nAlso RJF item 2,3 about RCS exclusion \u2014 that goes in a4 (excludes) mainly, but a1 also has items about excluding RCS. Actually a1.RJF has 4 items. The definition is the sum of two categories; also excludes RCS advisors. Let me write:\n\na1.RJF: Raymond James reports \"Total advisors\" as the sum of employee financial advisors and independent contractor advisors. Cite RJF-10K-2025#227.\n\nAnd another sentence about exclusion? The exclusion is more of a4. But a1 item 2 and 3 also describe the definition. I could write a second sentence. Actually, to keep it clean, I'll write:\n\na1.RJF claim 1: Raymond James reports financial advisor headcount as \"Total advisors,\" the sum of employee financial advisors and independent contractor advisors. [RJF-10K-2025#227]\n\na1.RJF claim 2: Raymond James excludes financial advisors associated with firms in its RCS division from its financial advisor counts, although their client assets are included in AUA. [RJF-10K-2025#12, RJF-10K-2025#228]\n\nBoth part_id a1.RJF. That's fine \u2014 multiple claims with same part_id.\n\nActually wait, I need to think about whether to be economical. The instruction says \"one cited sentence per asked item.\" For a1.RJF there are 4 items. I can write a couple sentences. Let me write 2-3 sentences covering the key definition points.\n\n**a2.MS**: Morgan Stanley reported 15,950 Wealth Management representatives for the quarter ended December 31, 2020, its advisor headcount figure. Cite MS-SUPP-2020Q4#1. part_id a2.MS.\n\nActually there are 3 items (15,950; 15,469; 15,468). The instruction says \"When the items give several periods for the same figure, state the newest one unless the question asks for a series.\" So I state the newest: 15,950. But I could mention the series briefly. Let me state the newest one and maybe note the prior periods. Actually to be safe, state newest: 15,950.\n\na2.MS: Morgan Stanley reported 15,950 Wealth Management representatives for the quarter ended December 31, 2020 (with 15,469 for September 30, 2020 and 15,468 for December 31, 2019). Cite MS-SUPP-2020Q4#1.\n\nHmm, but each claim is ONE sentence. I can do that in one sentence.\n\n**a2.SCHW**: adjacent only. Goes in adjacent. differs_because given by code.\n\n**a2.EDJ**: Edward Jones reported 20,425 financial advisors (actual) at year end 2025. Cite EDJ-10K-2025#130. part_id a2.EDJ. Newest period. There are many items (quarters). State newest: 20,514 at June 26, 2026 (period end). Actually the newest item is item 11: 20,514 at June 26, 2026. But item 1 is 20,425 at year end 2025 (Dec 31, 2025).\n\nWhich is newest? June 26, 2026 is newer than Dec 31, 2025. So newest figure is 20,514 (June 26, 2026).\n\nBut the 10-K (year end) is a different reporting. The instruction: \"When the items give several periods for the same figure, state the newest one.\" So I should state 20,514 at June 26, 2026.\n\nHmm, but there's nuance. Let me state the newest: 20,514 financial advisors at period end June 26, 2026.\n\nActually let me include both the period-end and average if relevant. The question is about the figure they report. Let me state newest period-end figure: 20,514 at June 26, 2026 (cite EDJ-10Q-2026Q2#60).\n\nActually, I want to be careful. Let me give the most recent figure. a2.EDJ: Edward Jones reported 20,514 financial advisors at period end (June 26, 2026) and an average of 20,537 for the second quarter of 2026. Cite EDJ-10Q-2026Q2#60.\n\nThat's one sentence with two figures.\n\n**a2.MER**: Bank of America reports \"Total wealth advisors\" at period end of 18,916 at December 31, 2023. Cite BAC-SUPP-2023Q4#2. part_id a2.MER. Newest is 18,916 (Dec 31, 2023). Item 6 is the investor day >15K combined Merrill and Private Bank. That's a different scope. I'll state the newest period-end: 18,916.\n\na2.MER: Bank of America reported \"Total wealth advisors\" at period end of 18,916 at December 31, 2023, defined as including advisors across all wealth management businesses in GWIM and Consumer Banking. Cite BAC-SUPP-2023Q4#2.\n\n**a2.RJF**: Raymond James reported 8,943 total financial advisors as of September 30, 2025. Cite RJF-10K-2025#227. part_id a2.RJF. Newest is 8,943.\n\na2.RJF: Raymond James reported 8,943 total financial advisors as of September 30, 2025, comprising 3,878 employee financial advisors and 5,065 independent contractor financial advisors. Cite RJF-10K-2025#227.\n\n**a3.MS**: adjacent only. differs_because given.\n\n**a3.SCHW**: fact. Schwab states growth in headcount includes growth in financial consultants and wealth advisors. Also describes advisory roles as Financial Consultants, Active Trader Financial Consultants, and Wealth Consultants.\n\na3.SCHW: Schwab states that growth in its headcount includes growth in financial consultants and wealth advisors, which it attributes to supporting its expanding client base. Cite SCHW-10Q-2026Q1#22.\n\nAnother: a3.SCHW: Schwab describes its investor-facing advisory roles as Financial Consultants, Active Trader Financial Consultants, and Wealth Consultants, who provide guidance and relationship management. Cite SCHW-10K-2025#18.\n\nAlso the transcript item: continuing to hire financial consultants and wealth advisers. Cite SCHW-TR-2026Q1#4.\n\nAnd SCHW-10Q-2026Q2#25: compensation expense growth from headcount including financial consultants and wealth advisors.\n\nI'll write a few sentences. Let me write 2-3 sentences.\n\n**a3.EDJ**: gap (skip)\n\n**a3.MER**: fact. Merrill (Bank of America) reports \"Total wealth advisors\" at period end, which includes advisors across all wealth management businesses in GWIM and Consumer Banking. Cite BAC-SUPP-2023Q4#2. part_id a3.MER.\n\n**a3.RJF**: fact. Raymond James reports its advisor headcount as the sum of employee and independent contractor financial advisors. Cite RJF-10K-2025#227.\n\nAlso: employee financial advisors are counted within associates; independent contractors are \"independent advisors.\" Cite RJF-10K-2025#24, RJF-10K-2025#23.\n\n**a4.MS**: adjacent only.\n\n**a4.SCHW**: gap\n**a4.EDJ**: gap\n**a4.MER**: gap\n\n**a4.RJF**: fact. Raymond James states that financial advisors associated with firms in its RCS division are not included in its financial advisor counts, although their client assets are included in AUA. Cite RJF-10K-2025#12, RJF-10K-2025#228. part_id a4.RJF.\n\n**a5.MS**: fact. Morgan Stanley disclosed \"Wealth Management representatives\" of 15,950 as of December 31, 2020 in its Wealth Management Metrics. Cite MS-SUPP-2020Q4#1. part_id a5.MS.\n\n**a5.SCHW**: fact. Schwab's filings attribute compensation and benefits expense growth to growth in headcount including financial consultants and wealth advisors, without disclosing a specific advisor headcount figure. Cite SCHW-10Q-2026Q2#71.\n\nAlso ADV filing reports employees by function. Cite SCHW-ADV1A-2026#1.\n\n**a5.EDJ**: fact. Edward Jones reports financial advisor headcount as \"Financial advisors (actual),\" disclosing both period-end and average, split between U.S. and Canada. Cite EDJ-10K-2025#130, EDJ-10K-2025#148, EDJ-10Q-2026Q1#62.\n\n**a5.MER**: fact. Bank of America's GWIM Key Indicators report advisor headcount as \"Total wealth advisors\" at period end. Cite BAC-SUPP-2023Q4#2.\n\n**a5.RJF**: fact. Raymond James reports advisor headcount as \"Financial advisors\" broken into \"Employees\" and \"Independent contractors\" with a \"Total advisors\" line, as of each September 30. Cite RJF-10K-2025#227.\n\nNow let me write the adjacent items. Each adjacent item needs text, chunk_ids, part_id, differs_because (in my words with same meaning as code's differs_because).\n\nAdjacent cells:\n1. a2.SCHW (different quantity): differs because 'Schwab does not report a dedicated 'advisor headcount' figure...' \n\nThe adjacent items are the 4 items listed under a2.SCHW. Wait, but the instruction says \"one adjacent item per cell.\" Actually let me re-read: \"A cell marked 'adjacent only' goes in adjacent, never in claims, one adjacent item per cell, each with differs_because from the cell.\"\n\nHmm, but a2.SCHW has 4 items listed. Wait, let me re-read. The a2.SCHW cell has a \"different quantity (adjacent only)\" with differs_because, and then 4 items listed.\n\nActually, I think \"one adjacent item per cell\" means one adjacent entry per cell. But the items are multiple. Let me re-read the instruction more carefully.\n\n\"adjacent: ... one adjacent item per cell, each with differs_because from the cell, in your words with the same meaning.\"\n\nHmm, but there might be multiple items per cell. Actually I think I should create one adjacent entry per cell, incorporating the items. But the items might be multiple distinct adjacent figures.\n\nWait, let me look at the a2.SCHW items: 4 items (30,690 employees; 4,127 advisory functions; 16,763 registered reps; 6,584 IARs). These are all from SCHW-ADV1A-2026#1.\n\nFor a3.MS: 4 items (29,481 employees; 13,000 advisory; 26,985 registered reps; 23,077 IARs). From MS-ADV1A-2026#1.\n\nFor a4.MS: 1 item (29,481 employees). From MS-ADV1A-2026#1.\n\nThe instruction says \"one adjacent item per cell.\" But there are multiple items. Hmm. I think the intent is to provide the adjacent information concisely. Let me create one adjacent entry per cell that captures the key adjacent figure.\n\nActually, re-reading: \"A cell marked 'adjacent only' goes in adjacent, never in claims, one adjacent item per cell, each with differs_because from the cell, in your words with the same meaning.\"\n\nI think \"one adjacent item per cell\" means one adjacent entry per cell. So for a2.SCHW, I create one adjacent entry summarizing the adjacent figures (or the closest one). The differs_because is the same for all items in that cell.\n\nBut which figure to highlight? The closest disclosed figure. For a2.SCHW, the code gap says: \"the closest disclosed figure is Schwab's Form ADV Part 1A reports approximately 30,690 employees, including full- and part-time employees but excluding clerical workers (adjacent).\"\n\nSo the adjacent is about 30,690 employees (and the related registration category figures).\n\nI think I can write one adjacent entry per cell with the key figure(s) and the differs_because. Let me write them concisely.\n\nActually, let me reconsider. The adjacent array takes multiple items. I could put multiple adjacent entries, but the instruction says \"one adjacent item per cell.\" So one per cell.\n\nLet me write:\n\na2.SCHW adjacent: Schwab's Form ADV Part 1A reports approximately 30,690 employees (including full- and part-time employees but excluding clerical workers), of which approximately 4,127 perform investment advisory functions (including research) and 6,584 are investment adviser representatives. Cite SCHW-ADV1A-2026#1. differs_because: \"Schwab does not report a dedicated 'advisor headcount' figure; these are Form ADV regulatory disclosures of total employees and employees by function, not an advisor headcount.\"\n\nWait, but I need to be careful about combining items into one sentence. The instruction says \"never run a list of items inside one sentence.\" Hmm, but that's for claims. For adjacent, is it the same? Let me check.\n\nActually the adjacent items - let me think. The instruction \"Never run a list of items inside one sentence; write one sentence per item instead\" is under Shape section which applies generally.\n\nHmm, but for adjacent, \"one adjacent item per cell.\" So one adjacent entry per cell. But within that entry, the text should be... one sentence?\n\nLet me just write one adjacent entry per cell, with a single sentence (or a couple) capturing the key adjacent info, and the differs_because.\n\nActually, let me simplify. For each adjacent cell, write one adjacent entry with a concise text and the differs_because.\n\nLet me reconsider the number of adjacent items. Actually, I realize I might be overcomplicating. Let me create one adjacent entry per adjacent cell.\n\na2.SCHW: 1 adjacent entry.\na3.MS: 1 adjacent entry.\na4.MS: 1 adjacent entry.\n\nLet me write them.\n\nFor a2.SCHW adjacent text: \"Schwab's Form ADV Part 1A reports approximately 30,690 employees (including full- and part-time employees but excluding clerical workers), with approximately 4,127 performing investment advisory functions (including research), 16,763 registered representatives of a broker-dealer, and 6,584 investment adviser representatives.\"\n\nHmm that's a list. But it's within one adjacent entry. Let me keep it as a sentence; the \"never run a list\" rule is strict though. Let me write separate sentences? But adjacent entry text is a single string.\n\nActually, I think for adjacent I can be a bit more concise. Let me focus on the closest figure as the code gap states. The code gap for a2.SCHW says closest is 30,690 employees. So:\n\na2.SCHW adjacent: \"Schwab's Form ADV Part 1A reports approximately 30,690 employees, a count including full- and part-time employees but excluding clerical workers; the same filing reports 4,127 employees perform investment advisory functions (including research) and 6,584 are investment adviser representatives.\" Cite SCHW-ADV1A-2026#1. differs_because: \"Schwab does not report a dedicated advisor headcount figure; these are Form ADV regulatory disclosures of total employees and employees by function, which are different measures from an advisor headcount.\"\n\nOK let me keep it as one text string with maybe two sentences.\n\nActually, the text field is a single string, and I can include multiple sentences in it. Let me keep it concise.\n\nLet me also handle the \"quote not verbatim\" notes \u2014 never put those in quotation marks. And \"figure not found in its passage\" \u2014 keep figure out.\n\nFor a5.MER item 4: \"figure not found in its passage: do not state this figure.\" So I must NOT state the >15K figure. Good, I'll skip that.\n\nNow let me also think about the headline claim (claim 1).\n\nLet me write the full answer now.\n\nLet me draft all claims in order:\n\n**Headline (part_id \"\"):**\n\"The five firms define and report advisor headcount differently: Morgan Stanley reports 'Wealth Management representatives,' Edward Jones reports 'Financial advisors (actual),' Merrill (Bank of America) reports 'Total wealth advisors' across GWIM and Consumer Banking, Raymond James reports 'Total advisors' as employee plus independent contractor advisors, and Schwab publishes no dedicated advisor headcount figure.\"\n\nCite: MS-SUPP-2020Q4#1, EDJ-10K-2025#130, BAC-SUPP-2023Q4#2, RJF-10K-2025#227, SCHW-ADV1A-2026#1.\n\nHmm, but I shouldn't use quotation marks for quote-not-verbatim. The \"Total wealth advisors\" and \"Financial advisors (actual)\" and \"Wealth Management representatives\" are actual labels from the quotes. \"Total advisors\" is from RJF. These are actual terms, so quotation marks are OK (they're the firm's own terms, and the quotes are verbatim labels). Actually BAC-SUPP-2023Q4#2 is marked \"quote not verbatim\" for the full quote, but the term \"Total wealth advisors\" appears verbatim. I think using the term is fine, but I should be careful. The rule: \"An item marked 'quote not verbatim' is never put in quotation marks.\" This refers to the specific quote. The term \"Total wealth advisors\" is a metric label that appears verbatim in the quote. I'll use it without concern, or I could avoid quotes entirely and just use the terms.\n\nActually, to be safe, I'll use the firms' own terms but maybe without quotation marks where there's ambiguity. Let me just use the terms naturally. The instruction says \"Use each firm's own terms.\" I can use them without quotation marks or with. Let me use them in a natural way.\n\nLet me write the headline without quotation marks to be safe:\n\n\"The five firms define and report advisor headcount differently: Morgan Stanley reports Wealth Management representatives, Edward Jones reports Financial advisors (actual), Merrill (Bank of America) reports Total wealth advisors across GWIM and Consumer Banking, Raymond James reports Total advisors as the sum of employee and independent contractor advisors, and Schwab publishes no dedicated advisor headcount figure.\"\n\nNow the per-cell claims.\n\nLet me also reconsider: should I write claims grouped by aspect or by firm? The question asks \"How does each of the five define and report...\". The instruction for \"for each firm\" says one cited sentence per firm. But here the question is multifaceted (5 aspects). \n\nThe part_ids are per-cell (a1.MER, a2.MS, etc.) or per-aspect (a1, a2...). So I should write per-cell claims. Let me go aspect by aspect, firm by firm, writing each cell's claim with its cell part_id.\n\nActually, I realize the part_id for a claim must be one of the enum values. For single-cell claims, use the cell id (a2.MS etc.). For spanning claims, use aspect id (a1, a2...).\n\nLet me write claims for each \"fact\" cell.\n\nLet me list all fact cells and write claims:\n\na1.MER (fact):\n\"Bank of America reports a Total wealth advisors figure at period end, defined as including advisors across all wealth management businesses in GWIM and Consumer Banking.\" [BAC-SUPP-2023Q4#2]\n\na1.RJF (fact, 4 items):\n\"Raymond James reports Total advisors as the sum of employee financial advisors and independent contractor financial advisors.\" [RJF-10K-2025#227]\n\"Raymond James excludes financial advisors associated with firms in its RCS division from its financial advisor counts, although their client assets are included in AUA.\" [RJF-10K-2025#12, RJF-10K-2025#228]\n\na2.MS (fact):\n\"Morgan Stanley reported 15,950 Wealth Management representatives for the quarter ended December 31, 2020, following 15,469 for September 30, 2020 and 15,468 for December 31, 2019.\" [MS-SUPP-2020Q4#1]\n\na2.EDJ (fact):\n\"Edward Jones reported 20,514 financial advisors at period end June 26, 2026 and an average of 20,537 for the second quarter of 2026.\" [EDJ-10Q-2026Q2#60]\n\nHmm, actually let me reconsider. The newest period-end figure across all items: item 11 (20,514, June 26, 2026) is newest. Item 9 is 20,550 March 27, 2026. Item 1 is 20,425 Dec 31, 2025.\n\nWait, June 26, 2026 (20,514) is after March 27, 2026 (20,550). So newest is 20,514 at June 26, 2026.\n\nActually wait, let me re-check the dates. EDJ fiscal year: period end dates. EDJ-10Q-2026Q2#60: \"20,514 at period end (June 26, 2026)\". EDJ-10Q-2026Q1#61: \"20,550 at March 27, 2026\". So June 26, 2026 is later. Newest = 20,514.\n\nHmm but that's odd that it went down from 20,550 to 20,514. Whatever, I just report the newest.\n\nActually, let me reconsider. The 10-K is annual (year end Dec 31, 2025). The 10-Qs are more recent. The newest single figure is 20,514 (June 26, 2026).\n\nLet me state: \"Edward Jones reported 20,514 financial advisors at period end June 26, 2026.\" Cite EDJ-10Q-2026Q2#60.\n\nI'll also mention the average maybe. But keep it simple. The question is about the figure they report. Let me give the newest period-end figure.\n\nActually, I could also note year end 2025 figure of 20,425 since that's a \"year end\" figure from the 10-K. But the newest is June 26, 2026. Let me just state newest.\n\na2.MER (fact):\n\"Bank of America reported Total wealth advisors at period end of 18,916 at December 31, 2023, defined as including advisors across all wealth management businesses in GWIM and Consumer Banking.\" [BAC-SUPP-2023Q4#2]\n\na2.RJF (fact):\n\"Raymond James reported 8,943 total financial advisors as of September 30, 2025, comprising 3,878 employee financial advisors and 5,065 independent contractor financial advisors.\" [RJF-10K-2025#227]\n\na3.SCHW (fact, 4 items):\n\"Schwab states that growth in its headcount includes growth in financial consultants and wealth advisors, attributed to supporting its expanding client base.\" [SCHW-10Q-2026Q1#22]\n\"Schwab describes its investor-facing advisory roles as Financial Consultants, Active Trader Financial Consultants, and Wealth Consultants, who provide guidance and relationship management.\" [SCHW-10K-2025#18]\n\na3.MER (fact):\n\"Bank of America's Total wealth advisors at period end includes advisors across all wealth management businesses in GWIM and Consumer Banking.\" [BAC-SUPP-2023Q4#2]\n\na3.RJF (fact, 4 items):\n\"Raymond James reports its financial advisor headcount as the sum of employee financial advisors and independent contractor financial advisors, shown as Total advisors.\" [RJF-10K-2025#227]\n\"As of September 30, 2025, Raymond James had approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors.\" [RJF-10K-2025#24]\n\"Raymond James's independent contractor financial advisors, which it calls independent advisors, are included in its advisor counts.\" [RJF-10K-2025#23]\n\na4.RJF (fact, 2 items):\n\"Raymond James states that financial advisors associated with firms in its RCS (RIA & Custody Services) division are not included in its financial advisor counts, although their client assets are included in AUA.\" [RJF-10K-2025#12, RJF-10K-2025#228]\n\na5.MS (fact):\n\"Morgan Stanley disclosed Wealth Management representatives of 15,950 as of December 31, 2020 in its Wealth Management Metrics.\" [MS-SUPP-2020Q4#1]\n\na5.SCHW (fact, 5 items):\n\"Schwab's filings attribute compensation and benefits expense growth to growth in headcount, including financial consultants and wealth advisors, without disclosing a specific advisor headcount figure.\" [SCHW-10Q-2026Q2#71]\n\"Schwab's Form ADV Part 1A reports 30,690 employees, defined as including full- and part-time employees but excluding clerical workers, with 4,127 performing investment advisory functions (including research) and 6,584 registered as investment adviser representatives.\" [SCHW-ADV1A-2026#1]\n\nHmm, that second one is a list. Let me split or keep concise. Actually it's within one sentence with commas. Let me keep it but maybe split.\n\nActually, let me reconsider. I'll write two sentences:\n\"Schwab's Form ADV Part 1A reports 30,690 employees, defined as including full- and part-time employees but excluding clerical workers.\" [SCHW-ADV1A-2026#1]\n\"Schwab's Form ADV Part 1A reports 4,127 employees perform investment advisory functions (including research) and 6,584 are investment adviser representatives.\" [SCHW-ADV1A-2026#1]\n\na5.EDJ (fact, 5 items):\n\"Edward Jones reports financial advisor headcount as Financial advisors (actual), disclosing both the count at period end and the average for the period, split between U.S. and Canada segments.\" [EDJ-10K-2025#130, EDJ-10K-2025#148, EDJ-10Q-2026Q1#62]\n\"At year end 2025, Edward Jones reported 20,425 financial advisors, with 19,540 in the U.S. segment and 885 in the Canada segment.\" [EDJ-10K-2025#130, EDJ-10K-2025#148]\n\nWait, need to check the 20,425 and the segment split. EDJ-10K-2025#130 has 20,425 at year end. EDJ-10K-2025#148 has U.S. 19,540 and Canada 885. 19,540 + 885 = 20,425. Consistent. Good.\n\na5.MER (fact):\n\"Bank of America's Global Wealth & Investment Management Key Indicators report advisor headcount as Total wealth advisors at period end, defined as including advisors across all wealth management businesses in GWIM and Consumer Banking.\" [BAC-SUPP-2023Q4#2]\n\na5.RJF (fact, 9 items):\n\"Raymond James reports advisor headcount as Financial advisors, broken into Employees and Independent contractors with a Total advisors line, as of each September 30.\" [RJF-10K-2025#227]\n\"Advisors in Raymond James's RCS division are not included in its financial advisor metric, although their client assets are included in PCG AUA.\" [RJF-10K-2025#228]\n\nOK this is getting long but that's expected for a 5-firm \u00d7 5-aspect question.\n\nNow adjacent items:\n\na2.SCHW (adjacent only):\ntext: \"Schwab's Form ADV Part 1A reports approximately 30,690 employees, defined as including full- and part-time employees but excluding clerical workers, and reports 4,127 employees perform investment advisory functions (including research) and 6,584 are investment adviser representatives.\"\nchunk_ids: [SCHW-ADV1A-2026#1]\npart_id: a2.SCHW\ndiffers_because: \"Schwab does not report a dedicated advisor headcount figure; these are Form ADV regulatory disclosures of total employees and employees by function, which are different measures from an advisor headcount.\"\n\na3.MS (adjacent only):\ntext: \"Morgan Stanley's Form ADV reports approximately 29,481 employees, defined as including full- and part-time employees but excluding clerical workers, with 13,000 performing investment advisory functions (including research) and 26,985 registered representatives of a broker-dealer.\"\nchunk_ids: [MS-ADV1A-2026#1]\npart_id: a3.MS\ndiffers_because: \"These are Form ADV regulatory figures measuring total employees and registration categories, not the firm's Wealth Management representatives advisor headcount; no passage defines what Morgan Stanley's advisor headcount itself includes.\"\n\na4.MS (adjacent only):\ntext: \"Morgan Stanley's Form ADV reports approximately 29,481 employees, stating it includes full- and part-time employees but does not include clerical workers.\"\nchunk_ids: [MS-ADV1A-2026#1]\npart_id: a4.MS\ndiffers_because: \"This is the firm's total employee count on Form ADV (which excludes clerical workers), a different measure than its advisor headcount; no passage states what the advisor headcount definition itself excludes.\"\n\nNow, let me also reconsider whether I need a comparison sentence. The aspects are marked \"different_basis\" (not same_basis). The instruction says: \"For each aspect marked comparison, one sentence (part_id that aspect's id) says whether the comparison can be made...\"\n\nWait, let me re-read: \"For each aspect marked comparison, one sentence (part_id that aspect's id) says whether the comparison can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests on.\"\n\nThe aspects have \"Comparability (code): different_basis: the firms define it differently; not compared or combined (caveat added by code)\". So the caveat is added by code. But is there a \"comparison\" aspect I need to write a sentence for?\n\nLooking at the aspects a1-a5, they're all \"fact, metric advisor_headcount\" types. The comparability is noted as \"different_basis\" with caveat added by code. So I don't need to write a comparison sentence \u2014 the code caveats handle it.\n\nActually wait, re-reading the \"comparison\" rule: \"For each aspect marked comparison, one sentence...\" These aspects aren't marked \"comparison\" \u2014 they're \"fact\" aspects with a \"Comparability (code)\" note saying different_basis. The caveat is added by code. So no comparison sentence needed from me.\n\nOK. Let me also double check: do I need to write anything for the \"not found\" gaps? No \u2014 code adds those. I skip them.\n\nSo my gaps array should be empty? Let me check the tool schema: gaps is required. But the instruction says \"Cells with code gaps get no claim; code adds those gaps.\" And \"Gaps added by code (do not repeat them).\"\n\nSo I should NOT add gaps myself. The gaps array should be empty ([]).\n\nWait, but the gaps array is required in the schema. Let me pass an empty array [].\n\nActually, re-reading: \"Cells with code gaps get no claim; code adds those gaps. Add no gap of your own unless those gaps miss something.\"\n\nSo gaps = [].\n\nNow let me finalize the answer.\n\nLet me also reconsider the headline claim part_id. The enum includes \"\". I'll use \"\" for headline.\n\nActually, wait \u2014 should the headline be a claim with part_id \"\"? Or should I just make the first claim one of the firm cells? The instruction says \"Claim 1 answers the question directly (the headline fact, figure or verdict) and MUST cite the items it rests on.\"\n\nI'll write a headline claim with part_id \"\".\n\nLet me also verify all chunk ids I cite are in the allowed list. Yes, all are in Sources.\n\nLet me now also double-check the \"date what you state from its source line\" requirement. For MS figures: \"in the 2020Q4 supplement\" or \"for the quarter ended December 31, 2020\". For EDJ: \"at year end 2025\" or \"in the 2Q26 10-Q\". Let me add dates appropriately.\n\nLet me also be careful: \"Every sentence states what cited items say... Cite only chunk ids listed under Sources.\"\n\nLet me write final text now, being careful.\n\nLet me refine each claim with proper dating and attribution.\n\nFinal claims:\n\n1. Headline (part_id \"\"):\n\"The five firms define and report advisor headcount differently: Morgan Stanley reports Wealth Management representatives, Edward Jones reports Financial advisors (actual), Merrill (Bank of America) reports Total wealth advisors across GWIM and Consumer Banking, Raymond James reports Total advisors as employee plus independent contractor advisors, and Schwab publishes no dedicated advisor headcount figure.\"\nchunks: MS-SUPP-2020Q4#1, EDJ-10K-2025#130, BAC-SUPP-2023Q4#2, RJF-10K-2025#227, SCHW-ADV1A-2026#1\n\n2. a1.MER:\n\"In its 2023 fourth-quarter financial supplement, Bank of America reports a Total wealth advisors figure at period end, defined as including advisors across all wealth management businesses in GWIM and Consumer Banking.\"\nchunks: BAC-SUPP-2023Q4#2\n\n3. a1.RJF (two sentences):\n\"Raymond James reports Total advisors as the sum of employee financial advisors and independent contractor financial advisors.\" [RJF-10K-2025#227]\n\"Raymond James excludes financial advisors associated with firms in its RCS division from its financial advisor counts, although their client assets are included in AUA.\" [RJF-10K-2025#12, RJF-10K-2025#228]\n\n4. a2.MS:\n\"Morgan Stanley reported 15,950 Wealth Management representatives for the quarter ended December 31, 2020, following 15,469 for September 30, 2020 and 15,468 for December 31, 2019.\" [MS-SUPP-2020Q4#1]\n\n5. a2.EDJ:\n\"Edward Jones reported 20,514 financial advisors at period end June 26, 2026, and an average of 20,537 for the second quarter of 2026.\" [EDJ-10Q-2026Q2#60]\n\n6. a2.MER:\n\"Bank of America reported Total wealth advisors at period end of 18,916 at December 31, 2023, defined as including advisors across all wealth management businesses in GWIM and Consumer Banking.\" [BAC-SUPP-2023Q4#2]\n\n7. a2.RJF:\n\"Raymond James reported 8,943 total financial advisors as of September 30, 2025, comprising 3,878 employee financial advisors and 5,065 independent contractor financial advisors.\" [RJF-10K-2025#227]\n\n8. a3.SCHW (two sentences):\n\"Schwab states that growth in its headcount includes growth in financial consultants and wealth advisors, attributed to supporting its expanding client base.\" [SCHW-10Q-2026Q1#22]\n\"Schwab describes its investor-facing advisory roles as Financial Consultants, Active Trader Financial Consultants, and Wealth Consultants, who provide guidance and relationship management.\" [SCHW-10K-2025#18]\n\n9. a3.MER:\n\"Bank of America's Total wealth advisors figure includes advisors across all wealth management businesses in GWIM and Consumer Banking.\" [BAC-SUPP-2023Q4#2]\n\n10. a3.RJF (three sentences):\n\"Raymond James reports its financial advisor headcount as the sum of employee financial advisors and independent contractor financial advisors, shown as Total advisors.\" [RJF-10K-2025#227]\n\"As of September 30, 2025, Raymond James had approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors.\" [RJF-10K-2025#24]\n\"Raymond James's independent contractor financial advisors, which it calls independent advisors, are included in its advisor counts.\" [RJF-10K-2025#23]\n\n11. a4.RJF:\n\"Raymond James states that financial advisors associated with firms in its RCS (RIA & Custody Services) division are not included in its financial advisor counts, although their client assets are included in AUA.\" [RJF-10K-2025#12, RJF-10K-2025#228]\n\n12. a5.MS:\n\"Morgan Stanley disclosed Wealth Management representatives of 15,950 as of December 31, 2020 in its Wealth Management Metrics.\" [MS-SUPP-2020Q4#1]\n\n13. a5.SCHW (three sentences):\n\"Schwab's filings attribute compensation and benefits expense growth to growth in headcount, including financial consultants and wealth advisors, without disclosing a specific advisor headcount figure.\" [SCHW-10Q-2026Q2#71]\n\"Schwab's Form ADV Part 1A reports 30,690 employees, defined as including full- and part-time employees but excluding clerical workers.\" [SCHW-ADV1A-2026#1]\n\"Schwab's Form ADV Part 1A reports 4,127 employees perform investment advisory functions (including research) and 6,584 are investment adviser representatives.\" [SCHW-ADV1A-2026#1]\n\n14. a5.EDJ (two sentences):\n\"Edward Jones reports financial advisor headcount as Financial advisors (actual), disclosing both the count at period end and the average for the period, split between U.S. and Canada segments.\" [EDJ-10K-2025#130, EDJ-10K-2025#148, EDJ-10Q-2026Q1#62]\n\"At year end 2025, Edward Jones reported 20,425 financial advisors, with 19,540 in the U.S. segment and 885 in the Canada segment.\" [EDJ-10K-2025#130, EDJ-10K-2025#148]\n\n15. a5.MER:\n\"Bank of America's Global Wealth & Investment Management Key Indicators report advisor headcount as Total wealth advisors at period end, defined as including advisors across all wealth management businesses in GWIM and Consumer Banking.\" [BAC-SUPP-2023Q4#2]\n\n16. a5.RJF (two sentences):\n\"Raymond James reports advisor headcount as Financial advisors, broken into Employees and Independent contractors with a Total advisors line, as of each September 30.\" [RJF-10K-2025#227]\n\"Advisors in Raymond James's RCS division are not included in its financial advisor metric, although their client assets are included in PCG AUA.\" [RJF-10K-2025#228]\n\nNow adjacent items (3):\n\na2.SCHW, a3.MS, a4.MS.\n\nLet me finalize.\n\nActually, let me reconsider the \"quote not verbatim\" rule for RJF items. a3.RJF item 1 quote is marked \"quote not verbatim: never put it in quotation marks.\" Item 3 also marked. So I don't use quotation marks there. My text doesn't use quotation marks, good.\n\nAlso a5.RJF item 1 quote marked not verbatim. I don't use quotes. Good.\n\nAlso a1.RJF item 1: \"Financial advisor counts comprise 'Employees' and 'Independent contractors,' summed as 'Total advisors.'\" This is the definition text, not a quote issue. My text is fine.\n\nNow, let me also reconsider: the instruction says \"Use each firm's own terms.\" I'm using \"Wealth Management representatives\", \"Financial advisors (actual)\", \"Total wealth advisors\", \"Total advisors\", \"Employees\", \"Independent contractors\". Good.\n\nLet me also verify I'm not stating the >15K Merrill investor day figure (figure not found in passage). I'm not. Good.\n\nOne more consideration: The headline mentions \"Schwab publishes no dedicated advisor headcount figure\" citing SCHW-ADV1A-2026#1. That's the adjacent source. Is that OK? The headline rests on the fact that Schwab only has ADV figures. Actually, the fact that Schwab publishes no dedicated advisor headcount is established by the code gap for a2.SCHW. I can cite SCHW-ADV1A-2026#1 as the source showing what Schwab does report (ADV figures). That's reasonable.\n\nActually, let me reconsider the headline citing. The headline is a summary spanning firms. It should cite items it rests on. For Schwab, the claim \"publishes no dedicated advisor headcount figure\" \u2014 the evidence is the ADV filing showing employee counts. I'll cite SCHW-ADV1A-2026#1.\n\nLet me finalize and submit.\n\nLet me double-check part_id values are all in enum:\n- \"\" for headline \u2713\n- a1.MER \u2713, a1.RJF \u2713\n- a2.MS \u2713, a2.EDJ \u2713, a2.MER \u2713, a2.RJF \u2713\n- a3.SCHW \u2713, a3.MER \u2713, a3.RJF \u2713\n- a4.RJF \u2713\n- a5.MS \u2713, a5.SCHW \u2713, a5.EDJ \u2713, a5.MER \u2713, a5.RJF \u2713\n\nAdjacent part_ids: a2.SCHW \u2713, a3.MS \u2713, a4.MS \u2713.\n\nAll good.\n\nLet me write the final submit.\n\nActually, one more thing about the a2.EDJ - should I also mention the year-end 2025 figure? The question doesn't ask for a series. Newest is June 26, 2026. I'll state that.\n\nAlso, for a2.MS, I'm giving a series (three periods) but the instruction says \"state the newest one unless the question asks for a series.\" I gave a series. Should I just state newest? The instruction says state newest. But it's fine to briefly note prior. Actually, let me just state the newest to be safe: \"Morgan Stanley reported 15,950 Wealth Management representatives for the quarter ended December 31, 2020.\"\n\nBut the a2.MS items explicitly list three. The instruction \"state the newest one unless the question asks for a series\" \u2014 the question doesn't ask for a series. So state newest: 15,950. I'll simplify to just newest, but I could mention the others briefly. Let me just state newest to follow the rule strictly.\n\nActually, I'll keep it simple: just the newest 15,950.\n\nSimilarly a2.EDJ: just newest 20,514.\n\nLet me also reconsider: for a5.MS, the item says 15,950 disclosed. Fine.\n\nLet me finalize.\n\nFor a2.MS claim:\n\"Morgan Stanley reported 15,950 Wealth Management representatives for the quarter ended December 31, 2020.\" [MS-SUPP-2020Q4#1]\n\nFor a2.EDJ claim:\n\"Edward Jones reported 20,514 financial advisors at period end June 26, 2026.\" [EDJ-10Q-2026Q2#60]\n\nI could add the average too but keep it minimal. Actually the question is about \"the advisor headcount figure the firm reports\" \u2014 I'll give the period-end figure. Maybe mention both period-end and average since Edward Jones uniquely reports both. But that's a5 territory. For a2, just the figure.\n\nLet me keep a2.EDJ as: \"Edward Jones reported 20,514 financial advisors at period end June 26, 2026.\" \n\nI'll add average in a5.EDJ which I already did.\n\nOK finalize now. Let me write it all out.\n\nActually, for a2.EDJ, I want to also give the year-end since the headline comparison date matters. But no, just newest.\n\nLet me write everything and submit.",
+  "first_claim_s": 141.56,
+  "stream_items": {
+    "first_claim_s": 141.56,
+    "shown": 24,
+    "held": 3
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "The five firms define and report advisor headcount differently: Morgan Stanley reports Wealth Management representatives, Edward Jones reports Financial advisors (actual), Merrill (Bank of America) reports Total wealth advisors across GWIM and Consumer Banking, Raymond James reports Total advisors as the sum of employee and independent contractor advisors, and Schwab publishes no dedicated advisor headcount figure.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1",
+          "EDJ-10K-2025#130",
+          "BAC-SUPP-2023Q4#2",
+          "RJF-10K-2025#227",
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": ""
+      },
+      {
+        "text": "In its 2023 fourth-quarter financial supplement, Bank of America reports a Total wealth advisors figure at period end, defined as including advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Raymond James reports Total advisors as the sum of employee financial advisors and independent contractor financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James excludes financial advisors associated with firms in its RCS division from its financial advisor counts, although their client assets are included in AUA.",
+        "chunk_ids": [
+          "RJF-10K-2025#12",
+          "RJF-10K-2025#228"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Morgan Stanley reported 15,950 Wealth Management representatives for the quarter ended December 31, 2020.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Edward Jones reported 20,514 financial advisors at period end June 26, 2026.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q2#60"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Bank of America reported Total wealth advisors at period end of 18,916 at December 31, 2023, defined as including advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Raymond James reported 8,943 total financial advisors as of September 30, 2025, comprising 3,878 employee financial advisors and 5,065 independent contractor financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Schwab states that growth in its headcount includes growth in financial consultants and wealth advisors, attributed to supporting its expanding client base.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q1#22"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Schwab describes its investor-facing advisory roles as Financial Consultants, Active Trader Financial Consultants, and Wealth Consultants, who provide guidance and relationship management.",
+        "chunk_ids": [
+          "SCHW-10K-2025#18"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Bank of America's Total wealth advisors figure includes advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Raymond James reports its financial advisor headcount as the sum of employee financial advisors and independent contractor financial advisors, shown as Total advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "As of September 30, 2025, Raymond James had approximately 19,500 associates (including 3,878 employee financial advisors) and 5,065 independent advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#24"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James's independent contractor financial advisors, which it calls independent advisors, are included in its advisor counts.",
+        "chunk_ids": [
+          "RJF-10K-2025#23"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James states that financial advisors associated with firms in its RCS (RIA & Custody Services) division are not included in its financial advisor counts, although their client assets are included in AUA.",
+        "chunk_ids": [
+          "RJF-10K-2025#12",
+          "RJF-10K-2025#228"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "Morgan Stanley disclosed Wealth Management representatives of 15,950 as of December 31, 2020 in its Wealth Management Metrics.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "Schwab's filings attribute compensation and benefits expense growth to growth in headcount, including financial consultants and wealth advisors, without disclosing a specific advisor headcount figure.",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q2#71"
+        ],
+        "part_id": "a5.SCHW"
+      },
+      {
+        "text": "Schwab's Form ADV Part 1A reports 30,690 employees, defined as including full- and part-time employees but excluding clerical workers.",
+        "chunk_ids": [
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": "a5.SCHW"
+      },
+      {
+        "text": "Schwab's Form ADV Part 1A reports 4,127 employees perform investment advisory functions (including research) and 6,584 are investment adviser representatives.",
+        "chunk_ids": [
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": "a5.SCHW"
+      },
+      {
+        "text": "Edward Jones reports financial advisor headcount as Financial advisors (actual), disclosing both the count at period end and the average for the period, split between U.S. and Canada segments.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130",
+          "EDJ-10K-2025#148",
+          "EDJ-10Q-2026Q1#62"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "At year end 2025, Edward Jones reported 20,425 financial advisors, with 19,540 in the U.S. segment and 885 in the Canada segment.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130",
+          "EDJ-10K-2025#148"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Bank of America's Global Wealth & Investment Management Key Indicators report advisor headcount as Total wealth advisors at period end, defined as including advisors across all wealth management businesses in GWIM and Consumer Banking.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a5.MER"
+      },
+      {
+        "text": "Raymond James reports advisor headcount as Financial advisors, broken into Employees and Independent contractors with a Total advisors line, as of each September 30.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Advisors in Raymond James's RCS division are not included in its financial advisor metric, although their client assets are included in PCG AUA.",
+        "chunk_ids": [
+          "RJF-10K-2025#228"
+        ],
+        "part_id": "a5.RJF"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Schwab's Form ADV Part 1A reports approximately 30,690 employees, defined as including full- and part-time employees but excluding clerical workers, and reports 4,127 employees perform investment advisory functions (including research) and 6,584 are investment adviser representatives.",
+        "chunk_ids": [
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Schwab does not report a dedicated advisor headcount figure; these are Form ADV regulatory disclosures of total employees and employees by function, which are different measures from an advisor headcount."
+      },
+      {
+        "text": "Morgan Stanley's Form ADV reports approximately 29,481 employees, defined as including full- and part-time employees but excluding clerical workers, with 13,000 performing investment advisory functions (including research) and 26,985 registered representatives of a broker-dealer.",
+        "chunk_ids": [
+          "MS-ADV1A-2026#1"
+        ],
+        "part_id": "a3.MS",
+        "differs_because": "These are Form ADV regulatory figures measuring total employees and registration categories, not the firm's Wealth Management representatives advisor headcount; no passage defines what Morgan Stanley's advisor headcount itself includes."
+      },
+      {
+        "text": "Morgan Stanley's Form ADV reports approximately 29,481 employees, stating it includes full- and part-time employees but does not include clerical workers.",
+        "chunk_ids": [
+          "MS-ADV1A-2026#1"
+        ],
+        "part_id": "a4.MS",
+        "differs_because": "This is the firm's total employee count on Form ADV (which excludes clerical workers), a different measure than its advisor headcount; no passage states what the advisor headcount definition itself excludes."
+      }
+    ],
+    "gaps": []
+  }
+}

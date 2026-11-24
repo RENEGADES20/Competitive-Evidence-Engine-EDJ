@@ -256,7 +256,7 @@ def test_prompt_v53_changes_only_the_reduce_key(monkeypatch):
 
     def key():
         return er.reduce_cache_key(qd, "snap", "deepseek", "m", 64000, "v", m, qry)
-    monkeypatch.setenv("REDUCE_PROMPT", "v5.2")   # #292: the default is v8; v5.2 keys unchanged
+    monkeypatch.setenv("REDUCE_PROMPT", "v5.2")   # #297: the default is v5.2 again; v5.2 keys unchanged
     v52 = key()
     assert R.prompt_version() == "v5.2" and R.system_prompt() == P.SYSTEM_PROMPT_V5   # #272 keys unchanged
     monkeypatch.setenv("REDUCE_PROMPT", "v5.3")

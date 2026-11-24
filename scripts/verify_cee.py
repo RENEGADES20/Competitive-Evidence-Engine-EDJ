@@ -446,7 +446,7 @@ def check_footnote_click(rec, page) -> None:
 def check_reduce_version(rec, page, qid: str, want_list: bool) -> None:
     """#292: the reduce version the newest query_log row used: with REDUCE_PROMPT=v7 a list-form question keeps v5.2
     and any other gets v7, its paragraph opening with the mock's direct sentence ("In short: "); else the configured
-    version (default REDUCE_PROMPT_DEFAULT, v8 since #292)."""
+    version (default REDUCE_PROMPT_DEFAULT: v8 from #292, v5.2 again since #297)."""
     from cee.config import REDUCE_PROMPT_DEFAULT
     configured = os.environ.get("REDUCE_PROMPT", "").strip() or REDUCE_PROMPT_DEFAULT
     synth = configured in ("v7", "v8", "v9")

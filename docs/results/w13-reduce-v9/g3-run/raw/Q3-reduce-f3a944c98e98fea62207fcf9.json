@@ -1,0 +1,458 @@
+{
+  "question_id": "Q3",
+  "question": "What is Schwab's strategy for its RIA custody business?",
+  "reduce_version": "v9",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#10",
+    "SCHW-TR-2025Q3#13",
+    "SCHW-10K-2025#23",
+    "SCHW-DECK-2026-investor-day#35",
+    "SCHW-TR-2024Q4#13",
+    "SCHW-DECK-2026Q3#21",
+    "SCHW-TRADE-2026-10-28-WM-01#0",
+    "SCHW-TRADE-2026-10-29-WM-01#0",
+    "SCHW-DECK-2026-investor-day#41",
+    "SCHW-TR-2024Q4#37",
+    "SCHW-TR-2026Q1#48",
+    "SCHW-TRADE-2026-08-26-WM-01#1",
+    "SCHW-10K-2025#13",
+    "SCHW-TRADE-2026-10-07-RB-01#4",
+    "SCHW-TRADE-2026-08-24-IN-01#2",
+    "SCHW-TRADE-2026-10-29-WM-01#2",
+    "SCHW-TRADE-2026-10-23-WM-01#3",
+    "SCHW-TRADE-2026-08-26-WM-01#3",
+    "SCHW-DECK-2026Q2#14",
+    "SCHW-DECK-2026-investor-day#62",
+    "SCHW-TRADE-2026-10-15-WM-01#3",
+    "SCHW-DECK-2026Q3#22",
+    "SCHW-PR-2026-10-15-01#41",
+    "SCHW-TRADE-2026-10-27-IN-01#1",
+    "SCHW-TRADE-2026-10-28-WM-01#2",
+    "SCHW-TR-2025Q1#14",
+    "SCHW-TR-2025Q3#14",
+    "SCHW-TR-2025Q4#12",
+    "SCHW-TR-2026Q3#5",
+    "SCHW-TRADE-2026-10-28-WM-02#0",
+    "SCHW-TRADE-2026-10-23-WM-01#0",
+    "SCHW-TRADE-2026-11-02-RB-01#2",
+    "SCHW-TRADE-2026-10-07-WM-01#0",
+    "SCHW-TRADE-2026-10-15-WM-01#1",
+    "SCHW-TR-2026Q1#59"
+  ],
+  "schema_fallback": [],
+  "enum_values": 110,
+  "at": "2026-11-24T00:07:51.682456-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 11806,
+    "output_tokens": 13120,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 10142,
+    "reasoning_tokens": 9242,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.94
+  },
+  "wall_s": 135.95,
+  "tokens_per_s": 96.51,
+  "ttft_s": 1.94,
+  "reasoning_content": "Let me work through this carefully. The question asks about Schwab's strategy for its RIA custody business. The aspects are:\n\n- a1: What is the strategy for the RIA custody business? (fact)\n- a2: What priorities are stated? (fact)\n- a3: What competition is named? (fact)\n- a4: What results are reported for RIA custody clients and assets? (series)\n- a5: advisor headcount (different quantity, adjacent only)\n- a6: What is new in the strategy within the time window? (recency)\n\nI need to write claims for each aspect, with each claim one sentence citing chunk ids.\n\nLet me organize.\n\na1: strategy. Multiple items. I should write one sentence per item? Actually the shape says \"a single fact or figure: 1 to 3 sentences\". But a1 has 10 items. The question is \"what is the strategy\" - I should cover the main points. Let me write one sentence per item, or consolidate. The instruction says \"the main points, one per thing the question asks\". But it also says \"Cover what was asked: every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence.\"\n\nActually, let me re-read. The claim 1 answers the question directly. Then \"Cover what was asked: every cell that holds a fact for an aspect... is cited by a sentence (its cell id as part_id...)\". So each item that holds a fact should be cited. But that would be 10 sentences for a1, 10 for a2, 8 for a3, many for a4, 14 for a6.\n\nHmm, but the guidance also says \"a single fact or figure: 1 to 3 sentences in total\". This is a more open question (\"what is the strategy\"). The list mode applies to \"for each firm\", \"list\", etc.\n\nActually, let me think about how these are typically done. The part_id for a cell is a1.SCHW etc. Each item maps to the cell a1.SCHW. So a sentence about a1.SCHW uses part_id \"a1.SCHW\".\n\nThe instruction: \"Cover what was asked: every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence (its cell id as part_id, or the aspect id for a sentence spanning its firms).\"\n\nSo each cell (a1.SCHW is one cell containing 10 items) should be cited by a sentence. Actually a cell here appears to be per aspect+item? Wait, the part_id enum includes \"a1.SCHW\" but not \"a1.SCHW.item1\". So the cell is a1.SCHW (one cell), and all items belong to that cell.\n\nSo for a1.SCHW, I write sentences covering the strategy, citing the relevant chunk ids. The claim 1 answers directly. I can write multiple sentences covering the main points.\n\nLet me be reasonable: write a headline sentence answering the question, then cover the key points. Each sentence cites chunk ids.\n\nFor a1, key strategy points:\n- Built around helping independent advisers grow, compete and succeed (SCHW-TR-2026Q3#10)\n- Requires scale, trust, operational excellence, service, breadth (SCHW-TR-2026Q3#10)\n- Deepening relationships by building broader support ecosystem beyond custody (SCHW-TR-2025Q3#13)\n- Maintain competitive position through sales, support, technology, business consulting teams (SCHW-10K-2025#23)\n- Leading RIA support ecosystem with wealth tools, lending, technology (SCHW-DECK-2026-investor-day#35)\n- Adding support for RIAs of all sizes, helping new advisors transition to independence (SCHW-TR-2024Q4#13)\n- Differentiated full-service platform (SCHW-DECK-2026Q3#21)\n- Focus on custody for RIAs under $100M AUM (SCHW-TRADE-2026-10-28-WM-01#0)\n- Give RIAs equal/better access than wirehouses to banking services (SCHW-TRADE-2026-10-29-WM-01#0)\n- Strategic priorities: broaden support while improving monetization (SCHW-DECK-2026-investor-day#41)\n\nThat's a lot. I should be efficient but cover. I'll write several sentences.\n\nActually, let me reconsider. The instruction is quite detailed. Each item has a \"fact\" label. I think the intent is to write one sentence per meaningful point, but I should be judicious to not be overly long. Given the complexity, I'll write a headline + cover each major point.\n\nLet me draft the claims for each aspect.\n\nI'll write a headline answer sentence first (claim 1), which could be part of a1.\n\nActually claim 1 answers the question directly and MUST cite. Let me make the headline about the overall strategy.\n\nLet me structure:\n\nClaim 1 (headline, part_id \"\"? or a1.SCHW?): Schwab's RIA custody strategy centers on helping independent advisers grow, compete and succeed, and on building a broader support ecosystem beyond custody. Cite SCHW-TR-2026Q3#10, SCHW-TR-2025Q3#13.\n\nActually, part_id should probably be a1.SCHW for the strategy. But claim 1 \"answers the question directly\". The question overall is the strategy. Hmm.\n\nLet me just use part_id a1.SCHW for strategy sentences, a2.SCHW for priorities, etc. And the headline claim 1 could be part_id a1.SCHW too (or \"\").\n\nI'll write claim 1 as the headline with part_id a1.SCHW? The enum has \"\" as an option. I think claim 1 (headline) might use \"\" but let me think.\n\nActually the instructions say \"part_id: the cell id for a sentence about one cell; the aspect id for a sentence spanning firms or cells.\" And claim 1 answers the question directly.\n\nI'll make claim 1 about strategy (a1.SCHW) since that's the core question.\n\nLet me write the claims now.\n\nFor a1.SCHW (strategy):\n1. Headline: Schwab's RIA custody strategy is built around helping independent advisers grow, compete and succeed and around building a broader support ecosystem that extends beyond custody. [SCHW-TR-2026Q3#10, SCHW-TR-2025Q3#13]\n2. Schwab states the RIA custody business requires scale, trust, operational excellence, outstanding service and breadth to support advisers as their businesses and clients' needs become more complex. [SCHW-TR-2026Q3#10]\n3. Schwab believes it can maintain its competitive position through sales, support, technology, and business consulting teams dedicated to helping RIAs grow, compete and succeed. [SCHW-10K-2025#23]\n4. Schwab aims to be the leading RIA support ecosystem, providing wealth tools, investment/lending products and technology in addition to custody and service. [SCHW-DECK-2026-investor-day#35]\n5. Schwab describes its offering as a differentiated, full-service platform built on scale and reputation, breadth beyond custody, operational excellence, and dedicated service and support. [SCHW-DECK-2026Q3#21]\n6. Schwab will continue to focus on custody services for RIAs with under $100 million in AUM, positioning its role as providing a platform and support ecosystem. [SCHW-TRADE-2026-10-28-WM-01#0]\n7. Schwab wants to give RIAs equal or better access than wirehouse counterparts to banking services such as lending, private market investing and long-short strategies, positioning itself as the RIA's bank. [SCHW-TRADE-2026-10-29-WM-01#0]\n8. Schwab's strategic priorities include broadening support for RIAs while improving monetization. [SCHW-DECK-2026-investor-day#41]\n9. In advisor services Schwab is adding support and capabilities for RIAs of all sizes while helping new advisors transition to independence. [SCHW-TR-2024Q4#13]\n\nThat's thorough. Maybe I can consolidate some. But I'll include all to cover items. Actually I have 10 items for a1. Let me make sure each is covered:\n\nitem 1: grow, compete, succeed - covered in #1\nitem 2: scale, trust, etc - #2\nitem 3: deepening relationships, broader ecosystem - #1\nitem 4: maintain competitive position teams - #3\nitem 5: leading RIA support ecosystem - #4\nitem 6: adding support RIAs all sizes, transition to independence - #9\nitem 7: differentiated full-service platform - #5\nitem 8: focus under $100M AUM - #6\nitem 9: equal/better access banking - #7\nitem 10: strategic priorities broaden + monetization - #8\n\nGood, all covered.\n\nFor a2.SCHW (priorities), 10 items. Many overlap with a1. But they're distinct aspects. I need to cover a2 items.\n\na2 items:\n1. maintain competitive position teams + superior service + technology scalable platform [SCHW-10K-2025#23]\n2. built around helping advisors grow compete succeed; requires scale trust etc [SCHW-TR-2026Q3#10]\n3. deepening relationships, broader ecosystem, lending, alternatives, NTF mutual fund platform [SCHW-TR-2025Q3#13]\n4. leading RIA support ecosystem [SCHW-DECK-2026-investor-day#35]\n5. adding support RIAs all sizes, transition to independence [SCHW-TR-2024Q4#13]\n6. focus areas: lending, private-market, long-short, being RIAs' bank [SCHW-TRADE-2026-10-29-WM-01#0]\n7. continue focus under $100M AUM [SCHW-TRADE-2026-10-28-WM-01#0]\n8. opportunity: curated set of alternatives vs just custodying [SCHW-TR-2024Q4#37]\n9. rounded out offering, structured asset lending [SCHW-TR-2026Q1#48]\n10. largest custodian, long-term value, innovation [SCHW-TRADE-2026-08-26-WM-01#1]\n\nI'll write these as priorities. Some overlap with a1 but that's fine since they're different aspects and I cite the same chunks.\n\nLet me write a2 sentences concisely. Actually, I worry about redundancy. But the instruction is to cover what's asked. I'll write one sentence per item but maybe consolidate where natural.\n\nFor a2, I'll write:\n1. Schwab states it maintains its competitive position in Advisor Services through sales, support, technology and business consulting teams dedicated to helping RIAs grow, compete and succeed, with superior service and technology providing a scalable platform. [SCHW-10K-2025#23]\n2. Schwab states its advisor business is built around helping independent advisors grow, compete and succeed, and that the business requires scale, trust, operational excellence, outstanding service and breadth. [SCHW-TR-2026Q3#10]\n3. Schwab states it is deepening relationships with RIA firms by building a broader support ecosystem beyond custody, including grown lending support, alternatives capability and an expanded institutional no-transaction-fee mutual fund platform. [SCHW-TR-2025Q3#13]\n4. Schwab states its priority is to provide the leading RIA support ecosystem with wealth tools, investment/lending products and technology in addition to custody and service. [SCHW-DECK-2026-investor-day#35]\n5. Schwab states it is adding support and capabilities for RIAs of all sizes while helping new advisors transition to independence. [SCHW-TR-2024Q4#13]\n6. Schwab states focus areas for its custody offerings include lending (pledged-asset lines), private-market investing and long-short strategies, and playing the role of being RIAs' bank. [SCHW-TRADE-2026-10-29-WM-01#0]\n7. Schwab states it will continue to focus on custody services for RIAs with under $100 million AUM, providing a platform and support ecosystem. [SCHW-TRADE-2026-10-28-WM-01#0]\n8. Schwab states the opportunity going forward in advisor services is to offer a more curated set of alternatives to advisors rather than primarily just custodying the assets. [SCHW-TR-2024Q4#37]\n9. Schwab states it has rounded out its offering by adding more lending capabilities, including a structured asset lending program enabling clients to borrow against alternative and restricted/private shares. [SCHW-TR-2026Q1#48]\n10. Schwab states, as the largest custodian for advisors, it is focused on creating long-term value and access and on investing in innovation, capabilities and service. [SCHW-TRADE-2026-08-26-WM-01#1]\n\nFor a3.SCHW (competition), 8 items:\n1. 10-K: competes with institutional custodians, wirehouses, regional/independent broker-dealers, fintech custodians, banks, trust companies. [SCHW-10K-2025#13]\n2. Fidelity second-largest custodian [SCHW-TRADE-2026-10-28-WM-01#0]\n3. Fidelity close rival in cash/custody [SCHW-TRADE-2026-10-07-RB-01#4]\n4. Altruist Vanguard-owned custodian [SCHW-TRADE-2026-10-07-RB-01#4]\n5. SEI, Goldman, Robinhood custodial alternatives [SCHW-TRADE-2026-08-24-IN-01#2]\n6. BNY Pershing custodian alongside Schwab [SCHW-TRADE-2026-10-29-WM-01#2]\n7. LPL independent broker/dealer and RIA custodian [SCHW-TRADE-2026-10-23-WM-01#3]\n8. Vanguard via Altruist competitor [SCHW-TRADE-2026-08-26-WM-01#3]\n\nFor a4.SCHW (results), items. Note items 3, 4, 5 are marked \"figure not found in its passage: do not state this figure\". So skip those figures. \n\nActually item 3: \"$5.7 trillion RIA custodial assets as of Q2 2026\" - figure not found, skip.\nItem 4: $5.2 trillion client assets - figure not found, skip.\nItem 5: 3.9 million households - figure not found, skip.\n\nSo usable items: 1, 2, 6, 7, 8, 9, 10, 11, 12, 13.\n\nItem 1: more than 16,000 firms, period 2026-09-30 [SCHW-TR-2026Q3#10]\nItem 2: $5.8 trillion assets, period 2026-09-30 [SCHW-TR-2026Q3#10]\nItem 6: 1,001 new RIAs added Q3 2026 [SCHW-TRADE-2026-10-15-WM-01#3]\nItem 7: 1,101 custodians added to ADVs 3Q26 [SCHW-DECK-2026Q3#22]\nItem 8: 1,100 advisory firms added Schwab as custodian last year (2025), more than 3x next closest [SCHW-TR-2026Q3#10]\nItems 9-13: Advisor Services client assets series $5,845.9B, $5,741.9B, $5,201.5B, $5,195.5B, $5,016.7B [SCHW-PR-2026-10-15-01#41]\n\nNote the basis break. Item 1 and 2 use \"more than 16,000 firms\" and \"$5.8 trillion\" as of 2026-09-30. The client assets series (items 9-13) shows Advisor Services client assets. Item 2 says $5.8 trillion (rounded) for \"these more than 16,000 firms\" representing client assets. Item 9 says $5,845.9B at Sept 30 2026, which is $5.8 trillion rounded. So these are consistent-ish but different items.\n\nFor the series, I should give the quarters. The series (items 9-13) run from 2025-09-30 to 2026-09-30.\n\nAlso note items 1/2 are \"more than 16,000 firms\" (2026-09-30) while item 8 says \"more than 1,100 advisory firms added... last year\" (2025).\n\nLet me write a4 sentences. This is a \"series\" aspect. The question asks \"what results are reported\". I should list the results.\n\nActually for a4, I need to note the basis break. The code caveat says figures cover different bases. I should state each basis with its own periods, never join.\n\nLet me write:\n1. Schwab states it serves more than 16,000 independent advisory firms on its platform as of September 30, 2026. [SCHW-TR-2026Q3#10]\n2. These more than 16,000 firms represent $5.8 trillion in client assets on Schwab's platform as of September 30, 2026. [SCHW-TR-2026Q3#10]\n3. Schwab states that more than 1,100 advisory firms added Schwab as a custodian in 2025, more than 3x the next closest provider. [SCHW-TR-2026Q3#10]\n4. Schwab added 1,001 new RIAs to its custody platform in Q3 2026, far more than its nearest peers. [SCHW-TRADE-2026-10-15-WM-01#3]\n5. Schwab reports 1,101 custodians added to ADVs in 3Q26, versus peers adding 349, 339, 202 and 79. [SCHW-DECK-2026Q3#22]\n6. Advisor Services client assets (USD billions) were: 5,845.9 at Sept 30 2026, 5,741.9 at June 30 2026, 5,201.5 at March 31 2026, 5,195.5 at Dec 31 2025, 5,016.7 at Sept 30 2025. [SCHW-PR-2026-10-15-01#41]\n\nHmm, that's a series in one sentence. The instruction says \"a figure or series per firm: give each firm's own definition of the metric alongside its figures.\" And \"A series asked 'by quarter' gives the quarters, not only the latest one.\"\n\nBut also \"Never run a list of items inside one sentence; write one sentence per item instead.\" So I should write one sentence per period? That would be 5 sentences for the series.\n\nActually \"Never run a list of items inside one sentence\" - a series of quarters is a list. So I should write one sentence per quarter. Let me do that.\n\n6. Advisor Services client assets were $5,845.9 billion at September 30, 2026. [SCHW-PR-2026-10-15-01#41]\n7. Advisor Services client assets were $5,741.9 billion at June 30, 2026. [...]\n8. Advisor Services client assets were $5,201.5 billion at March 31, 2026. [...]\n9. Advisor Services client assets were $5,195.5 billion at December 31, 2025. [...]\n10. Advisor Services client assets were $5,016.7 billion at September 30, 2025. [...]\n\nEach citing the same chunk. Good.\n\nAlso I should give the definition: \"client assets\" (Advisor Services segment).\n\nLet me include a definition sentence. Actually the metric definition is \"client assets\" in the Advisor Services segment. I'll state \"Advisor Services client assets\" as the definition inline.\n\nFor a6 (what's new), 14 items, all fact. I need to cover each with a sentence, with period attribution.\n\nLet me write a6 items:\n1. In Q1 2025, Schwab announced a strategic investment in wealth.com, a digital estate planning leader, as part of a broader effort to provide more of an ecosystem for RIA clients. [SCHW-TR-2025Q1#14]\n2. In Q3 2025, Schwab deepened relationships with its 16,000 RIA firms by building a broader support ecosystem, including lending support, alternatives capability, an expanded institutional no-transaction-fee mutual fund platform, and Advisor ProDirect. [SCHW-TR-2025Q3#13]\n3. In September 2025, Schwab supported the largest advisor transition in its industry's history by welcoming OpenArc to its platform. [SCHW-TR-2025Q3#14]\n4. In Q4 2025, Schwab expanded its wealth services offer, including Model Market Center, alternative investments, lending and trust services through Charles Schwab Bank, and a high-touch block-trade trading service launching in Q1. [SCHW-TR-2025Q4#12]\n5. In Q1 2026, Schwab launched a structured asset lending program enabling advisors' clients to borrow against alternative investments and restricted or private shares. [SCHW-TR-2026Q1#48]\n6. In Q3 2026, Schwab collaborated with Anthropic and became the first RIA custodian included in Claude for Financial Advisors. [SCHW-TR-2026Q3#5]\n7. Schwab plans to push bank capabilities for RIAs to give independent advisors equal or better access than wirehouses to banking services such as lending, private market investing and long-short strategies. [SCHW-TRADE-2026-10-29-WM-01#0]\n8. Schwab will continue to focus on its custody services for RIAs with under $100 million in AUM. [SCHW-TRADE-2026-10-28-WM-01#0]\n9. Schwab is offering a $4,800 credit toward the Claude enterprise version to give smaller advisors access to AI connectors between Schwab Advisor Center and their own tools. [SCHW-TRADE-2026-10-28-WM-02#0]\n10. Syntax integrated its index engine with Schwab's iRebal platform to streamline direct indexing for RIAs. [SCHW-TRADE-2026-10-23-WM-01#0]\n11. Schwab is partnering with Nevis to offer a digital onboarding process for Schwab RIAs and is moving exclusively to Docusign for executing agreements. [SCHW-TRADE-2026-11-02-RB-01#2]\n12. Schwab acquired Forge Global to broaden private market capabilities and later agreed to divest the Forge Trust self-directed IRA custodian while keeping Forge's private markets platform. [SCHW-TRADE-2026-10-07-WM-01#0]\n13. Schwab is developing a proprietary long-short investment strategy to deliver long-short capabilities to clients and RIAs. [SCHW-TRADE-2026-10-15-WM-01#1]\n14. In Q1 2026, Schwab is building its own books and records and custody capabilities as a prelude to offering clients choice in how they hold equities and to support future tokenization. [SCHW-TR-2026Q1#59]\n\nFor a5, this is \"different quantity (adjacent only)\". So no claim for a5.SCHW. I need adjacent items. The gap is already added by code. So I add adjacent items for a5.SCHW.\n\nAdjacent item 1: Schwab has more than 3,000 employees dedicated to serving advisors (employees, not the advisors themselves). differs_because: \"These are counts of Schwab's own employees dedicated to serving advisors... not the advisor headcount of the RIA custody business.\"\n\nAdjacent item 2: Schwab noted it has some 3,000 financial advisors in-house (its own retail advice staff), many holding CFPs. differs_because same.\n\nThe differs_because template given: \"These are counts of Schwab's own employees dedicated to serving advisors and Schwab's in-house financial advisors (retail advice staff), not the advisor headcount of the RIA custody business (the independent RIA advisors whose firms custody with Schwab).\"\n\nI'll use that for both, or slightly adjust. The instruction says one adjacent item per cell, each with differs_because. There are 2 items but both belong to cell a5.SCHW. Actually \"one adjacent item per cell\" - the cell a5.SCHW has 2 items. Hmm, \"A cell marked 'adjacent only' goes in adjacent, never in claims, one adjacent item per cell.\"\n\nSo one adjacent item per cell. But there are 2 items in the cell. I think I should put both items? Or one? The instruction says \"one adjacent item per cell\". But there are two different figures (employees vs in-house advisors). \n\nActually, re-reading: \"one adjacent item per cell, each with differs_because from the cell\". The cell is a5.SCHW containing 2 items. I think I should provide one adjacent entry per item? Or one per cell?\n\nThe gap says \"the closest disclosed figure is Schwab has more than 3,000 employees dedicated to serving advisors (adjacent)\". So the primary adjacent is item 1 (employees). Item 2 is \"some 3,000 financial advisors in-house\".\n\nI'll include both as adjacent items since they're different quantities. Actually, let me include both to be safe - each is a different disclosed figure. The differs_because template covers both.\n\nLet me write two adjacent items with the same differs_because (the template covers both).\n\nActually the template says: \"These are counts of Schwab's own employees dedicated to serving advisors and Schwab's in-house financial advisors (retail advice staff), not the advisor headcount...\"\n\nI'll use that for both adjacent items.\n\nNow, the headline claim 1. Let me write it. The question is \"What is Schwab's strategy for its RIA custody business?\"\n\nClaim 1: Schwab's RIA custody strategy is built around helping independent advisers grow, compete and succeed, and around building a broader support ecosystem that extends beyond custody to add value for RIAs. [SCHW-TR-2026Q3#10, SCHW-TR-2025Q3#13]\n\npart_id: a1.SCHW? Or \"\"? I think claim 1 should use \"\" or a1.SCHW. Since it's the headline answering the whole question, but it's really about a1 (strategy). I'll use a1.SCHW.\n\nActually wait, let me reconsider part_id. The claim 1 is \"the headline fact\". It answers the question directly. The question is about strategy (a1). So part_id a1.SCHW makes sense.\n\nHmm, but actually the headline could span all aspects. I'll keep it simple: claim 1 part_id = a1.SCHW.\n\nLet me now finalize. I need to make sure I don't over-cite. Each sentence cites its chunk ids.\n\nLet me also double check: \"item 3\" for a1 says quote \"deepening relationships with the 16,000 RIA firms\" - but the fact line says \"by building a broader support ecosystem\". Note the fact says \"deepening relationships with the RIA firms it serves\". Fine.\n\nNow let me write everything out.\n\nFor part_id assignments:\n- a1 sentences: part_id \"a1.SCHW\"\n- a2 sentences: \"a2.SCHW\"\n- a3 sentences: \"a3.SCHW\"\n- a4 sentences: \"a4.SCHW\"\n- a6 sentences: \"a6.SCHW\"\n- a5: no claims (gap). adjacent items part_id \"a5.SCHW\"\n\nWait, but the part_id enum also includes \"a1\", \"a2\", etc. (aspect id for spanning firms). Since there's only one firm (SCHW), I use the .SCHW versions.\n\nLet me write the final answer.\n\nFor a4, note item 2's definition: \"these more than 16,000 firms represent $5.8 trillion in assets\" - client assets. And the series items 9-13 are \"Advisor Services client assets\". These are the same basis roughly ($5.8T = $5,845.9B). But I should state them separately as items.\n\nActually, item 1 and 2 are about \"more than 16,000 firms\" and \"$5.8 trillion\" from the transcript, period 2026-09-30, scope Advisor Services. Item 9 is $5,845.9B at 2026-09-30 from press release. These are the same figure essentially but from different sources. I'll state both but they're separate items with separate citations.\n\nLet me also note the definition of the metric. \"client assets\" is the definition. I'll say \"Advisor Services client assets\" and \"client assets\" as needed.\n\nLet me now also check: do I need to state the basis break explicitly in my text? The caveat is added by code. But the instruction says \"A definition change inside a series is stated as a break, never joined into one series.\" The basis break here is between \"Advisor Services\" basis and \"whole firm\" basis. Actually the code says \"state each basis with its own periods; never join them.\"\n\nFor a4, item 1/2 are Advisor Services (2026-09-30). Item 6 is Q3 2026 (Advisor Services, 1,001 new RIAs). Item 7 is 3Q26 (1,101 custodians). Item 8 is 2025 (1,100 firms). Items 9-13 are Advisor Services client assets series.\n\nThe basis break note says \"Advisor Services: 2025, 2025-09-30, ...; whole firm: 2026-06-30, 2026Q3\". The \"whole firm\" basis refers to item 3 ($5.7T RIA custodial assets, 2026-06-30) and item 7? Actually item 7 \"1,101 custodians added to ADVs 3Q26\" - is that whole firm or Advisor Services? \n\nActually item 3 is \"$5.7 trillion RIA custodial assets as of Q2 2026\" - whole firm, 2026-06-30. That's \"figure not found\", skip. So the \"whole firm\" basis doesn't actually appear in my claims (item 3 skipped).\n\nItem 7 \"1,101 custodians added to ADVs 3Q26\" - this is from SCHW-DECK-2026Q3#22, not marked with a scope. The basis break mentions \"whole firm: 2026-06-30, 2026Q3\". Hmm, item 7 period is 2026Q3. So item 7 might be \"whole firm\" basis. But it's about custodians added to ADVs, which is essentially RIA custody. \n\nActually I shouldn't overthink. The code adds the caveat. I'll just state each figure with its own label and period, not joining them into one series. I'll state item 6 (1,001 new RIAs) and item 7 (1,101 custodians) as separate trade/deck reported figures.\n\nActually, item 6 and 7 are describing the same thing (1,001 vs 1,101 new RIAs/custodians in Q3 2026) but from different sources. Item 6 says \"1,001 new RIAs to its custody platform\" (trade press), item 7 says \"1,101 custodians added to ADVs\" (deck). These are slightly different numbers/sources. I'll state both as they are, attributed.\n\nItem 6 is trade press (SCHW-TRADE). Item 7 is deck (SCHW-DECK).\n\nFor item 6, it's from trade press, so I should attribute: \"trade press reports Schwab added 1,001 new RIAs to its custody platform in Q3 2026.\"\n\nOK let me finalize.\n\nLet me write out all claims now in the final structure.\n\nActually, I realize I should also think about whether claim 1 should be a separate headline or just be part of the a1 flow. The instructions say \"Claim 1 answers the question directly (the headline fact, figure or verdict) and MUST cite the items it rests on.\"\n\nSo claim 1 is the headline. I'll write it first.\n\nLet me finalize the answer now.\n\nFor part_id of claim 1, I'll use \"a1.SCHW\" since it's about the strategy.\n\nActually, wait - maybe claim 1 should span the whole question and use \"\". Let me think about what's cleaner. The question is singular (strategy). Claim 1 = the headline about strategy. I'll use a1.SCHW.\n\nHmm, but then claim 1 and my a1 item sentences would all have part_id a1.SCHW, which is fine (multiple sentences for one cell).\n\nLet me write it all out.\n\nFinal structure:\n\nClaims:\n1. [a1.SCHW] headline\n2-9. a1.SCHW items (strategy details)\n10-19. a2.SCHW priorities\n20-27. a3.SCHW competition\n28+ a4.SCHW results\n+ a6.SCHW new items\n\nAdjacent: 2 items for a5.SCHW.\n\nLet me write concisely but completely.\n\nActually, I'm going to write it now. Let me be careful about sentence length (35 words or fewer where possible).\n\nLet me draft final answer text.\n\nI'll number part_ids correctly.\n\nFor the headline claim, I'll combine: \"Schwab's RIA custody strategy is built around helping independent advisers grow, compete and succeed, and around deepening relationships by building a broader support ecosystem that extends beyond custody to add value for RIAs.\"\n\nCite: SCHW-TR-2026Q3#10, SCHW-TR-2025Q3#13.\n\nNow writing all.\n\nLet me make sure I attribute properly. Trade press items: \"trade press reports\". Management/transcript: \"Schwab states/management states\". 10-K: \"Schwab's 10-K states\". Deck: \"Schwab's investor day deck states\".\n\nFor a6 items with quotes about plans, I should attribute to management/Schwab.\n\nItem 7 a6: \"Schwab plans to push bank capabilities...\" - this is trade press reporting of Wurster's comments (SCHW-TRADE-2026-10-29-WM-01#0). I'll say \"Schwab plans\" or \"trade press reports Schwab plans\". Actually it says \"Schwab wants to give...\" Let me attribute as trade press: \"Trade press reports Schwab wants to give RIAs equal or better access than wirehouses to banking services...\"\n\nActually the fact for a1 item 9 is also from this source, and it's stated as \"Schwab wants to give RIAs equal or better access...\" I'll just state it as management intent without over-attributing, but per instructions I should attribute strategy/intent to firm or management. And trade press items should be attributed to trade press.\n\nThe source SCHW-TRADE-2026-10-29-WM-01#0 is trade press. So statements from it should be \"trade press reports...\" Let me attribute trade press sources as \"trade press reports\".\n\nBut wait, some SCHW-TRADE sources might be Schwab's own announcements via trade press. The instruction: \"A trade-press item is stated attributed ('trade press reports ...')\". Let me apply that to SCHW-TRADE sources.\n\nActually, let me look. SCHW-TRADE = trade press. SCHW-TR = transcript. SCHW-10K = 10-K. SCHW-DECK = deck. SCHW-PR = press release.\n\nSo for SCHW-TRADE sources, attribute \"trade press reports\".\n\nFor a1 item 8 (SCHW-TRADE-2026-10-28-WM-01#0): \"Schwab will continue to focus on custody services for RIAs with under $100 million AUM\" - trade press. Attribute \"Trade press reports Schwab will continue to focus...\"\n\nFor a1 item 9 (SCHW-TRADE-2026-10-29-WM-01#0): trade press. \"Trade press reports Schwab wants to give RIAs equal or better access...\"\n\nFor a3 items 2-8: all trade press except item 1 (10-K).\n\na3 item 2: \"Trade press names Fidelity Investments as the second-largest custodian after Schwab.\" [SCHW-TRADE-2026-10-28-WM-01#0]\n\na3 item 3: \"Trade press names Fidelity as Schwab's close rival in cash/custody services.\" [SCHW-TRADE-2026-10-07-RB-01#4]\n\na3 item 4: \"Trade press names Altruist as a Vanguard-owned custodian competing in the RIA custody space.\" [SCHW-TRADE-2026-10-07-RB-01#4]\n\na3 item 5: \"Trade press names SEI, Goldman and Robinhood as custodial alternatives RIAs might consider.\" [SCHW-TRADE-2026-08-24-IN-01#2]\n\na3 item 6: \"Trade press names BNY Pershing as a custodian used alongside Schwab by breakaway RIA teams.\" [SCHW-TRADE-2026-10-29-WM-01#2]\n\na3 item 7: \"Trade press names LPL as an independent broker/dealer and RIA custodian.\" [SCHW-TRADE-2026-10-23-WM-01#3]\n\na3 item 8: \"Trade press reports Vanguard, through its acquisition of Altruist, is set up to compete with Schwab in RIA custody.\" [SCHW-TRADE-2026-08-26-WM-01#3]\n\na3 item 1: \"Schwab's 10-K states that in the Advisor Services arena it competes with institutional custodians, wirehouses, regional and independent broker-dealers, fintech custodians, banks, and trust companies.\" [SCHW-10K-2025#13]\n\nFor a4 item 6 (trade press): \"Trade press reports Schwab added 1,001 new RIAs to its custody platform in Q3 2026, far more than its nearest peers.\" [SCHW-TRADE-2026-10-15-WM-01#3]\n\na4 item 7 (deck): \"Schwab's Q3 2026 deck reports 1,101 custodians added to ADVs in 3Q26, versus peers adding 349, 339, 202, and 79.\" [SCHW-DECK-2026Q3#22]\n\na4 items 1, 2, 8 (transcript): \"Schwab states...\" \n\na4 items 9-13 (press release): \"Advisor Services client assets were $X billion at [date].\"\n\nFor a6 items:\nitem 1 (transcript 2025Q1): \"In Q1 2025, Schwab announced a strategic investment in wealth.com... part of a broader effort to provide more of an ecosystem for its RIA clients.\" [SCHW-TR-2025Q1#14]\nitem 2 (transcript 2025Q3): [SCHW-TR-2025Q3#13]\nitem 3 (transcript 2025Q3): [SCHW-TR-2025Q3#14]\nitem 4 (transcript 2025Q4): [SCHW-TR-2025Q4#12]\nitem 5 (transcript 2026Q1): [SCHW-TR-2026Q1#48]\nitem 6 (transcript 2026Q3): [SCHW-TR-2026Q3#5]\nitem 7 (trade press): [SCHW-TRADE-2026-10-29-WM-01#0] - \"Trade press reports Schwab plans...\"\nitem 8 (trade press): [SCHW-TRADE-2026-10-28-WM-01#0] - \"Trade press reports Schwab will continue to focus on custody services for RIAs with under $100M AUM.\"\nitem 9 (trade press): [SCHW-TRADE-2026-10-28-WM-02#0] - $4,800 credit\nitem 10 (trade press): [SCHW-TRADE-2026-10-23-WM-01#0] - Syntax integration\nitem 11 (trade press): [SCHW-TRADE-2026-11-02-RB-01#2] - Nevis\nitem 12 (trade press): [SCHW-TRADE-2026-10-07-WM-01#0] - Forge\nitem 13 (trade press): [SCHW-TRADE-2026-10-15-WM-01#1] - long-short strategy\nitem 14 (transcript 2026Q1): [SCHW-TR-2026Q1#59] - books and records/tokenization\n\nOK. Now let me write the full submission.\n\nFor a6 item 12, \"later agreed to divest the Forge Trust... while keeping Forge's private markets platform\" - the quote about Forge Trust sale. I'll state it.\n\nNow, the answerable is true.\n\nLet me write it all out carefully and concisely.\n\nOne more consideration: the instruction says claim 1 answers directly and MUST cite. Then \"Then the length follows the question\". This is a \"what is the strategy\" question - \"the main points, one per thing the question asks, each cited.\"\n\nOK I'm confident. Let me write.\n\nI'll keep sentences reasonably concise.\n\nLet me write the final tool call.",
+  "first_claim_s": 106.97,
+  "stream_items": {
+    "first_claim_s": 106.97,
+    "shown": 51,
+    "held": 2
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Schwab's RIA custody strategy is built around helping independent advisers grow, compete and succeed, and around deepening relationships with the RIA firms it serves by building a broader support ecosystem that extends beyond custody to add value for RIAs.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10",
+          "SCHW-TR-2025Q3#13"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab states the RIA custody business requires scale, trust, operational excellence, outstanding service and breadth to support advisers as their businesses and clients' needs become more complex.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab believes it can maintain its competitive position primarily through its sales, support, technology and business consulting teams dedicated to helping RIAs grow, compete and succeed.",
+        "chunk_ids": [
+          "SCHW-10K-2025#23"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab aims to be the leading RIA support ecosystem, providing wealth tools, investment/lending products and technology in addition to custody and service.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#35"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab describes its offering as a differentiated, full-service platform built on scale and reputation, breadth beyond custody, operational excellence, and dedicated service and support.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q3#21"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "In advisor services, Schwab is adding support and capabilities for RIAs of all sizes while also helping new advisors transition to independence.",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#13"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Trade press reports Schwab will continue to focus on its custody services for registered investment advisors with under $100 million in AUM, positioning its role as providing a platform and support ecosystem.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#0"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Trade press reports Schwab wants to give RIAs equal or better access than their wirehouse counterparts to banking services such as lending, private market investing and long-short strategies, positioning itself as the RIA's bank.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab's strategic priorities include broadening support for RIAs while improving monetization.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#41"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab states it maintains its competitive position in Advisor Services through sales, support, technology and business consulting teams dedicated to helping RIAs grow, compete and succeed, with superior service and technology providing a scalable platform.",
+        "chunk_ids": [
+          "SCHW-10K-2025#23"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab states its advisor business is built around helping independent advisors grow, compete and succeed, and that the business requires scale, trust, operational excellence, outstanding service and breadth.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab states it is deepening relationships with RIA firms by building a broader support ecosystem beyond custody, including grown lending support, alternatives capability and an expanded institutional no-transaction-fee mutual fund platform.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#13"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab states its priority is to provide the leading RIA support ecosystem to help advisors serve their clients, with wealth tools, investment/lending products and technology in addition to custody and service.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#35"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab states that in advisor services it is adding support and capabilities for RIAs of all sizes while helping new advisors transition to independence.",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#13"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab states focus areas for its custody offerings include pledged-asset lending, private-market investing and long-short strategies, and playing the role of being RIAs' bank to help manage both sides of clients' balance sheets.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab states it will continue to focus on custody services for RIAs with under $100 million AUM, providing a platform and support ecosystem to help advisors support clients and thrive.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#0"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab states the opportunity going forward in advisor services is to offer a more curated set of alternatives to advisors rather than primarily just custodying the assets.",
+        "chunk_ids": [
+          "SCHW-TR-2024Q4#37"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab states it has rounded out its offering to advisors by adding more lending capabilities, including a structured asset lending program enabling clients to borrow against alternative and restricted or private shares.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#48"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab states that, as the largest custodian for advisors, it is focused on creating long-term value and access and on investing in innovation, capabilities and service to help advisors grow and investors succeed.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-08-26-WM-01#1"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab's 10-K states that in the Advisor Services arena it competes with institutional custodians, wirehouses, regional and independent broker-dealers, fintech custodians, banks, and trust companies.",
+        "chunk_ids": [
+          "SCHW-10K-2025#13"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press names Fidelity Investments as the second-largest custodian after Schwab in the RIA custody business.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#0"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press names Fidelity as Schwab's close rival in cash and custody services.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-07-RB-01#4"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press names Altruist as a Vanguard-owned custodian competing in the RIA custody space.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-07-RB-01#4"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press names SEI, Goldman and Robinhood as custodial alternatives that RIAs might consider as competitors to Schwab.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-08-24-IN-01#2"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press names BNY Pershing as a custodian used alongside Schwab by breakaway RIA teams.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#2"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press names LPL as an independent broker/dealer and RIA custodian.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-23-WM-01#3"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Trade press reports Vanguard, through its acquisition of Altruist, is set up to compete with Schwab in RIA custody.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-08-26-WM-01#3"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Schwab states it serves more than 16,000 independent advisory firms on its platform as of September 30, 2026.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Schwab states that these more than 16,000 firms represent $5.8 trillion in client assets on its platform as of September 30, 2026.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Schwab states that more than 1,100 advisory firms added Schwab as a custodian in 2025, more than 3x the number of the next closest provider.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Trade press reports Schwab added 1,001 new RIAs to its custody platform in Q3 2026, far more than its nearest peers.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-15-WM-01#3"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Schwab's Q3 2026 deck reports 1,101 custodians added to ADVs in 3Q26, versus peers adding 349, 339, 202, and 79.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q3#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services client assets were $5,845.9 billion at September 30, 2026.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services client assets were $5,741.9 billion at June 30, 2026.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services client assets were $5,201.5 billion at March 31, 2026.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services client assets were $5,195.5 billion at December 31, 2025.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "Advisor Services client assets were $5,016.7 billion at September 30, 2025.",
+        "chunk_ids": [
+          "SCHW-PR-2026-10-15-01#41"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "In Q1 2025, Schwab announced a strategic investment in wealth.com, a digital estate planning leader, described as one part of a broader effort to provide more of an ecosystem for its RIA clients to help them grow, compete and succeed.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q1#14"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "In Q3 2025, Schwab deepened relationships with its 16,000 RIA firms by building a broader support ecosystem, including grown lending support, expanded alternatives capability, an expanded institutional no-transaction-fee mutual fund platform, and the launch of Advisor ProDirect.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#13"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "In September 2025, Schwab supported the largest advisor transition in the history of its industry by welcoming OpenArc to its platform.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q3#14"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "In Q4 2025, Schwab expanded its wealth services offer for Advisor Services, including its Model Market Center platform and alternative investments, lending and trust services through Charles Schwab Bank, and a high-touch block-trade trading service launching in Q1.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#12"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "In Q1 2026, Schwab launched a structured asset lending program enabling advisors' clients to borrow against alternative investments and restricted or private shares.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#48"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "In Q3 2026, Schwab collaborated with Anthropic and became the first RIA custodian included in Claude for Financial Advisors.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#5"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "Trade press reports Schwab plans to give RIAs equal or better access than their wirehouse counterparts to banking services such as lending, private market investing and long-short strategies.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-29-WM-01#0"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "Trade press reports Schwab will continue to focus on its custody services for registered investment advisors with under $100 million in AUM.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#0"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "Trade press reports Schwab is offering a $4,800 credit toward the Claude enterprise version to give smaller advisors access to AI connectors between Schwab Advisor Center and their own tools.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-02#0"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "Trade press reports Syntax integrated its index engine with Schwab's iRebal platform to streamline direct indexing for RIAs, linking index creation, calculation, model management, trading and tax management support.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-23-WM-01#0"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "Trade press reports Schwab is partnering with Nevis, an AI operating system for wealth management, to offer a digital onboarding process for Schwab RIAs, and is moving exclusively to Docusign for executing agreements.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-11-02-RB-01#2"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "Trade press reports Schwab acquired Forge Global to broaden its private market capabilities, and later agreed to divest the Forge Trust self-directed IRA custodian business while keeping Forge's private markets platform.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-07-WM-01#0"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "Trade press reports Schwab is developing a proprietary long-short investment strategy to deliver long-short capabilities to its clients and RIAs.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-15-WM-01#1"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "In Q1 2026, Schwab stated it is building its own books and records and custody capabilities as a prelude to offering clients choice in how they hold equities and to support future tokenization of securities.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#59"
+        ],
+        "part_id": "a6.SCHW"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Schwab has more than 3,000 employees dedicated to serving advisors.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-27-IN-01#1"
+        ],
+        "part_id": "a5.SCHW",
+        "differs_because": "These are counts of Schwab's own employees dedicated to serving advisors, not the advisor headcount of the RIA custody business (the independent RIA advisors whose firms custody with Schwab)."
+      },
+      {
+        "text": "Schwab noted it has some 3,000 financial advisors in-house, many of whom hold CFPs.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-28-WM-01#2"
+        ],
+        "part_id": "a5.SCHW",
+        "differs_because": "These are Schwab's own in-house financial advisors (retail advice staff), not the advisor headcount of the RIA custody business (the independent RIA advisors whose firms custody with Schwab)."
+      }
+    ],
+    "gaps": []
+  }
+}
