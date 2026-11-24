@@ -83,3 +83,9 @@ Built, checked and run (4 calls); not adopted. Files, checks and results: `docs/
 - 2026-11-23 - plan review CHANGES REQUESTED (issue #292 comment 7118136034): computability statements kept as a
   code box (`Answer.computations`), Q24 pass item, false evidence-list text removed, spec section and tests added,
   v7 block shortened to a link.
+- 2026-11-24 - v8 amendment approved (issue #292 comment 7118166000). v8 code + 7 tests (1718230); pytest 1217 pass.
+  Mock rule and #272 plans: v5.2 = main 30/30; v8: Q26, Q27 identical, worse 0. No mock matrix (and none of the four
+  real #272 matrices) has a derivation proposal, so the Computability box is proven by tests, not drivable on mock.
+  verify-cee v8 and default: ask-answer, ask-layout, ask-progress PASS.
+- 2026-11-24 00:50 UTC - count at gate 1718230: low 42 reused + 4 new; off 42 reused + 4 new (= plan). Paid runs held
+  until the 04:00 UTC off-peak window (peak 01:00-04:00).
