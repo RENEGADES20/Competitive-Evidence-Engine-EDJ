@@ -117,3 +117,16 @@ checks the score stays at or above #272 test B (24/30 adjudicated). Plan review:
 - 2026-11-23 - plan review CHANGES REQUESTED (issue comment 7120735225): text-only pass count decides; 23/30 is a fail,
   with an effort- vs form-caused rule; verdict negatives, `comparison_refiled` mock assert, Q26 / Q27 zero delta, peak
   confound noted. Amended. 0 calls.
+- 2026-11-23 - plan approved (issue comment 7120764517). Code + 18 tests (a7d9ed1); pytest 1235 passed.
+- 2026-11-23 21:14 - Q24 replay (0 calls): the g8-off record reused, `comparison_missing` [], re-filed a1 -> a4.
+  verify-cee on mock at a7d9ed1: ask-answer, ask-layout, ask-progress PASS. Mock fts Q1-Q30 vs main d1bbed5, rule and
+  #272 plans: 30/30 identical on both; `comparison_refiled` empty everywhere.
+- 2026-11-23 21:25 - side check (0 calls): #272 records Q3, Q4, Q8, Q22 (borderline ones; Q7 and Q15 dumps were too
+  large for one scorer) scored by two fresh Sonnet scorers, with and without the evidence block.
+- 2026-11-23 21:32 (03:32 UTC, peak) - count g3-count: 521 reused, 24 new reduce keys (= plan). Paid run g3-run started,
+  `--max-calls 24`, not waiting for off-peak (TL instruction).
+- 2026-11-23 21:43 - g3-run done: 24 calls, $0.609 at peak, none failed; fallback fired on Q24 only. Reduce wall p50
+  10.4 s / p90 18.8 s.
+- 2026-11-23 21:50 - blind scoring (four fresh Sonnet scorers): 14/30, text-only 14/30; at most 23/30 after a second
+  read. Fail. Regressions Q5, Q7, Q22 form-caused, so the rule says stop and report to the TL before merge (results doc).
+  No PR opened.

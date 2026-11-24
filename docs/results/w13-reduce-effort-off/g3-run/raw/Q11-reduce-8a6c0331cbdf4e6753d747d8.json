@@ -1,0 +1,135 @@
+{
+  "question_id": "Q11",
+  "question": "How does each of the five define and report advisor headcount -- and what does each definition include or exclude?",
+  "reduce_version": "v8",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-2-reduce-off-c64000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-SUPP-2020Q4#1",
+    "MS-ADV1A-2026#1",
+    "SCHW-ADV1A-2026#1",
+    "SCHW-10Q-2026Q1#22",
+    "SCHW-10Q-2026Q2#25",
+    "SCHW-10K-2025#18",
+    "SCHW-TR-2026Q1#4",
+    "SCHW-10Q-2026Q2#71",
+    "EDJ-10K-2025#130",
+    "EDJ-10Q-2025Q3#86",
+    "EDJ-10Q-2026Q1#61",
+    "EDJ-10Q-2026Q2#60",
+    "EDJ-10Q-2025Q2#64",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10K-2025#148",
+    "EDJ-10Q-2026Q1#62",
+    "BAC-SUPP-2023Q4#2",
+    "BAC-DECK-2025-investor-day#9",
+    "RJF-10K-2025#227",
+    "RJF-10K-2025#12",
+    "RJF-10K-2025#228",
+    "RJF-10K-2025#24",
+    "RJF-10K-2025#23"
+  ],
+  "schema_fallback": [],
+  "enum_values": 140,
+  "at": "2026-11-23T21:36:10.248424-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 15700,
+    "output_tokens": 775,
+    "cache_hit_tokens": 1152,
+    "cache_miss_tokens": 14548,
+    "reasoning_tokens": null,
+    "tool_calls": 1,
+    "thinking": "off",
+    "effort": "off",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.45
+  },
+  "wall_s": 11.25,
+  "tokens_per_s": 68.89,
+  "ttft_s": 2.45,
+  "reasoning_content": null,
+  "first_claim_s": 3.78,
+  "stream_items": {
+    "first_claim_s": 3.78,
+    "shown": 5,
+    "held": 3
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "The five firms define and report advisor headcount differently, with no common definition across them.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1",
+          "EDJ-10K-2025#130",
+          "BAC-SUPP-2023Q4#2",
+          "RJF-10K-2025#228"
+        ],
+        "part_id": "a1"
+      },
+      {
+        "text": "Raymond James reports its financial advisor headcount as the sum of employee and independent contractor advisors, labeled Total advisors, which was 8,943 as of September 30, 2025.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Merrill reports a Total wealth advisors figure that includes advisors across all wealth management businesses in GWIM and Consumer Banking, at 18,916 for December 31, 2023.",
+        "chunk_ids": [
+          "BAC-SUPP-2023Q4#2"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Edward Jones reports financial advisors as actual headcount at period end and average, disclosing both a U.S. and a Canada split, with 20,425 at year end 2025.",
+        "chunk_ids": [
+          "EDJ-10K-2025#130",
+          "EDJ-10K-2025#148"
+        ],
+        "part_id": "a2.EDJ"
+      },
+      {
+        "text": "Morgan Stanley reports only a Wealth Management representatives count of 15,950 as of December 31, 2020, with no written definition of what it includes or excludes.",
+        "chunk_ids": [
+          "MS-SUPP-2020Q4#1"
+        ],
+        "part_id": "a2.MS"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Schwab does not publish a dedicated advisor headcount figure; its Form ADV Part 1A reports 4,127 employees performing investment advisory functions (including research).",
+        "chunk_ids": [
+          "SCHW-ADV1A-2026#1"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "This is a regulatory filing count of employees performing investment advisory functions, not Schwab's own advisor headcount metric, which is not disclosed."
+      },
+      {
+        "text": "Morgan Stanley's Form ADV reports approximately 29,481 employees, defined as including full- and part-time employees but excluding clerical workers.",
+        "chunk_ids": [
+          "MS-ADV1A-2026#1"
+        ],
+        "part_id": "a3.MS",
+        "differs_because": "This is a regulatory filing total-employee count, not the firm's 'Wealth Management representatives' advisor headcount, and does not state what the advisor metric itself includes."
+      },
+      {
+        "text": "On its Form ADV, Morgan Stanley reports its approximate employee count of 29,481, noting it excludes clerical workers.",
+        "chunk_ids": [
+          "MS-ADV1A-2026#1"
+        ],
+        "part_id": "a4.MS",
+        "differs_because": "This exclusion of clerical workers applies to the Form ADV total-employee count, not to the firm's advisor headcount definition."
+      }
+    ],
+    "gaps": []
+  }
+}
