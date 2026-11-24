@@ -175,6 +175,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-23 | Facts table code (FACTS off, no rows) + ADR-022 Deferred; G0 stop: at most 5/485 #272 map calls servable (#288) | DeepSeek balance ran out (402) before the extraction | revisit facts only with more registered metrics or a question mix that asks bare figures |
 | 2026-11-23 | Removed the unused reduce v6 (#284) and facts-table (#285) code, config, scripts and tests; `upgrade.sql` drops the empty `facts` table; results docs, evidence and ADR-022 (Deferred) kept; mock Q1-Q30 and request hashes identical to main (#290) (#290) | none | #283 MAP_PREFIX stays for intersection-first follow-ups |
 | 2026-11-23 | Ask page: answer paragraph with footnotes above the evidence (list for window/recency), streamed claims fade in on top, evidence + SOURCE cards kept on every rerun (#291) (#293) | none | part B: reduce prompt (direct answer + synthesis) |
+| 2026-11-24 | #292 reduce prompt v8 (brief cited answer, at most 5 sentences, computability box) is the default; v7 stays behind REDUCE_PROMPT; 12 real calls (#294) | ADR-021 rule 5 amendment and default switch need TL sign-off | Gate 3: 30-question scored run on v8 (TL go-ahead); reduce effort off as a latency lever (failed Q24 comparison part_id) |
 
 ## Weekly score (from W6)
 
