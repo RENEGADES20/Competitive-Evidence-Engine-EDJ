@@ -1,0 +1,19 @@
+Scorer note for this dump (#297, plans/0297-reduce-v9.md step 6). verdict-rule.txt is the bar, unchanged.
+
+- Your part lists only some questions. Score exactly the questions in your part file (Q26 and Q27 are not in any
+  part: they carry an earlier verdict). "All 30 questions" in verdict-rule.txt means: every question of your part.
+- Each question's dump has an ANSWER block (claims C1.., adjacent items A1.., gaps G, caveats, and COMPUTABILITY lines,
+  which are a box written by code and shown with the answer) and, after it, an EVIDENCE LIST block.
+- Judge PASS / FAIL on what the answer asserts: its sentences, their cited passages, the gaps, the caveats and the
+  Computability box. The EVIDENCE LIST is context only, not answer content: the page shows it under the answer
+  (one line per evidence item), but an answer does not pass because a needed fact sits only in the evidence list.
+  You may use it to check what evidence existed.
+- For every PASS add "text_only": true or false: true if the PASS holds on the answer text and its citations alone,
+  reading nothing from the evidence list; false if you leaned on the evidence list. For a FAIL, "text_only": null.
+- Borderline (definition for this run): a FAIL is borderline when its reason names a single missing or misworded part
+  while the answer is otherwise correct; mark it "borderline": true. A PASS you hesitated on may also be marked
+  borderline: true. Every other verdict is borderline: false.
+
+Output: one JSON object, keys = the question ids of your part, in order, each
+  {"verdict": "PASS"|"FAIL", "class": "" or e.g. "s" / "b, r", "borderline": true|false, "text_only": true|false|null,
+   "reason": "<one line>"}
