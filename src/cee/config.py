@@ -60,7 +60,7 @@ class Settings:
     # #275: a streamed DeepSeek call with no chunk for this many seconds is aborted and saved as failed
     # (no automatic retry); the reduce system prompt version (v5.2 | v5.3: v5.3 adds "state each fact once").
     deepseek_idle_s: float = 120.0
-    reduce_prompt: str = "v5.2"
+    reduce_prompt: str = "v8"
     # #277 verify-cee only: while this file names a stage (map | reduce), the mock call of that stage fails
     # (extract.mock_failure). Empty (the default): never. Never read for a real provider.
     mock_fail_file: str = ""
@@ -156,8 +156,8 @@ def _nonneg_float(name: str, default: float) -> float:
 
 
 DEEPSEEK_IDLE_S_DEFAULT = 120.0   # #275: seconds without a streamed chunk before a call is aborted
-REDUCE_PROMPTS = ("v5.2", "v5.3")
-REDUCE_PROMPT_DEFAULT = "v5.2"
+REDUCE_PROMPTS = ("v5.2", "v5.3", "v7", "v8")   # #292: v7 = direct answer plus cited synthesis; v8 = brief
+REDUCE_PROMPT_DEFAULT = "v8"   # #292: v8 passed the plan rule at reduce effort low (docs/results/w13-reduce-synthesis.md)
 
 
 def _positive_float(name: str, default: float) -> float:

@@ -239,6 +239,22 @@ def answer_block(items: list[dict], as_list: bool, fade_from: int | None = 0, bl
     _html(answer_html(items, as_list, fade_from, block_fade))
 
 
+def computability_html(item: dict) -> str:
+    """#292 v8: a code-written computability statement (COMPUTED / NOT_COMPUTED, inputs and population sources cited)
+    as a box next to the caveats, with footnotes into the evidence list like an answer sentence."""
+    unlinked = "".join(" " + citation_chip_html(cid, None, False, "not in the retrieved set")
+                       for cid in item.get("unlinked") or [])
+    flags = "".join(f' <span class="cee-flag">{escape(FLAG_TEXT.get(f, f))}</span>' for f in item.get("flags") or []
+                    if f != "code_computability")
+    text = escape(" ".join(str(item["text"]).split()))
+    return (f'<div class="cee-box cee-caveat cee-computability"><b class="l">Computability:</b> {text}'
+            f'{footnotes_html(item.get("footnotes") or [])}{unlinked}{flags}</div>')
+
+
+def computability_box(item: dict) -> None:
+    _html(computability_html(item))
+
+
 def caveat_box(text: str) -> None:
     """Always expanded: never inside an expander, tab or tooltip."""
     _html(f'<div class="cee-box cee-caveat"><b class="l">Caveat:</b> {escape(text)}</div>')

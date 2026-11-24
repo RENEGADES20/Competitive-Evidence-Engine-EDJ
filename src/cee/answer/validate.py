@@ -229,12 +229,16 @@ def _matrix_state(pid: str, answer: Answer, matrix, known: dict) -> str | None:
     return None
 
 
-def part_coverage(answer: Answer, plan, hits: list[Hit], matrix=None) -> dict[str, str]:
+def part_coverage(answer: Answer, plan, hits: list[Hit], matrix=None, synthesis: bool = False,
+                  brief: bool = False) -> dict[str, str]:
     """{part_id: model | citation | handoff | code_gap | comparison | proxy | proxy_by_design | none}
     for the plan's parts (#215; the matrix states #247 B3).
     model: a cited claim / adjacent item or a gap names the part; citation: an item without a valid
     part_id cites a passage found for the part (v3 outputs, the mock); handoff: a normative part in
-    a boundary answer, covered by the hand-off sentence; code_gap: check_parts added a gap."""
+    a boundary answer, covered by the hand-off sentence; code_gap: check_parts added a gap.
+    #292 synthesis (prompt v7): aspect: a cited sentence with the part's aspect id cites one of the cell's counting
+    items or derivation inputs (one sentence may cover several cells). #292 brief (v8): evidence_list: a holding cell the answer does not
+    cite is covered by the evidence list under the answer (#291), so it gets no part gap."""
     ids = [p.id for p in plan.parts]
     known = {h.chunk_id: h for h in hits}
 
@@ -259,12 +263,32 @@ def part_coverage(answer: Answer, plan, hits: list[Hit], matrix=None) -> dict[st
         elif answer.behavior == "answer_with_boundary" and is_normative(p.text) \
                 and any(c.text.strip() == BOUNDARY_HANDOFF for c in answer.claims):
             out[p.id] = "handoff"
+        elif synthesis and _aspect_sentence(p.id, items, matrix, known):
+            out[p.id] = "aspect"
+        elif brief and _holds(p.id, matrix):
+            out[p.id] = "evidence_list"
         else:
             out[p.id] = _matrix_state(p.id, answer, matrix, known) or "none"
     return out
 
 
-def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "", matrix=None) -> Answer:
+def _holds(pid: str, matrix) -> bool:
+    from cee.answer.matrix import holds
+    cell = matrix.cells.get(pid) if matrix is not None else None
+    return cell is not None and holds(cell)
+
+
+def _aspect_sentence(pid: str, items, matrix, known: dict) -> bool:
+    """#292: a claim with the cell's aspect id as part_id cites a retrieved chunk of the cell's own evidence."""
+    cell = matrix.cells.get(pid) if matrix is not None else None
+    if cell is None:
+        return False
+    own = {k for i in cell.counting_items for k in i.chunk_ids} | set((cell.derivation or {}).get("input_chunk_ids") or [])
+    return any(c.part_id == cell.aspect_id and any(k in own and k in known for k in c.chunk_ids) for c in items)
+
+
+def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "", matrix=None,
+                synthesis: bool = False, brief: bool = False) -> Answer:
     """Every planned part has a cited claim, a cited adjacent item or a gap; a part with none gets
     a code-built gap flagged part_gap (#215, ground rule 3). The wording comes from the part's
     candidate pool before exclusion: 0 -> "No evidence retrieved for", else (or unknown) "Not
@@ -274,7 +298,7 @@ def check_parts(answer: Answer, plan, hits: list[Hit], question: str = "", matri
         return answer
     pools = _part_pools(plan)
     for p in plan.parts:
-        if part_coverage(answer, plan, hits, matrix)[p.id] != "none":
+        if part_coverage(answer, plan, hits, matrix, synthesis, brief)[p.id] != "none":
             continue
         wording = PART_NO_EVIDENCE if pools.get(p.id) == 0 else PART_NOT_ANSWERED
         answer.gaps.append(Gap(what=wording.format(part=_part_label(p, question)),

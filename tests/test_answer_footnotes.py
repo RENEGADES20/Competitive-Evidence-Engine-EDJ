@@ -42,7 +42,8 @@ def test_an_id_outside_the_retrieved_set_gets_no_card_and_stays_an_unlinked_chip
     assert 'href="#cee-ev-1"' in html and "?chunk=NOT-RETRIEVED" not in html
 
 
-def test_window_or_recency_answers_are_a_list_others_a_paragraph():
+def test_window_or_recency_answers_are_a_list_others_a_paragraph(monkeypatch):
+    monkeypatch.setenv("REDUCE_PROMPT", "v5.2")   # #291 rule under v5.2; v8: tests/test_reduce_synthesis.py
     fact, recency = NS(kind="fact"), NS(kind="recency")
     assert P.list_form(Query(question="q", window=("2026-08-01", "2026-11-01")), [fact])
     assert P.list_form(Query(question="q"), [fact, recency])

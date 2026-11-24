@@ -313,7 +313,7 @@ extraction call's cited evidence as it lands, then (#275) each claim of the answ
 passed its citation, figure and date checks ("Answer (in progress: checks running)"), then the full answer.
 `DEEPSEEK_IDLE_S` (default 120) stops a streamed call that sends nothing for that long: the call fails fast
 (saved with its partial output in an eval run), and the Ask page shows an error with a "Try again" button;
-nothing is retried automatically. `REDUCE_PROMPT` (`v5.2 | v5.3`) picks the reduce prompt version.
+nothing is retried automatically. `REDUCE_PROMPT` (`v5.2 | v5.3 | v7 | v8`, default `v8` since #292: a brief cited answer; window and all-recency questions use v5.2) picks the reduce prompt version.
 ```powershell
 $env:LLM_PROVIDER="deepseek"; .\.venv\Scripts\python.exe -m streamlit run src\cee\app\streamlit_app.py
 ```

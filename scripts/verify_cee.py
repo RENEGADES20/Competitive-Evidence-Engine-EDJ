@@ -344,11 +344,21 @@ def check_part_gaps(rec, page, what: str) -> None:
     import json as _json
     # base64: passage text holds non-ASCII characters the console code page cannot decode
     b64 = psql(VERIFY_DB, "SELECT encode(convert_to(json_build_object('parts', filters->'plan'->'parts', "
+                          "'cells', filters->'map'->'cells', 'version', filters->'reduce'->>'version', "
                           "'answer', answer)::text, 'UTF8'), 'base64') FROM query_log WHERE answer IS NOT NULL ORDER BY query_id DESC LIMIT 1")
     row = _json.loads(base64.b64decode("".join(b64.split())).decode("utf-8"))
     parts = [p["id"] for p in row["parts"] or []]
     # #247: the reduce answers a part with a claim, an adjacent item or a matrix gap (code-built)
     cited = {c.get("part_id") for c in [*row["answer"]["claims"], *row["answer"]["adjacent"]]}
+    if row.get("version") == "v8":   # #292 v8: a holding cell is covered by the evidence list under the answer
+        cited |= {cid for cid, cell in (row.get("cells") or {}).items()
+                  if cell.get("label") == "derived" or (cell.get("effective_label") == "fact")}
+    if row.get("version") == "v7":   # #292: a sentence with an aspect id covers each cell of it whose chunk it cites
+        for cid, cell in (row.get("cells") or {}).items():
+            own = {k for i in cell.get("items") or [] for k in i.get("chunk_ids") or []}
+            if any(c.get("part_id") == cell.get("aspect_id") and own & set(c.get("chunk_ids") or [])
+                   for c in row["answer"]["claims"]):
+                cited.add(cid)
     gapped = {g.get("part_id") for g in row["answer"]["gaps"] if "part_gap" not in (g.get("flags") or [])}
     expected = [p for p in parts if p not in cited and p not in gapped]
     gaps = [g for g in row["answer"]["gaps"] if "part_gap" in (g.get("flags") or [])]
@@ -418,12 +428,56 @@ def check_footnote_click(rec, page) -> None:
              target == href[1:], f"location target={target}")
 
 
+def check_reduce_version(rec, page, qid: str, want_list: bool) -> None:
+    """#292: the reduce version the newest query_log row used: with REDUCE_PROMPT=v7 a list-form question keeps v5.2
+    and any other gets v7, its paragraph opening with the mock's direct sentence ("In short: "); else the configured
+    version (default REDUCE_PROMPT_DEFAULT, v8 since #292)."""
+    from cee.config import REDUCE_PROMPT_DEFAULT
+    configured = os.environ.get("REDUCE_PROMPT", "").strip() or REDUCE_PROMPT_DEFAULT
+    synth = configured in ("v7", "v8")
+    want = "v5.2" if (synth and want_list) else configured
+    got = psql(VERIFY_DB, "SELECT coalesce(filters->'reduce'->>'version', 'none') FROM query_log ORDER BY query_id DESC LIMIT 1")
+    first = page.evaluate("() => { const e = document.querySelector('.cee-answer p, .cee-answer li');"
+                          " return e ? e.innerText.slice(0, 60) : ''; }")
+    direct = (not (synth and not want_list)) or first.startswith("In short: ")
+    rec.step(f"{qid}: read the reduce version of the newest query_log row (REDUCE_PROMPT={configured})",
+             f"version {want}" + ("; the paragraph opens with the direct sentence" if want in ("v7", "v8") else ""),
+             got == want and direct, f"version={got}; answer starts {first!r}")
+    if want == "v8":
+        check_computability_box(rec, page, qid)
+
+
+BOX_JS = """() => {
+  const boxes = [...document.querySelectorAll('.cee-computability')];
+  const hrefs = boxes.flatMap(b => [...b.querySelectorAll('a[href^="#cee-ev-"]')].map(a => a.getAttribute('href')));
+  return {boxes: boxes.length, footnotes: hrefs.length, missing: hrefs.filter(h => !document.getElementById(h.slice(1))),
+          sentences: document.querySelectorAll('.cee-answer .cee-sent').length,
+          text: boxes.map(b => b.innerText.slice(0, 90))};
+}"""
+
+
+def check_computability_box(rec, page, qid: str) -> None:
+    """#292 v8: at most 5 answer sentences; one Computability box per `answer.computations` entry of the newest
+    query_log row (code-written COMPUTED / NOT_COMPUTED, inputs and population sources cited), each with footnotes
+    that resolve to evidence cards."""
+    n = int(psql(VERIFY_DB, "SELECT coalesce(jsonb_array_length((answer::jsonb)->'computations'), 0) FROM query_log "
+                            "WHERE answer IS NOT NULL ORDER BY query_id DESC LIMIT 1") or 0)
+    box = page.evaluate(BOX_JS)
+    ok = (box["boxes"] == n and box["sentences"] <= 5 and not box["missing"]
+          and (n == 0 or box["footnotes"] >= n))
+    rec.step(f"{qid}: read the Computability box (v8)",
+             f"{n} box(es) as logged, each with resolving footnotes; at most 5 answer sentences",
+             ok, f"boxes={box['boxes']} logged={n} footnotes={box['footnotes']} missing={box['missing']} "
+                 f"sentences={box['sentences']} text={box['text']}")
+
+
 def feature_ask_layout(page, base, rec, ctx):
     """#291: answer above the evidence for Q5, Q8, Q24, Q26; footnotes resolve; a Coverage -> Ask round trip keeps
     the answer and the evidence (drawn from session state, no new run)."""
     for qid, want_list in LAYOUT_QS:
         ask(page, base, question_text(qid))
         lay = check_layout(rec, page, f"Ask {qid}; read the layout", want_list)
+        check_reduce_version(rec, page, qid, want_list)
         if qid == "Q5":
             check_footnote_click(rec, page)
         before = int(psql(VERIFY_DB, "SELECT count(*) FROM query_log"))
