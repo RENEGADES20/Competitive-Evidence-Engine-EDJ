@@ -1,0 +1,78 @@
+{
+  "question_id": "Q30",
+  "question": "What is Merrill's standalone profitability?",
+  "reduce_version": "v8",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 64000,
+  "request_version": "ds-strict-2-reduce-off-c64000-s1",
+  "behavior": "gap_with_adjacent",
+  "chunk_ids": [
+    "BAC-PR-2026-10-14-01#11",
+    "BAC-PR-2026-07-14-01#10",
+    "BAC-PR-2026-04-15-01#10",
+    "BAC-PR-2026-01-14-01#11",
+    "BAC-SUPP-2026Q1#43",
+    "BAC-10K-2025#244",
+    "BAC-SUPP-2026Q3#51",
+    "BAC-10K-2025#247",
+    "BAC-10Q-2026Q2#89",
+    "BAC-10Q-2025Q3#94",
+    "BAC-10Q-2025Q2#94"
+  ],
+  "schema_fallback": [],
+  "enum_values": 32,
+  "at": "2026-11-23T21:43:32.596305-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 4273,
+    "output_tokens": 349,
+    "cache_hit_tokens": 1024,
+    "cache_miss_tokens": 3249,
+    "reasoning_tokens": null,
+    "tool_calls": 1,
+    "thinking": "off",
+    "effort": "off",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.86
+  },
+  "wall_s": 4.88,
+  "tokens_per_s": 71.52,
+  "ttft_s": 1.86,
+  "reasoning_content": null,
+  "first_claim_s": null,
+  "stream_items": {
+    "first_claim_s": null,
+    "shown": 0,
+    "held": 2
+  },
+  "raw": {
+    "answerable": false,
+    "behavior": "gap_with_adjacent",
+    "claims": [],
+    "adjacent": [
+      {
+        "text": "No standalone profitability figure is reported for Merrill alone; profitability is reported for the Global Wealth and Investment Management (GWIM) segment, which combines Merrill Wealth Management with Bank of America Private Bank.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#11",
+          "BAC-PR-2026-07-14-01#10",
+          "BAC-PR-2026-04-15-01#10",
+          "BAC-PR-2026-01-14-01#11"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "GWIM includes both Merrill and Bank of America Private Bank; the two have different reporting scopes, so GWIM figures are not Merrill's."
+      },
+      {
+        "text": "Merrill's own separately disclosed figure is revenue, a different measure from profitability, such as Merrill Wealth Management revenue of $5.7 billion in 2026Q2.",
+        "chunk_ids": [
+          "BAC-10Q-2026Q2#89"
+        ],
+        "part_id": "a1.MER",
+        "differs_because": "Revenue is a different measure from profitability."
+      }
+    ],
+    "gaps": []
+  }
+}
