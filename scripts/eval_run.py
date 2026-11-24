@@ -771,8 +771,11 @@ class RealRunner:
         if not R.needs_call(matrix):
             answer, _ = answer_for(q["text"], query, hits, self.provider, plan=plan, matrix=matrix, info=info)
             return answer.model_dump(), "code_built", info
-        key = reduce_cache_key(q, self.snapshot, self.provider, self.model, R.max_tokens(self.provider),
-                               self.reduce_version, matrix, query)
+        # #295: the effort (cap, request version) of this question's form (reduce.effort: brief off, else low)
+        version = R.request_version(self.provider, matrix, query) if self.provider == "deepseek" \
+            else self.reduce_version
+        cap = R.max_tokens(self.provider, matrix, query)
+        key = reduce_cache_key(q, self.snapshot, self.provider, self.model, cap, version, matrix, query)
         path = self.cache_dir / f"{q['id']}-reduce-{key}.json"
         self.last_file = path.name
         # #275: the reduce record's file and a sha of its rendered message, in the report even when the call is
@@ -819,7 +822,7 @@ class RealRunner:
         schema, fallback = R.reduce_schema(matrix)
         meta = {"question_id": q["id"], "question": q["text"], "reduce_version": R.prompt_version(matrix, query),
                 "snapshot": self.snapshot, "provider": self.provider, "model": self.model,
-                "max_tokens": R.max_tokens(self.provider), "request_version": self.reduce_version,
+                "max_tokens": cap, "request_version": version,
                 "behavior": matrix.behavior, "chunk_ids": R.citable(matrix), "schema_fallback": fallback,
                 "enum_values": R.enum_values(schema), "at": now_iso()}
         got: dict = {}

@@ -417,11 +417,27 @@ def enum_values(schema: dict) -> int:
     return n
 
 
-def max_tokens(provider: str) -> int:
-    """#272: deepseek by the reduce stage's effort (off 20000, thinking 128000); else the answer cap."""
+def effort(m: EvidenceMatrix | None = None, query=None) -> str:
+    """#295: the DeepSeek effort of this question's reduce call: DEEPSEEK_EFFORT_REDUCE_BRIEF (default off) for a v8
+    brief synthesis answer, else DEEPSEEK_EFFORT_REDUCE (default low; list-form answers, v5.2 / v7)."""
+    s = settings()
+    return s.deepseek_effort_reduce_brief if brief(m, query) else s.deepseek_effort_reduce
+
+
+def request_version(provider: str, m: EvidenceMatrix | None = None, query=None) -> str | None:
+    """#295: the reduce request version of this question's call (its effort, cap and streaming)."""
     from cee.answer import llm
     if provider == "deepseek":
-        return llm.stage_max_tokens("reduce")
+        return llm.request_version(provider, "reduce", effort(m, query))
+    return llm.request_version(provider, "reduce")
+
+
+def max_tokens(provider: str, m: EvidenceMatrix | None = None, query=None) -> int:
+    """#272: deepseek by the reduce stage's effort (off 20000, thinking 128000); else the answer cap. #295: the effort
+    of this question's form (effort)."""
+    from cee.answer import llm
+    if provider == "deepseek":
+        return llm.stage_max_tokens("reduce", effort(m, query))
     return llm.answer_max_tokens(provider)
 
 
@@ -443,7 +459,7 @@ def requests(question: str, m: EvidenceMatrix, query, provider: str) -> dict:
                                     "json_schema": {"name": "answer", "strict": True, "schema": schema}}}
     if provider == "deepseek":
         return llm.deepseek_tool_request(TOOL, "Submit the cited answer.", schema, system_prompt(m, query), user,
-                                         max_tokens(provider), stage="reduce")
+                                         max_tokens(provider, m, query), stage="reduce", effort=effort(m, query))
     raise ValueError(f"Unknown LLM_PROVIDER: {provider}")
 
 
@@ -452,10 +468,10 @@ def input_tokens(question: str, m: EvidenceMatrix, query=None) -> int:
     return round((len(system_prompt(m, query)) + len(json.dumps(schema)) + len(reduce_message(question, m, query))) / 4)
 
 
-def input_limit(provider: str) -> int | None:
+def input_limit(provider: str, m: EvidenceMatrix | None = None, query=None) -> int | None:
     from cee.answer import llm
     window = llm.CONTEXT_WINDOW.get(provider)
-    return None if window is None else window - max_tokens(provider)
+    return None if window is None else window - max_tokens(provider, m, query)
 
 
 # --- the call ------------------------------------------------------------------------------------
@@ -472,7 +488,7 @@ def call_reduce(question: str, m: EvidenceMatrix, query, provider: str, client=N
     from cee.answer import cancel, llm
     cancel.check()
     meta = {} if meta is None else meta
-    limit = input_limit(provider)
+    limit = input_limit(provider, m, query)
     if limit is not None and input_tokens(question, m, query) > limit:
         raise RuntimeError("input over the model's limit: the reduce call was not sent")
     req = requests(question, m, query, provider)
@@ -766,17 +782,53 @@ def _aspect_ids(m: EvidenceMatrix, aspect_id: str) -> set[str]:
     return {aspect_id} | {c.id for c in m.cells.values() if c.aspect_id == aspect_id}
 
 
-def check_comparisons(answer: Answer, m: EvidenceMatrix) -> list[str]:
+REFILE_BLOCKERS = ("no_citation", "unmatched_citation", "outside_matrix", "claim_from_adjacent")
+_VERDICT = re.compile(P.COMPARISON_VERDICT, re.I)
+
+
+def refile_comparison(answer: Answer, m: EvidenceMatrix, a, ids_ok: set[str], log: list) -> bool:
+    """#295, v8 brief form only: when comparison aspect `a` has no claim under its own ids, the first model claim
+    that (1) cites citable counting items of `a`'s holding cells for 2 or more firms, (2) states a comparability verdict
+    (P.COMPARISON_VERDICT), (3) carries no citation / outside-matrix / adjacent flag and is not normative and (4) was
+    not re-filed already is re-filed under `a` (part_id := a.id). Text and citations are unchanged; nothing is
+    written or cited by code. Logged in `log`. False when no claim qualifies (the COMPARISON_MISSING gap follows)."""
+    from cee.answer.validate import is_normative
+    by_firm: dict[str, set[str]] = {}
+    for c in m.cells.values():
+        if c.aspect_id == a.id and c.entity and holds(c):
+            by_firm.setdefault(c.entity, set()).update(k for i in c.counting_items for k in i.chunk_ids)
+    if len(by_firm) < 2:
+        return False
+    done = {e["aspect"] for e in log}   # a claim re-filed already carries its aspect's id
+    for n, x in enumerate(answer.claims):
+        if (x.part_id in done or x.text.strip() == P.BOUNDARY_HANDOFF or any(f in x.flags for f in REFILE_BLOCKERS)
+                or is_normative(x.text) or not _VERDICT.search(x.text)):
+            continue
+        cited = {k for k in x.chunk_ids if k in ids_ok}
+        if sum(bool(cited & ks) for ks in by_firm.values()) < 2:
+            continue
+        log.append({"claim": n, "old_part_id": x.part_id, "aspect": a.id})
+        x.part_id = a.id
+        return True
+    return False
+
+
+def check_comparisons(answer: Answer, m: EvidenceMatrix, brief_form: bool = False,
+                      refiled: list | None = None) -> list[str]:
     """Rule 4: each comparison aspect needs a claim (part_id the aspect or one of its cells) citing a
-    matrix chunk; else the gap COMPARISON_MISSING, flag comparison_missing. Returns the missing ids."""
+    matrix chunk; else the gap COMPARISON_MISSING, flag comparison_missing. Returns the missing ids.
+    #295: in the v8 brief form a verdict filed under another part id is re-filed first (refile_comparison)."""
     from cee.answer.matrix import _aspect_text
     ids_ok = set(citable(m))
     missing = []
+    refiled = [] if refiled is None else refiled
     for a in m.aspects:
         if a.kind != "comparison":
             continue
         own = _aspect_ids(m, a.id)
         if any(c.part_id in own and any(k in ids_ok for k in c.chunk_ids) for c in answer.claims):
+            continue
+        if brief_form and refile_comparison(answer, m, a, ids_ok, refiled):
             continue
         if any(g.part_id == a.id and "comparison_missing" in g.flags for g in answer.gaps):
             missing.append(a.id)   # #247 part 2 R4: added once
@@ -1126,7 +1178,8 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
                 x.flags.append("outside_matrix")
     info["outside_matrix"] = outside
     check_adjacent(answer, m, synthesis(m, query))
-    info["comparison_missing"] = check_comparisons(answer, m)
+    info["comparison_refiled"] = []   # #295: v8 brief verdicts re-filed under their comparison aspect
+    info["comparison_missing"] = check_comparisons(answer, m, short, info["comparison_refiled"])
     info["why_line_missing"] = check_why_lines(answer, m, query)
     info["reordered"] = order_newest_first(answer, m, query, by_id)
     if not (m.behavior == "refuse" and m.behavior_reason.startswith("1e")):
@@ -1140,7 +1193,8 @@ def finish_answer(answer: Answer, m: EvidenceMatrix, query, plan, hits, question
     # checks run again on the reduced list (round-1 note 6), new code claims citation-checked
     info["duplicates_removed"] = dedupe_claims(answer, keep_first=synth)
     if info["duplicates_removed"]:
-        info["comparison_missing"] = sorted(set(info["comparison_missing"]) | set(check_comparisons(answer, m)))
+        again = check_comparisons(answer, m, short, info["comparison_refiled"])
+        info["comparison_missing"] = sorted(set(info["comparison_missing"]) | set(again))
         before = {id(x) for x in answer.claims}
         late = [] if short else check_computability(answer, m, synth)
         if late:

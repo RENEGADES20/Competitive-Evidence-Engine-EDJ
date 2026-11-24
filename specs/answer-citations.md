@@ -249,6 +249,16 @@ statements go to the Computability box (see "Computation claims"); other checks 
 comparison claims, then one sentence per further aspect, at most 5. **Default since #292: v8** (it passed the plan rule
 at reduce effort `low`; effort `off` failed Q24, see the results doc).
 
+#295 (plans/0295-reduce-effort-off.md): **reduce effort per form, comparison verdict re-filed.** A v8 brief synthesis
+answer is reduced with `DEEPSEEK_EFFORT_REDUCE_BRIEF` (default `off`, thinking disabled, streamed cap 64000); every
+other reduce call (list form, v5.2 / v7) keeps `DEEPSEEK_EFFORT_REDUCE` (default `low`). The request version, cap and
+cache keys follow the question's effort (`reduce.effort`). Rule 4 in the brief form only: when a comparison aspect has
+no claim under its own ids, the first model claim that cites citable counting items of that aspect's holding cells for
+2 or more firms, states a comparability verdict (`P.COMPARISON_VERDICT`), carries no `no_citation`,
+`unmatched_citation`, `outside_matrix` or `claim_from_adjacent` flag and is not normative is re-filed under the aspect
+(`part_id` := aspect id; text and citations unchanged; logged `comparison_refiled`). Else the `COMPARISON_MISSING` gap,
+as before: code never writes or cites a comparison claim. Results: `docs/results/w13-reduce-effort-off.md`.
+
 #277 (plans/0277-stop-retry.md): **Stop and Retry on the Ask page.**
 - Cancel token (`cee.answer.cancel`): `ask(..., token=...)` makes it active in a context variable; every model call
   checks it first (planner, map, reduce, legacy answer, `llm.deepseek_create`), `ask()` checks it at each stage

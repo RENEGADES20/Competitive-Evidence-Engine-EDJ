@@ -178,3 +178,13 @@ def test_streaming_read_timeout_is_per_chunk(monkeypatch):
     c = REAL_DEEPSEEK_CLIENT()
     assert isinstance(c.timeout, openai.Timeout) and c.timeout.read == llm.DEEPSEEK_TIMEOUT_S == 3600
     assert llm.DEEPSEEK_THINKING_CAP / 18 > llm.DEEPSEEK_TIMEOUT_S   # why only a per-read timeout is safe
+
+
+def test_effort_override_for_one_call(monkeypatch):
+    """#295: an explicit effort (the reduce of a brief synthesis answer) overrides the stage setting for one call."""
+    monkeypatch.setenv("DEEPSEEK_EFFORT_REDUCE", "low")
+    req = llm.deepseek_tool_request("t", "d", {}, "s", "u", 999, stage="reduce", effort="off")
+    assert req["extra_body"] == {"thinking": {"type": "disabled"}} and req["max_tokens"] == 64000
+    assert llm.request_version("deepseek", "reduce", "off") == "ds-strict-2-reduce-off-c64000-s1"
+    assert llm.request_version("deepseek", "reduce") == "ds-strict-2-reduce-low-c128000-s1"
+    assert _req("reduce")["extra_body"]["reasoning_effort"] == "low"

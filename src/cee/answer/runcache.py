@@ -146,11 +146,11 @@ def map_key(question: str, spec, provider: str, window=None) -> str:
 
 def reduce_key(question: str, matrix, query, provider: str) -> str:
     from cee.answer import reduce as R
-    from cee.answer.llm import request_version
     from cee.retrieve.planner import model_for
     schema, _ = R.reduce_schema(matrix)
     model = "mock" if provider == "mock" else model_for(provider, "reduce")
+    # #295: the cap and request version of this question's form (reduce.effort)
     return "reduce-" + _sha([question, R.prompt_version(matrix, query), provider, model,
-                             R.max_tokens(provider) if provider != "mock" else None,
-                             request_version(provider, "reduce"), _sha(R.system_prompt(matrix, query)),
+                             R.max_tokens(provider, matrix, query) if provider != "mock" else None,
+                             R.request_version(provider, matrix, query), _sha(R.system_prompt(matrix, query)),
                              _sha(R.reduce_message(question, matrix, query)), _sha(schema)])[:24]

@@ -47,6 +47,8 @@ class Settings:
     deepseek_effort_plan: str = "off"
     deepseek_effort_map: str = "low"
     deepseek_effort_reduce: str = "low"
+    # #295: the reduce effort of the v8 brief synthesis form (reduce.brief); every other reduce keeps the one above
+    deepseek_effort_reduce_brief: str = "off"
     deepseek_model_map: str = ""
     deepseek_stream: str = "on"
     map_call_tokens: int = 60000
@@ -100,6 +102,10 @@ MAP_CALL_TOKENS_DEFAULT = 60000
 # off: 1 invalid; C3, map on deepseek-flash: 3 invalid); critical path p50 209 s vs 415 s in #250.
 EFFORTS = ("off", "low", "high", "max")
 EFFORT_DEFAULTS = {"plan": "off", "map": "low", "reduce": "low"}
+# #295: v8 brief synthesis answers are reduced with thinking off (#292: 6-14 s per reduce against 15-343 s at low);
+# list-form answers keep EFFORT_DEFAULTS["reduce"] (#275: list form at off scored 20/30 blind). Gate 3:
+# docs/results/w13-reduce-effort-off.md.
+EFFORT_REDUCE_BRIEF_DEFAULT = "off"
 STREAM_MODES = ("on", "off", "nothink")
 
 
@@ -193,6 +199,7 @@ def settings() -> Settings:
         deepseek_effort_plan=_choice("DEEPSEEK_EFFORT_PLAN", EFFORTS, EFFORT_DEFAULTS["plan"]),
         deepseek_effort_map=_choice("DEEPSEEK_EFFORT_MAP", EFFORTS, EFFORT_DEFAULTS["map"]),
         deepseek_effort_reduce=_choice("DEEPSEEK_EFFORT_REDUCE", EFFORTS, EFFORT_DEFAULTS["reduce"]),
+        deepseek_effort_reduce_brief=_choice("DEEPSEEK_EFFORT_REDUCE_BRIEF", EFFORTS, EFFORT_REDUCE_BRIEF_DEFAULT),
         deepseek_model_map=os.getenv("DEEPSEEK_MODEL_MAP", "").strip(),
         deepseek_stream=_choice("DEEPSEEK_STREAM", STREAM_MODES, "on"),
         map_call_tokens=_positive_int("MAP_CALL_TOKENS", MAP_CALL_TOKENS_DEFAULT),

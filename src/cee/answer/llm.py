@@ -68,21 +68,22 @@ DEEPSEEK_OFF_CAPS = {"plan": 8000, "map": 20000, "reduce": 20000}
 DEEPSEEK_REDUCE_OFF_STREAMED_CAP = 64000
 
 
-def stage_effort(stage: str) -> str:
-    """off | low | high | max for one stage (DEEPSEEK_EFFORT_PLAN / _MAP / _REDUCE)."""
+def stage_effort(stage: str, effort: str | None = None) -> str:
+    """off | low | high | max for one stage (DEEPSEEK_EFFORT_PLAN / _MAP / _REDUCE). #295: `effort` overrides it for
+    one call (the reduce of a brief synthesis answer, reduce.effort)."""
     if stage not in DEEPSEEK_STAGES:
         raise ValueError(f"unknown stage {stage!r}")
-    return getattr(settings(), f"deepseek_effort_{stage}")
+    return effort or getattr(settings(), f"deepseek_effort_{stage}")
 
 
-def stage_thinking(stage: str) -> bool:
-    return stage_effort(stage) != "off"
+def stage_thinking(stage: str, effort: str | None = None) -> bool:
+    return stage_effort(stage, effort) != "off"
 
 
-def stage_max_tokens(stage: str) -> int:
-    if stage_thinking(stage):
+def stage_max_tokens(stage: str, effort: str | None = None) -> int:
+    if stage_thinking(stage, effort):
         return DEEPSEEK_THINKING_CAP
-    if stage == "reduce" and stage_stream(stage):
+    if stage == "reduce" and stage_stream(stage, effort):
         return DEEPSEEK_REDUCE_OFF_STREAMED_CAP
     return DEEPSEEK_OFF_CAPS[stage]
 
@@ -93,13 +94,13 @@ def stage_model(stage: str) -> str:
     return (s.deepseek_model_map or s.deepseek_model) if stage == "map" else s.deepseek_model
 
 
-def stage_stream(stage: str) -> bool:
+def stage_stream(stage: str, effort: str | None = None) -> bool:
     """DEEPSEEK_STREAM: on streams every stage; nothink only the stages with thinking off; off none."""
     mode = settings().deepseek_stream
-    return mode == "on" or (mode == "nothink" and not stage_thinking(stage))
+    return mode == "on" or (mode == "nothink" and not stage_thinking(stage, effort))
 
 
-def request_version(provider: str, stage: str | None = None) -> str | None:
+def request_version(provider: str, stage: str | None = None, effort: str | None = None) -> str | None:
     """The request version that joins the eval's cache keys (#232): anthropic strict-1; deepseek
     (#242) names the thinking mode and both caps, so an output made in one mode is never reused for
     the other; openai none. #272: with a stage, deepseek names that stage's effort, cap and streaming
@@ -111,8 +112,8 @@ def request_version(provider: str, stage: str | None = None) -> str | None:
         # #283, MAP_PREFIX=firm only: the map request carries the shared firm prefix up to MAP_PREFIX_TOKENS (one tool
         # schema, the cell's instruction last): "-pf<ceiling>" keeps those keys apart; off = the #272 string
         pf = f"-pf{settings().map_prefix_tokens}" if stage == "map" and settings().map_prefix == "firm" else ""
-        return (f"ds-strict-2-{stage}-{stage_effort(stage)}-c{stage_max_tokens(stage)}"
-                f"-s{1 if stage_stream(stage) else 0}{pf}")
+        return (f"ds-strict-2-{stage}-{stage_effort(stage, effort)}-c{stage_max_tokens(stage, effort)}"
+                f"-s{1 if stage_stream(stage, effort) else 0}{pf}")
     if provider == "deepseek":
         on = settings().deepseek_thinking
         return (f"ds-strict-1-think-{'on' if on else 'off'}"
@@ -365,7 +366,7 @@ def deepseek_client():
 
 
 def deepseek_tool_request(name: str, description: str, schema: dict, system: str, user: str,
-                          max_tokens: int, stage: str | None = None) -> dict:
+                          max_tokens: int, stage: str | None = None, effort: str | None = None) -> dict:
     """One strict function tool (#242). Thinking off: the named function is forced. Thinking on:
     tool_choice auto (a forced choice is a 400 in thinking mode); the prompt requires the tool.
     #272: with a stage, that stage's effort (sent as reasoning_effort when thinking is on), model, cap
@@ -374,8 +375,8 @@ def deepseek_tool_request(name: str, description: str, schema: dict, system: str
     if stage is None:
         on, model, body = s.deepseek_thinking, s.deepseek_model, {}
     else:
-        on, model, max_tokens = stage_thinking(stage), stage_model(stage), stage_max_tokens(stage)
-        body = {"reasoning_effort": stage_effort(stage)} if on else {}
+        on, model, max_tokens = stage_thinking(stage, effort), stage_model(stage), stage_max_tokens(stage, effort)
+        body = {"reasoning_effort": stage_effort(stage, effort)} if on else {}
     req = {
         "model": model,
         "max_tokens": max_tokens,
@@ -385,7 +386,7 @@ def deepseek_tool_request(name: str, description: str, schema: dict, system: str
         "tool_choice": "auto" if on else {"type": "function", "function": {"name": name}},
         "extra_body": {"thinking": {"type": "enabled" if on else "disabled"}, **body},
     }
-    if stage is not None and stage_stream(stage):
+    if stage is not None and stage_stream(stage, effort):
         req["stream"] = True
         req["stream_options"] = {"include_usage": True}
     return req

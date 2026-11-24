@@ -155,6 +155,15 @@ WHY_UNSAID = "Why it might matter: the source does not say."
 FORECAST_REFUSAL = ("This asks for a forecast of the engine's own; the engine reports only positions others "
                     "hold, attributed and dated.")
 COMPARISON_MISSING = "No cited claim answers the comparison asked: {aspect}."
+# #295 (v8 brief form, reduce.check_comparisons): a sentence states a comparability verdict when it matches this
+# (case-insensitive). Written from the two #292 Q24 sentences ("cannot be validly compared ... defined differently";
+# "a valid side-by-side ... on a different basis"); "compared with 2025" or "on a quarterly basis" do not match.
+COMPARISON_VERDICT = (r"comparab\w*|\bcomparisons?\b|\bcompared? (?:across|between|among)\b"
+                      r"|\b(?:be|been|being) (?:\w+ ){0,2}compared\b|\bside[- ]by[- ]side\b|\blike[- ]for[- ]like\b"
+                      r"|\bapples[- ]to[- ]apples\b"
+                      r"|\b(?:on|to) (?:a|the) (?:same|different|consistent|common|comparable|single) bas[ie]s\b"
+                      r"|\b(?:defined|measured|reported|counted|calculated) differently\b"
+                      r"|\bdifferent(?:ly)? (?:defined|measured|definitions?|bases|measures)\b")
 # #247 part 2 (code-added when the reduce omits the per-firm computation claim; TL D5): the inputs and
 # the population sources are cited, the sources quoted in their own words.
 COMPUTED = ("{firm}{aspect}: computed by code from two figures that cover the same population: {formula}"

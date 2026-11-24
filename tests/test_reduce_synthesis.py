@@ -235,3 +235,120 @@ def test_ask_page_draws_the_box_outside_the_paragraph_with_footnotes(v8):
     assert [i.get("box", False) for i in items] == [False, True] and len(cards) == 1
     html = ui.computability_html(items[1])
     assert "Computability:" in html and 'href="#cee-ev-1"' in html and "code_computability" not in html
+
+
+# --- #295: comparison verdict re-filed in the v8 brief form; reduce effort per form -------------------
+
+VERDICT_OFF = ("A valid side-by-side client-assets-per-advisor figure across the three firms cannot be computed, "
+               "because each firm measures client assets and advisor headcount on a different basis.")
+VERDICT_LOW = ("Client assets per advisor cannot be validly compared across the three firms, because their "
+               "advisor-headcount and client-asset measures are each defined differently.")
+
+
+def q24_off_shape():
+    """The #292 Q24 v8-off shape: fact aspects a1 (client assets) and a2 (headcount), comparison aspect a4 holding a
+    definition item for every firm."""
+    a1, a2 = Aspect("a1", "Client assets for the firm."), Aspect("a2", "Advisor headcount for the firm.")
+    a4 = Aspect("a4", "Whether client assets per advisor can be compared side by side.", kind="comparison")
+    hits, cells = [], []
+    for f in ("MS", "SCHW", "RJF"):
+        hits += [H(f"{f}-TR#1", f, text=f"{f} client assets."), H(f"{f}-10K#2", f, text=f"{f} advisors."),
+                 H(f"{f}-SUPP#3", f, text=f"{f} defines client assets its own way.")]
+        cells += [cell(f"a1.{f}", "fact", [item(f"{f}-TR#1", f"{f} client assets.")]),
+                  cell(f"a2.{f}", "fact", [item(f"{f}-10K#2", f"{f} advisors.")]),
+                  cell(f"a4.{f}", "fact", [item(f"{f}-SUPP#3", f"{f} defines client assets its own way.")])]
+    return matrix("Client assets per advisor across the three -- and is that comparison even valid?", [a1, a2, a4],
+                  cells, hits)
+
+
+def _raw(*claims):
+    return {"answerable": True, "behavior": "answer", "adjacent": [], "gaps": [],
+            "claims": [{"text": t, "chunk_ids": ids, "part_id": p} for t, ids, p in claims]}
+
+
+def test_v8_verdict_under_another_part_id_is_refiled_not_written(v8):
+    m = q24_off_shape()
+    ids = ["MS-SUPP#3", "SCHW-10K#2", "RJF-SUPP#3"]   # a4 cells of MS and RJF (2 firms), SCHW's headcount cell
+    a, info = run_finish(m, _raw((VERDICT_OFF, ids, "a1"), ("MS reported client assets.", ["MS-TR#1"], "a1.MS")),
+                         query=query_of(m))
+    assert info["comparison_missing"] == [] and not any("comparison_missing" in g.flags for g in a.gaps)
+    assert info["comparison_refiled"] == [{"claim": 0, "old_part_id": "a1", "aspect": "a4"}]
+    assert a.claims[0].part_id == "a4" and a.claims[0].text == VERDICT_OFF and a.claims[0].chunk_ids == ids
+    assert a.claims[1].part_id == "a1.MS" and len(a.claims) == 2
+
+
+@pytest.mark.parametrize("text, ids, why", [
+    ("MS, Schwab and Raymond James each report client assets and advisors.", ["MS-SUPP#3", "RJF-SUPP#3"], "no verdict"),
+    (VERDICT_LOW, ["MS-SUPP#3", "MS-10K#2"], "one firm's a4 cell"),
+    (VERDICT_LOW, ["MS-TR#1", "RJF-TR#1"], "no a4 cell"),
+])
+def test_v8_sentence_without_verdict_or_cited_a4_cells_is_not_refiled(v8, text, ids, why):
+    m = q24_off_shape()
+    a, info = run_finish(m, _raw((text, ids, "a1")), query=query_of(m))
+    assert info["comparison_refiled"] == [] and info["comparison_missing"] == ["a4"], why
+    assert a.claims[0].part_id == "a1"
+
+
+def test_v8_flagged_verdict_is_not_refiled(v8):
+    m = q24_off_shape()
+    a, info = run_finish(m, _raw((VERDICT_LOW, ["MS-SUPP#3", "RJF-SUPP#3", "XX-NOT#9"], "a1")), query=query_of(m))
+    assert "unmatched_citation" in a.claims[0].flags or "outside_matrix" in a.claims[0].flags
+    assert info["comparison_refiled"] == [] and info["comparison_missing"] == ["a4"]
+
+
+def test_v8_verdict_already_under_the_aspect_needs_no_refile(v8):
+    m = q24_off_shape()
+    _, info = run_finish(m, _raw((VERDICT_LOW, ["MS-SUPP#3", "RJF-SUPP#3"], "a4")), query=query_of(m))
+    assert info["comparison_refiled"] == [] and info["comparison_missing"] == []
+
+
+def test_v52_answer_is_never_refiled(monkeypatch):
+    monkeypatch.setenv("REDUCE_PROMPT", "v5.2")
+    m = q24_off_shape()
+    a, info = run_finish(m, _raw((VERDICT_OFF, ["MS-SUPP#3", "RJF-SUPP#3"], "a1")), query=query_of(m))
+    assert info["comparison_refiled"] == [] and info["comparison_missing"] == ["a4"] and a.claims[0].part_id == "a1"
+
+
+@pytest.mark.parametrize("text, verdict", [
+    (VERDICT_OFF, True), (VERDICT_LOW, True),
+    ("The firms' advisor counts are not comparable.", True),
+    ("A like-for-like comparison is not possible.", True),
+    ("Schwab's client assets rose 12% compared with 2025.", False),
+    ("Edward Jones reports its advisor count on a quarterly basis.", False),
+    ("Morgan Stanley reported $10.5 trillion in total client assets as of September 30, 2026.", False),
+    ("Raymond James compared favorably on recruiting, the CEO said.", False),
+])
+def test_verdict_pattern(text, verdict):
+    import re
+    assert bool(re.search(P.COMPARISON_VERDICT, text, re.I)) is verdict
+
+
+def test_reduce_effort_per_form(monkeypatch):
+    from cee.answer import llm
+    monkeypatch.setenv("REDUCE_PROMPT", "v8")
+    for v in ("DEEPSEEK_EFFORT_REDUCE", "DEEPSEEK_EFFORT_REDUCE_BRIEF", "DEEPSEEK_STREAM"):
+        monkeypatch.delenv(v, raising=False)
+    m = two_firm()
+    brief_q, list_q = query_of(m), query_of(m, WINDOW)
+    assert R.effort(m, brief_q) == "off" and R.effort(m, list_q) == "low"
+    assert R.max_tokens("deepseek", m, brief_q) == 64000 and R.max_tokens("deepseek", m, list_q) == 128000
+    assert R.request_version("deepseek", m, brief_q) == "ds-strict-2-reduce-off-c64000-s1"
+    assert R.request_version("deepseek", m, list_q) == "ds-strict-2-reduce-low-c128000-s1" \
+        == llm.request_version("deepseek", "reduce")
+    off, low = R.requests("q", m, brief_q, "deepseek"), R.requests("q", m, list_q, "deepseek")
+    assert off["extra_body"] == {"thinking": {"type": "disabled"}} and off["max_tokens"] == 64000
+    assert low["extra_body"]["reasoning_effort"] == "low" and low["max_tokens"] == 128000
+    monkeypatch.setenv("DEEPSEEK_EFFORT_REDUCE_BRIEF", "low")
+    assert R.request_version("deepseek", m, brief_q) == "ds-strict-2-reduce-low-c128000-s1"
+    monkeypatch.setenv("REDUCE_PROMPT", "v5.2")   # no brief form: the stage setting for every question
+    assert R.effort(m, brief_q) == "low"
+
+
+def test_app_run_cache_reduce_key_follows_the_form_effort(monkeypatch):
+    from cee.answer import runcache
+    monkeypatch.setenv("REDUCE_PROMPT", "v8")
+    monkeypatch.delenv("DEEPSEEK_EFFORT_REDUCE_BRIEF", raising=False)
+    m = two_firm()
+    k_off = runcache.reduce_key(m.question, m, query_of(m), "deepseek")
+    monkeypatch.setenv("DEEPSEEK_EFFORT_REDUCE_BRIEF", "low")
+    assert runcache.reduce_key(m.question, m, query_of(m), "deepseek") != k_off
