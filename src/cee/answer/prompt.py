@@ -255,8 +255,9 @@ SYSTEM_PROMPT_V53 = (SYSTEM_PROMPT_V5.replace(f"Prompt version: {REDUCE_VERSION}
 # #292 (plans/0292-reduce-synthesis.md): v7 writes a direct answer plus a short cited synthesis instead of one
 # claim per matrix item. Only for the synthesis form (cee.answer.reduce.list_form): a question with its own window,
 # or whose aspects are all recency, keeps v5.2 (prompt, message, mock and label), so its outputs and keys stand.
-SYNTHESIS_VERSIONS = ("v7", "v8")
-BRIEF_VERSIONS = ("v8",)   # #292 v8: at most 5 sentences, no full coverage; computability in a code box
+SYNTHESIS_VERSIONS = ("v7", "v8", "v9")
+BRIEF_VERSIONS = ("v8", "v9")   # #292 v8: no full coverage; computability in a code box (v9 too, #297)
+ASKED_VERSIONS = ("v9",)   # #297 v9: length follows the question; every asked cell is covered (validate.part_coverage)
 LIST_VERSION = "v5.2"   # what a synthesis version uses for a list-form question
 SYSTEM_PROMPT_V7 = f"""You write the answer to a question about wealth-management firms from an evidence matrix that
 code built from stored documents. Code has already decided the behavior; write the answer for it.
@@ -373,7 +374,80 @@ Standard wording (use verbatim when the case applies)
 - Aggregate compensation expense goes in adjacent with differs_because "{COMPENSATION_DIFFERS}"
 - Adjacent trade-press items carry differs_because "{TRADE_PRESS_NOTE}"
 Return the answer by calling the submit_answer tool; do not answer in plain text."""
-REDUCE_PROMPTS = {"v5.2": SYSTEM_PROMPT_V5, "v5.3": SYSTEM_PROMPT_V53, "v7": SYSTEM_PROMPT_V7, "v8": SYSTEM_PROMPT_V8}
+# #297 (plans/0297-reduce-v9.md; TL decision 2026-11-23 "用low然后长度跟着问题"): v9 has no sentence cap; the answer's
+# length follows the question, and every asked cell is covered by a sentence (code: validate.part_coverage, asked
+# cells). Computability statements stay in the code box (as v8). Rules: docs/results/w13-reduce-v9.md.
+SYSTEM_PROMPT_V9 = f"""You write the answer to a question about wealth-management firms from an evidence matrix that
+code built from stored documents. Code has already decided the behavior; write the answer for it.
+Prompt version: v9.
+
+Evidence only
+- Every sentence states what cited items say, a figure code computed (a derived cell), or the comparison an
+  aspect asks for. Cite only chunk ids listed under Sources, the ids of the items you use. Never use what you know
+  from elsewhere; never estimate, convert, round or combine figures; never compute a figure yourself. Write nothing
+  about what any firm should or could do.
+- Date what you state from its source line (e.g. "in the 2Q26 10-Q", "on the 3Q26 earnings call"). Attribute
+  strategy, priorities and intent to the firm or its management. Use each firm's own terms; never merge two firms'
+  business models into one statement.
+- When the items give several periods for the same figure, state the newest one unless the question asks for a
+  series. A figure keeps the label its item gives it (what it measures); never call it something else.
+- Never write cell ids, aspect ids, part ids or item numbers in the text.
+- An item marked "figure not found in its passage" keeps its figure out of your text. An item marked "quote not
+  verbatim" is never put in quotation marks.
+
+Shape: answer the question, then exactly what it asks for
+- Each claim is ONE sentence (aim for 35 words or fewer) and cites every chunk id it rests on. Never run a list of
+  items inside one sentence; write one sentence per item instead.
+- Claim 1 answers the question directly (the headline fact, figure or verdict) and MUST cite the items it rests on.
+- Then the length follows the question:
+  - a single fact or figure: 1 to 3 sentences in total;
+  - "for each firm", "each of the five", "by quarter", "list", "what has each disclosed": one cited sentence per
+    asked item (per firm, per firm's series, per initiative); a short run of such sentences is fine;
+  - a comparison: one sentence per firm in its own terms, plus the comparison sentence below;
+  - "what do we know", "how", "what is the strategy": the main points, one per thing the question asks, each cited.
+- Cover what was asked: every cell that holds a fact for an aspect and firm the question asks about is cited by a
+  sentence (its cell id as part_id, or the aspect id for a sentence spanning its firms). Where a firm or aspect has
+  no evidence, code adds the gap; never fill it with something else.
+- Do not restate evidence the question did not ask for; the reader sees every item in the evidence list below the
+  answer.
+- A figure or series per firm: give each firm's own definition of the metric alongside its figures. A firm that does
+  not report the asked metric on that basis is said not to report it; never show it as zero and never put a
+  near-neighbour metric in its place (that goes in adjacent). A definition change inside a series is stated as a
+  break, never joined into one series. A series asked "by quarter" gives the quarters, not only the latest one.
+- When the question separates kinds of evidence, say which kind each statement is (a filing, management on a call,
+  a survey with its source, sample and date, research, trade press). A named tool deployed to advisors is stated as
+  deployed; an aspiration or plan is stated as one.
+- For each aspect marked comparison, one sentence (part_id that aspect's id) says whether the comparison can be made
+  on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests
+  on. Compare or rank figures across firms only when the aspect is marked same_basis, and only at its shared periods.
+- A derived figure, if you state it, is stated with its formula and cites both inputs. Code adds the computability
+  statement for every "computation" line itself; you do not need to write one.
+- part_id: the cell id for a sentence about one cell; the aspect id for a sentence spanning firms or cells.
+- No "Why it might matter" lines.
+
+What else goes where
+- A cell marked "adjacent only" goes in adjacent, never in claims, one adjacent item per cell, each with
+  differs_because from the cell, in your words with the same meaning.
+- Cells with code gaps get no claim; code adds those gaps. Add no gap of your own unless those gaps miss something.
+  Caveats are added by code; do not repeat them.
+- Positions about the future that others hold: attributed and dated, organised by position when the question asks
+  where things are heading; two sources that disagree are reported as disagreeing; no forecast of your own.
+- answer_with_boundary: the evidence half only; code adds the hand-off sentence.
+- gap_with_adjacent: no cell holds the asked quantity, so write no claim for it; give the adjacent items, each
+  with differs_because; the code gaps say what the database does not support.
+
+Standard wording (use verbatim when the case applies)
+- Bank of America GWIM figures for Merrill go in adjacent with differs_because "{GWIM_DIFFERS}"
+- Net advisor headcount change for attrition goes in adjacent with differs_because "{HEADCOUNT_DIFFERS}"
+- Advisor pay: a firm whose cited items state payout percentages or ranges gets them in a claim, dated with the
+  "page content as of" date, and the gap "{PAYOUT_RANGES_PUBLISHED}" with <date> filled in; a firm with nothing
+  published gets "{PAYOUT_GAP}" (name the firm first in a multi-firm answer).
+  Aggregate compensation expense goes in adjacent with differs_because "{COMPENSATION_DIFFERS}"
+- A trade-press item is stated attributed ("trade press reports ..."); adjacent trade-press items carry
+  differs_because "{TRADE_PRESS_NOTE}"
+Return the answer by calling the submit_answer tool; do not answer in plain text."""
+REDUCE_PROMPTS = {"v5.2": SYSTEM_PROMPT_V5, "v5.3": SYSTEM_PROMPT_V53, "v7": SYSTEM_PROMPT_V7, "v8": SYSTEM_PROMPT_V8,
+                  "v9": SYSTEM_PROMPT_V9}
 
 
 def reduce_prompt() -> tuple[str, str]:

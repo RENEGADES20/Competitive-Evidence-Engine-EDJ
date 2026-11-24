@@ -1,0 +1,609 @@
+{
+  "question_id": "Q25",
+  "question": "What has each of the five actually disclosed about advisor compensation structures?",
+  "reduce_version": "v9",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-10K-2025#153",
+    "MS-10K-2025#193",
+    "MS-10K-2025#152",
+    "MS-10Q-2026Q1#457",
+    "MS-ADV-2026#173",
+    "MS-TR-2025Q4#22",
+    "MS-TRADE-2026-10-26-IN-01#4",
+    "MS-TRADE-2026-10-26-IN-01#1",
+    "MS-10Q-2026Q2#93",
+    "MS-10Q-2026Q1#73",
+    "MS-TRADE-2026-11-10-IN-01#0",
+    "MS-TRADE-2026-08-28-IN-01#0",
+    "MS-ADV-2026#142",
+    "MS-TR-2024Q4#88",
+    "SCHW-10K-2025#50",
+    "SCHW-10K-2025#496",
+    "SCHW-ADV-2026#40",
+    "SCHW-ADV-2026#78",
+    "SCHW-PR-2026-10-15-01#57",
+    "SCHW-10K-2025#487",
+    "SCHW-10K-2025#495",
+    "SCHW-10K-2025#267",
+    "SCHW-ADV-2026#88",
+    "SCHW-ADV-2026#87",
+    "EDJ-10K-2025#30",
+    "EDJ-ADV-2026#64",
+    "EDJ-ADV-2026#67",
+    "EDJ-10K-2025#264",
+    "EDJ-ADV-2026#65",
+    "EDJ-ADV-2026#66",
+    "EDJ-10K-2025#221",
+    "EDJ-10K-2025#222",
+    "EDJ-10K-2025#58",
+    "EDJ-10K-2025#71",
+    "MER-ADV-2026#400",
+    "MER-ADV-2026#406",
+    "MER-ADV-2026#408",
+    "MER-PR-web-advisor-development-program#1",
+    "MER-ADV-2026#411",
+    "MER-ADV-2026#241",
+    "MER-TRADE-2026-11-16-AH-01#1",
+    "MER-ADV-2026#425",
+    "MER-ADV-2026#414",
+    "RJF-TR-2026Q1#44",
+    "RJF-PR-web-affiliation-options#1",
+    "RJF-PR-web-affiliation-options#2",
+    "RJF-10K-2025#10",
+    "RJF-10K-2025#11",
+    "RJF-ADV-2026#50",
+    "RJF-ADV-2026#51",
+    "RJF-ADV-2026#54",
+    "RJF-10K-2025#678",
+    "RJF-10K-2025#481",
+    "RJF-SUPP-2026Q1#44",
+    "RJF-SUPP-2026Q1#42",
+    "RJF-TR-2026Q2#17",
+    "RJF-TR-2025Q1#19",
+    "RJF-SUPP-2025Q3#26",
+    "RJF-ADV-2026#53",
+    "RJF-PR-2026-07-22-01#103",
+    "RJF-10K-2025#29",
+    "RJF-SUPP-2026Q2#14",
+    "RJF-SUPP-2026Q1#14",
+    "RJF-SUPP-2025Q4#12",
+    "RJF-TR-2025Q3#20",
+    "RJF-10K-2025#260",
+    "RJF-SUPP-2025Q4#37",
+    "RJF-10K-2025#89",
+    "RJF-TR-2025Q4#16",
+    "RJF-TR-2025Q3#49",
+    "RJF-TR-2026Q1#25",
+    "RJF-SUPP-2026Q2#45",
+    "RJF-SUPP-2026Q2#29"
+  ],
+  "schema_fallback": [],
+  "enum_values": 258,
+  "at": "2026-11-24T01:18:00.932004-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 26942,
+    "output_tokens": 17490,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 25278,
+    "reasoning_tokens": 12555,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.39
+  },
+  "wall_s": 278.31,
+  "tokens_per_s": 62.84,
+  "ttft_s": 1.39,
+  "reasoning_content": "Let me understand the task. I need to write an answer about advisor compensation structures disclosed by five firms, organized by aspects a1-a6. The evidence matrix is provided, and I need to write claims, adjacent items, and gaps.\n\nLet me plan the claims. The question asks \"What has each of the five actually disclosed about advisor compensation structures?\"\n\nThe aspects:\n- a1: what each firm disclosed about advisor compensation structure (fact)\n- a2: payout grid/rate (fact for MS, RJF; gap SCHW; adjacent EDJ, MER)\n- a3: bonus/incentive awards (fact for all)\n- a4: recruiting compensation/transition pay/forgivable loans (fact for MS, EDJ, MER, RJF; gap SCHW)\n- a5: recent changes (fact MS, MER, RJF; adjacent SCHW; gap EDJ)\n- a6: comparison (one claim)\n\nLet me structure the answer. Claim 1 answers the question directly.\n\nGiven the complexity, I should write one cited sentence per cell (part_id per firm per aspect). Let me go through.\n\nActually, the instruction says: for each cell that holds a fact for an aspect and firm the question asks about is cited by a sentence (cell id as part_id). So I need to write a sentence for each cell.\n\nLet me enumerate the cells that need claims (part_ids):\n- a1.MS, a1.SCHW, a1.EDJ, a1.MER, a1.RJF (fact)\n- a2.MS (fact), a2.RJF (fact) \u2014 a2.SCHW gap, a2.EDJ adjacent, a2.MER adjacent\n- a3.MS, a3.SCHW, a3.EDJ, a3.MER, a3.RJF (fact)\n- a4.MS, a4.EDJ, a4.MER, a4.RJF (fact) \u2014 a4.SCHW gap\n- a5.MS, a5.MER, a5.RJF (fact) \u2014 a5.SCHW adjacent, a5.EDJ gap\n- a6 comparison (one claim)\n\nWait, but the \"Why\" section lists specific cells: a1.MS, a2.MS, a3.MS, a4.MS, a5.MS, a1.SCHW, a3.SCHW, a1.EDJ, a3.EDJ, a4.EDJ, a1.MER, a3.MER, a4.MER, a5.MER, a1.RJF, a2.RJF, a3.RJF, a4.RJF, a5.RJF.\n\nSo the cells that hold the asked quantity are:\n- MS: a1, a2, a3, a4, a5 (all fact)\n- SCHW: a1, a3 (fact); a2 gap; a4 gap; a5 adjacent\n- EDJ: a1, a3, a4 (fact); a2 adjacent; a5 gap\n- MER: a1, a3, a4, a5 (fact); a2 adjacent\n- RJF: a1, a2, a3, a4, a5 (all fact)\n\nPlus a6 comparison.\n\nSo I need claims for each of those cells. Let me write them.\n\nFor each cell, I write one cited sentence (or a few). The part_id is the cell id.\n\nLet me draft claims.\n\nFirst, the headline answer (Claim 1). This should cite items. I'll write a summary sentence.\n\nActually the structure: Claim 1 answers the question directly, then the length follows. This is a \"for each firm\" type question. So one cited sentence per asked item.\n\nLet me write claims in order.\n\nI'll start with a headline claim citing multiple sources, then go firm by firm, aspect by aspect.\n\nActually, let me think about how to organize. The part_id enum includes individual cells like a1.MS and aspect ids like a1, a2, etc. For a sentence about one cell, use the cell id. For a sentence spanning firms, use the aspect id.\n\nI'll write one sentence per cell. Each claim cites the chunk ids from that cell.\n\nLet me write each claim.\n\n**Headline (Claim 1)**: A general answer. I'll cite a few representative sources. Actually I need to be careful - claim 1 must cite items it rests on. I can make a headline summarizing that all five firms disclose different levels of detail. Let me cite broadly.\n\nActually, maybe I should keep claim 1 simple and let the comparison claim (a6) handle the \"how much detail\" comparison.\n\nLet me write a headline claim: \"Across the five firms, disclosed advisor compensation structures range from formulaic payout grids and specific payout percentages (Morgan Stanley, Raymond James) to commission-plus-bonus descriptions without a published grid (Edward Jones, Merrill).\"\n\nHmm, but that mixes. Let me be more careful and just make claim 1 a factual summary.\n\nLet me write claim 1: \"The five firms have disclosed advisor compensation structures at different levels of detail: Raymond James and Morgan Stanley disclose payout formulas and rates, while Edward Jones and Merrill describe commission- and incentive-based structures without publishing a payout grid.\" Cite multiple.\n\nActually, I'll keep it simpler and grounded. Let me just cite the key items.\n\nLet me now write all the claims systematically.\n\n**a1.MS** (Morgan Stanley structure):\nMultiple items. I need one sentence per cell? Or can I write a few sentences for a rich cell? The instruction says \"one cited sentence per asked item (per firm, per firm's series, per initiative)\". For a1 (fact about structure), a cell with many items. I think I can write a few sentences covering the main points, but each claim should be one sentence per item-ish.\n\nActually re-reading: \"one cited sentence per asked item (per firm...)\". Each cell is an \"item\" in the sense of the aspect. So one sentence per cell is fine, but I could also write more sentences if a cell has many distinct facts. But the guideline emphasizes \"Each claim is ONE sentence... Never run a list of items inside one sentence; write one sentence per item instead.\"\n\nHmm, \"write one sentence per item\" - item refers to the evidence items. But that could be a LOT of sentences. Let me be pragmatic: for each cell, write enough sentences to cover the key disclosed facts, one sentence per distinct fact, but not necessarily every single evidence item if they're redundant.\n\nActually, I think the cleaner interpretation: each cell (part_id) gets its claim(s). For cells with many items, I can write multiple sentences, but each sentence is one claim with its own chunk ids and same part_id.\n\nWait, but the part_id for a single cell is fixed (e.g., a1.MS). Multiple claims can share the same part_id.\n\nLet me write comprehensive but not exhaustive. I'll aim to cover each cell's key facts.\n\nLet me draft the full answer.\n\n---\n\n**Claim 1 (headline)**: The five firms disclose advisor compensation at very different levels of detail, from specific payout grids (Raymond James) to general commission-and-incentive descriptions without a published grid (Edward Jones, Merrill). \n\nI need to cite items for this. Let me cite RJF-PR-web-affiliation-options#1, EDJ-10K-2025#30, MER-ADV-2026#406.\n\nActually, let me make claim 1 more of a neutral factual statement. I'll write:\n\n\"The five firms have each disclosed aspects of how their advisors are compensated, but the level of detail varies widely across them.\"\n\nThat's vague. Let me ground it better. Actually I'll write a more substantive headline and cite.\n\nLet me write it as: \"The five wealth-management firms disclose advisor compensation at differing levels of detail, from Raymond James's specific affiliation-model payout percentages to Edward Jones's and Merrill's general commission-and-incentive descriptions that omit an actual payout grid.\"\n\nCite: RJF-PR-web-affiliation-options#1, RJF-PR-web-affiliation-options#2, EDJ-10K-2025#30, EDJ-ADV-2026#64, MER-ADV-2026#406.\n\nOK let me now write everything out.\n\nLet me go cell by cell.\n\n**a1.MS**: Morgan Stanley disclosed that for certain revenue-producing employees in the Wealth Management and Investment Management business segments, compensation is largely paid on the basis of formulaic payouts that link employee compensation to revenues (MS-10K-2025#153). It also disclosed that deferred compensation for financial advisors in the Wealth Management segment is generally 75% cash-based and 25% stock-based awards (MS-10K-2025#193). A Morgan Stanley Virtual Advisor is paid a base salary plus a discretionary bonus and retains no portion of the advisory fee (MS-ADV-2026#173). Management said the firm will increase the cash component of advisor compensation (MS-TR-2025Q4#22).\n\nI'll write a few sentences, each citing.\n\nActually let me be efficient and write 2-4 sentences for a1.MS covering the main facts.\n\n**a2.MS**: Morgan Stanley disclosed that compensation for certain revenue-producing employees is largely formulaic payouts linked to revenues, and that the amount of the client fee is a factor in calculating advisor compensation, with fee rates below a threshold giving credit for less than the total fee (MS-10K-2025#153, MS-ADV-2026#173). An MSVA is paid base salary plus discretionary bonus (MS-ADV-2026#173). Trade press reports a 10% pay threshold increase in 2027 (MS-TRADE-2026-10-26-IN-01#4).\n\n**a3.MS**: MSVA base salary plus discretionary bonus (MS-ADV-2026#173). Formulaic payouts (MS-10K-2025#153). Deferred compensation 75% cash/25% stock with vesting/clawback (MS-10Q-2026Q2#93, MS-10K-2025#193, MS-10Q-2026Q1#73). Discretionary incentive compensation (MS-10K-2025#152).\n\n**a4.MS**: FINRA arbitration reported Morgan Stanley sought to claw back $2.46 million in recruiting bonus loans from Sam Te Su (MS-TRADE-2026-11-10-IN-01#0). Sought to claw back recruiting bonus money from Darryl Cohen via promissory notes; awarded $8.13 million (MS-TRADE-2026-08-28-IN-01#0). Not introducing retention bonuses in 2027 (MS-TRADE-2026-10-26-IN-01#4).\n\n**a5.MS**: Will increase cash component of advisor compensation (MS-TR-2025Q4#22). Transitioned all DCP economic hedges to derivative instruments in Q1 2026 (MS-TR-2025Q4#22). Increasing pay threshold 10% in 2027 (MS-TRADE-2026-10-26-IN-01#4).\n\n**a1.SCHW**: Schwab disclosed a compensation package including base pay, performance-based incentive pay, equity awards, recognition awards, and health/wellness benefits (SCHW-10K-2025#50). Financial consultant career achievement plan (SCHW-10K-2025#496). FCs may receive compensation when clients purchase certain investments/products (SCHW-ADV-2026#78). SWAI compensation doesn't vary by recommendations (SCHW-ADV-2026#40).\n\n**a3.SCHW**: Performance-based incentive pay and equity awards (SCHW-10K-2025#50). Adjusted diluted EPS and return on tangible common equity as performance criteria for employee bonus (SCHW-10K-2025#267).\n\n**a1.EDJ**: Financial advisors generally compensated on commission basis subject to minimum guaranteed salary, plus additional compensation based on branch and Partnership profitability (EDJ-10K-2025#30). Most FAs receive portion of Program Fee, some salary (EDJ-ADV-2026#64). Bonuses determined by Partnership profitability and individual performance (EDJ-10K-2025#264). Non-qualified deferred comp plan (EDJ-10K-2025#221). Retirement transition plans (EDJ-10K-2025#222).\n\n**a3.EDJ**: Commission basis plus additional compensation (EDJ-10K-2025#30). Bonuses determined by Partnership profitability and individual performance (EDJ-10K-2025#264). Program Fee/AUC/Reserve Line Advance impact bonus eligibility (EDJ-ADV-2026#67). Travel Award Program (EDJ-ADV-2026#67). Bonuses may be decreased/eliminated if profitability decreases (EDJ-10K-2025#58).\n\n**a4.EDJ**: Retirement transition plans compensate retiring FAs for client transition services, generally 5-year agreement paid ratably over 4 years (EDJ-10K-2025#222).\n\n**a1.MER**: Advisors earn compensation based on revenue Merrill earns from Merrill Lynch Fee, Sales Charges, referrals (MER-ADV-2026#400). Eligible for compensation award based on growth targets (MER-ADV-2026#406). Recruitment payments (MER-ADV-2026#408). Base salary and unlimited earning potential (MER-PR-web-advisor-development-program#1).\n\n**a3.MER**: Compensation award from incentive program based on growth targets (MER-ADV-2026#406). Reduction in incentive compensation grid if fail growth 2 consecutive years (MER-ADV-2026#406). Recruitment bonuses in addition to incentive comp (MER-ADV-2026#408). Field management compensation based on revenues and strategic goals (MER-ADV-2026#411).\n\n**a4.MER**: Advisors who join from other firms receive salary guarantees, upfront awards, deferred payments, recruitment loans, based on size of prior business (MER-ADV-2026#408).\n\n**a5.MER**: Merrill returned to veteran broker recruiting with more aggressive offer after pulling back end of 2017 (MER-TRADE-2026-11-16-AH-01#1).\n\n**a1.RJF**: Employee FAs compensation primarily payout on revenues plus benefits (RJF-10K-2025#10). Independent contractors higher payout, cover own costs (RJF-10K-2025#11). CEO: independent payouts higher because cover overhead (RJF-TR-2026Q1#44). Affiliation options payouts (RJF-PR-web-affiliation-options#1, #2). Total compensation ratio (RJF-SUPP-2026Q1#42).\n\n**a2.RJF**: Traditional Employee up to 50% payout (RJF-PR-web-affiliation-options#1). Advisor Select 70-80% gross (RJF-PR-web-affiliation-options#1). Independent Contractor 81-90% (RJF-PR-web-affiliation-options#1). Corporate RIA 81-90% (RJF-PR-web-affiliation-options#2). Tiered payout systems (RJF-TR-2026Q1#44).\n\n**a3.RJF**: Financial incentives for affiliating include bonuses (RJF-ADV-2026#54). Recognition clubs with deferred compensation awards (RJF-ADV-2026#53). PCG recruiting/retention cash and equity awards (RJF-PR-2026-07-22-01#103). Competitive pay includes base salary, incentive bonus, equity (RJF-10K-2025#29). RSU in lieu of cash for annual bonus (RJF-10K-2025#678).\n\n**a4.RJF**: PCG recruiting/retention compensation $117M for Q ended June 30 2026 (RJF-SUPP-2026Q2#14). $111M March 31 2026 (RJF-SUPP-2026Q1#14). $107M Dec 31 2025 (RJF-SUPP-2025Q4#12). FY2025 $355M amortization (RJF-TR-2025Q3#20). Loans to FAs increased $300M (RJF-10K-2025#260). Transition assistance, bonuses, deferred comp, loans (RJF-ADV-2026#54).\n\n**a5.RJF**: Began presenting recruiting/retention comp in PCG segment commencing Q1 2026 (RJF-TR-2025Q4#16). Breaking out upfront money amortization (RJF-TR-2025Q3#49). Broken out cost of recruiting/retention (RJF-TR-2026Q1#25).\n\n**a6 comparison**: One claim comparing detail levels.\n\nNow let me write the actual answer. This is a lot. I'll write one sentence per cell (or a couple sentences for rich cells), citing chunk ids.\n\nLet me be mindful of the \"one sentence per item\" guidance but also not overwhelming. I'll consolidate sensibly while keeping each sentence single-fact and cited.\n\nActually, I realize I should be careful about which items to include. The instruction says \"Cover what was asked: every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence.\" So each cell needs at least one sentence. I can add more sentences for richer detail, but I should cover all cells.\n\nLet me write the answer now.\n\nFor adjacent items (a2.EDJ, a2.MER, a5.SCHW), I need adjacent entries with differs_because.\n\nLet me structure adjacent:\n- a2.EDJ: differs because \"The passages describe Edward Jones' general advisor compensation structure... but do not disclose a specific payout grid or payout rate.\" (given in matrix)\n- a2.MER: differs because \"Merrill describes the structure of its advisor incentive compensation award... but it does not disclose an actual payout grid or payout rate...\"\n- a5.SCHW: differs because \"The disclosed change concerns CS&Co.'s own compensation received from third-party ETF sponsors/issuers... not how Schwab's financial consultants are compensated.\"\n\nThe code already added gaps for a2.SCHW, a2.EDJ, a2.MER, a4.SCHW, a5.SCHW, a5.EDJ. Wait, but the gaps list includes a2.EDJ, a2.MER, a5.SCHW as \"not published... closest disclosed figure is (adjacent)\". And a2.SCHW, a4.SCHW, a5.EDJ as \"not found\".\n\nSo the gaps section in my answer should NOT repeat these (code adds them). But wait - the instructions say \"Cells with code gaps get no claim; code adds those gaps.\" And \"gap_with_adjacent: no cell holds the asked quantity, so write no claim for it; give the adjacent items.\"\n\nSo for a2.EDJ, a2.MER, a5.SCHW - these are \"adjacent only\" cells. I write adjacent items (not claims, not gaps - code adds the gap). For a2.SCHW, a4.SCHW, a5.EDJ - pure gaps, code adds them, I write nothing.\n\nWait, but the gaps are listed by code already: \"Gaps added by code (do not repeat them)\". So I don't put gaps in the gaps array for these. Actually, let me re-read the tool schema - there's a \"gaps\" array parameter. The instruction says \"Cells with code gaps get no claim; code adds those gaps. Add no gap of your own unless those gaps miss something.\"\n\nSo should I pass an empty gaps array? The code already adds gaps. Hmm. Actually the tool has a \"gaps\" field. The instruction \"Gaps added by code (do not repeat them)\" suggests I should not repeat them. So I leave gaps empty (or minimal).\n\nActually wait, let me reconsider. The \"gaps\" I see in the prompt are \"Gaps added by code (do not repeat them)\". This means these gaps are already added by the system. So in my submit_answer, I should NOT add these gaps again.\n\nBut then what about adjacent? The adjacent items need to be included. The gaps for adjacent cells (a2.EDJ, a2.MER, a5.SCHW) are marked \"not published... closest disclosed figure is (adjacent)\" - these are the gap+adjacent pattern. So I provide the adjacent items, and code adds the gap.\n\nSo my answer:\n- claims: for all fact cells + comparison\n- adjacent: for a2.EDJ, a2.MER, a5.SCHW (with differs_because)\n- gaps: leave empty (code adds them)\n\nLet me verify the adjacent part_ids. The adjacent items should have part_id matching the cell. For a2.EDJ, part_id \"a2.EDJ\". For a2.MER, \"a2.MER\". For a5.SCHW, \"a5.SCHW\".\n\nNow let me write everything.\n\nLet me carefully draft each claim sentence with correct citations.\n\nI need to also handle the \"standard wording\" for advisor pay - but that's about payout percentages published on recruiting pages. Raymond James publishes payout percentages (affiliation options). The standard says: \"a firm whose cited items state payout percentages or ranges gets them in a claim, dated with the 'page content as of' date\". RJF affiliation options are \"page content as of 2026-04-21\". So I should date RJF payout percentages with \"page content as of 2026-04-21\".\n\nFor Merrill, the advisor development program page says \"Base salary and unlimited earning potential\" - that's not a payout grid. No payout percentages. So no gap about \"Payout grids are not public\" - actually the code didn't add such a gap. The a2.MER is \"adjacent only\" with a specific differs_because. So I follow that.\n\nOK let me write.\n\nLet me now also date things per source line. The instruction: \"Date what you state from its source line\". So I should include source dates like \"in the 10-K\", \"on the earnings call\", etc.\n\nLet me write concise but dated claims.\n\nLet me draft the final claims array.\n\nI'll write them in order: headline, then by firm/aspect.\n\nClaim 1 (headline, part_id \"\" maybe? or no part_id). Actually the headline claim - what part_id? The schema has part_id \"\" as an option. I'll use \"\" for the headline, or maybe I should attach it to a specific aspect. The headline answers the question directly. I'll use part_id \"\".\n\nActually, looking at the comparison aspect a6 needs part_id \"a6\". The headline claim - I'll use \"\" (empty).\n\nLet me write headline: \"Across the five firms, advisor compensation disclosures range from Raymond James's specific affiliation-model payout percentages to Edward Jones's and Merrill's commission- and incentive-based descriptions that omit a published payout grid.\"\n\nCite: RJF-PR-web-affiliation-options#1, RJF-PR-web-affiliation-options#2, EDJ-10K-2025#30, EDJ-ADV-2026#64, MER-ADV-2026#406.\n\nNow individual claims.\n\nLet me write all and count.\n\nActually, I'll write the claims with part_id being the cell id for firm-specific claims, and \"a6\" for the comparison.\n\nLet me write the full JSON now.\n\nFor each claim, text must be ONE sentence. Let me keep them single-sentence.\n\nLet me draft:\n\nHeadline (part_id \"\"):\n\"The five firms have disclosed advisor compensation at very different levels of detail: Raymond James publishes specific payout percentages by affiliation model, Morgan Stanley describes formulaic payouts and deferred-compensation mixes, while Edward Jones and Merrill describe commission- and incentive-based structures without publishing a payout grid.\"\n\nThat's a bit long. Let me simplify to ~35 words or split. Actually aim for 35 words or fewer. Let me write two sentences? No, claim 1 is one sentence. Let me write it more compactly:\n\n\"Across the five firms, advisor compensation disclosures range from Raymond James's specific payout percentages by affiliation model to Edward Jones's and Merrill's commission- and incentive-based descriptions that omit a published payout grid.\"\n\nWord count ~30. Cite: RJF-PR-web-affiliation-options#1, RJF-PR-web-affiliation-options#2, EDJ-10K-2025#30, EDJ-ADV-2026#64, MER-ADV-2026#406.\n\nOK.\n\nNow a1.MS (multiple sentences, same part_id a1.MS):\n\n1. \"Morgan Stanley disclosed in its 2025 10-K that, for certain revenue-producing employees in the Wealth Management and Investment Management business segments, compensation is largely paid on formulaic payouts that link employee compensation to revenues.\" cite MS-10K-2025#153.\n\n2. \"It also disclosed that deferred compensation for Wealth Management financial advisors is generally composed of 75% cash-based awards and 25% stock-based awards.\" cite MS-10K-2025#193.\n\n3. \"In its 2026 ADV, Morgan Stanley disclosed that a Morgan Stanley Virtual Advisor is paid a base salary plus a discretionary bonus and retains no portion of the advisory fee.\" cite MS-ADV-2026#173.\n\n4. \"On its 4Q25 earnings call, management said the firm will increase the cash component of advisor compensation.\" cite MS-TR-2025Q4#22.\n\nI'll include these. That covers a1.MS well.\n\na2.MS:\n1. \"Morgan Stanley disclosed in its 2025 10-K that compensation for certain revenue-producing employees in the Wealth Management and Investment Management segments is largely paid on formulaic payouts linking employee compensation to revenues.\" cite MS-10K-2025#153.\n2. \"Its 2026 ADV disclosed that the amount of the client fee is a factor in calculating advisor compensation, with advisors given credit for less than the total fee when the fee rate is below a threshold.\" cite MS-ADV-2026#173.\n3. \"Trade press reports that Morgan Stanley is increasing a pay threshold for advisors by 10% in 2027.\" cite MS-TRADE-2026-10-26-IN-01#4.\n\na3.MS:\n1. \"Morgan Stanley's 2026 ADV disclosed that a Morgan Stanley Virtual Advisor is paid a base salary plus a discretionary bonus.\" cite MS-ADV-2026#173.\n2. \"Deferred compensation for Wealth Management financial advisors is generally composed of 75% cash-based and 25% stock-based awards, under programs that generally contain vesting, clawback and cancellation provisions.\" cite MS-10Q-2026Q2#93, MS-10K-2025#193, MS-10Q-2026Q1#73.\n3. \"Its 2025 10-K stated that compensation and benefits expenses include formulaic programs and discretionary incentive compensation.\" cite MS-10K-2025#152.\n\na4.MS:\n1. \"Trade press reports that a FINRA arbitration panel turned aside Morgan Stanley's attempt to claw back $2.46 million in recruiting bonus loans from former advisor Sam Te Su.\" cite MS-TRADE-2026-11-10-IN-01#0.\n2. \"Trade press also reports that Morgan Stanley sought to claw back recruiting bonus money from former advisor Darryl Cohen via promissory notes, with a FINRA arbitrator awarding the firm $8.13 million in damages plus $561,000 in legal fees.\" cite MS-TRADE-2026-08-28-IN-01#0.\n3. \"Trade press reports that Morgan Stanley is not introducing retention bonuses in its 2027 pay plan and is instead increasing a pay threshold for advisors by 10%.\" cite MS-TRADE-2026-10-26-IN-01#4.\n\na5.MS:\n1. \"On its 4Q25 earnings call, Morgan Stanley said it will increase the cash component of advisor compensation to reduce accounting-driven volatility and simplify its compensation program.\" cite MS-TR-2025Q4#22.\n2. \"It also disclosed that beginning in the first quarter of 2026 it transitioned all economic hedges for its Wealth Management deferred cash-based compensation obligations to derivative instruments.\" cite MS-TR-2025Q4#22.\n3. \"Trade press reports that Morgan Stanley is increasing a pay threshold for advisors by 10% in 2027, requiring 10% more revenue for the same pay.\" cite MS-TRADE-2026-10-26-IN-01#4.\n\na1.SCHW:\n1. \"Schwab's 2025 10-K stated it offers a compensation package rewarding employee and company performance, encompassing base pay, performance-based incentive pay, equity awards, recognition awards, and health and wellness benefits.\" cite SCHW-10K-2025#50.\n2. \"It disclosed a financial consultant career achievement plan, a nonqualified plan under which eligible financial consultants can receive earned cash payments after retirement contingent on performance, tenure, age, and client transitioning, with full vesting at age 60 and ten years of service.\" cite SCHW-10K-2025#496.\n3. \"Schwab's 2026 ADV disclosed that Financial Consultants may receive compensation when clients purchase certain investments or products they recommend or introduce.\" cite SCHW-ADV-2026#78.\n4. \"It also disclosed that SWAI and SWAI Associates' compensation does not vary based on their specific investment recommendations and is not tied to investment performance.\" cite SCHW-ADV-2026#40.\n\na3.SCHW:\n1. \"Schwab's 2025 10-K stated its compensation package includes performance-based incentive pay and equity awards in addition to base pay.\" cite SCHW-10K-2025#50.\n2. \"It disclosed that adjusted diluted EPS and return on tangible common equity are used as components of performance criteria for employee bonus and certain executive management incentive compensation arrangements.\" cite SCHW-10K-2025#267.\n\na1.EDJ:\n1. \"Edward Jones's 2025 10-K disclosed that financial advisors are generally compensated on a commission basis, subject to a minimum guaranteed salary, and may receive additional compensation based on branch office and Partnership profitability.\" cite EDJ-10K-2025#30.\n2. \"Its 2026 ADV disclosed that most financial advisors receive a portion of the Program Fee, while some receive a salary in addition to or in lieu of it.\" cite EDJ-ADV-2026#64.\n3. \"It disclosed that financial advisor bonuses are determined by the overall Partnership's profitability and the performance of individual financial advisors.\" cite EDJ-10K-2025#264.\n4. \"It disclosed a non-qualified deferred compensation plan for certain financial advisors and retirement transition plans that compensate retiring advisors for client transition services.\" cite EDJ-10K-2025#221, EDJ-10K-2025#222.\n\na3.EDJ:\n1. \"Edward Jones's 2025 10-K disclosed that financial advisor bonuses are determined by the overall Partnership's profitability and the performance of individual financial advisors.\" cite EDJ-10K-2025#264.\n2. \"Its 2026 ADV disclosed that the Program Fee, assets under care, and Reserve Line Advance balances impact most financial advisors' eligibility for a bonus and the bonus amount.\" cite EDJ-ADV-2026#67.\n3. \"It disclosed that most financial advisors are eligible for the Edward Jones Travel Award Program, with eligibility based on new and existing assets under care.\" cite EDJ-ADV-2026#67.\n4. \"Its 2025 10-K disclosed that if Partnership profitability decreases, bonuses paid to financial advisors may be decreased or eliminated.\" cite EDJ-10K-2025#58.\n\na4.EDJ:\n1. \"Edward Jones's 2025 10-K disclosed that eligible retiring financial advisors are offered retirement transition plans compensating them for client transition services under a generally five-year agreement, with most paid ratably over four years.\" cite EDJ-10K-2025#222.\n\na1.MER:\n1. \"Merrill's 2026 ADV disclosed that advisors earn compensation based on the revenue Merrill earns from the Merrill Lynch Fee, from Sales Charges on brokerage account securities transactions, and from referrals to Affiliates.\" cite MER-ADV-2026#400.\n2. \"It disclosed that advisors are eligible for a compensation award, payable over a defined period, from an incentive program based on meeting prior-year growth targets in new households and in assets and liabilities.\" cite MER-ADV-2026#406.\n3. \"It disclosed that advisors who join from other firms generally receive recruitment payments such as salary guarantees, upfront awards, and compensation contingent on continued employment.\" cite MER-ADV-2026#408.\n4. \"Its advisor recruiting page discloses base salary and unlimited earning potential.\" cite MER-PR-web-advisor-development-program#1.\n\na3.MER:\n1. \"Merrill's 2026 ADV disclosed that advisors are eligible to receive a compensation award, payable over a defined period, from an incentive program based on meeting prior-year growth targets in new households and in assets and liabilities.\" cite MER-ADV-2026#406.\n2. \"It disclosed that an advisor is subject to a reduction in their incentive compensation grid if they fail to achieve growth for two consecutive years in the assets and liabilities component of the award.\" cite MER-ADV-2026#406.\n3. \"It disclosed that recruitment payments, including salary guarantees and upfront awards, are in addition to the incentive compensation to which advisors are otherwise entitled.\" cite MER-ADV-2026#408.\n4. \"It disclosed that elements of field management compensation are based on revenues to Merrill and on the advisors they manage meeting strategic goals, including the growth in assets and liabilities component of the award.\" cite MER-ADV-2026#411.\n\na4.MER:\n1. \"Merrill's 2026 ADV disclosed that advisors who join from other firms generally receive payments that may include salary guarantees, upfront awards, and compensation contingent on continued employment such as deferred payments and recruitment loans, generally based on the size of the business at their prior firm.\" cite MER-ADV-2026#408.\n\na5.MER:\n1. \"Trade press reports that Merrill executives said in October that the firm has returned to veteran broker recruiting with a more aggressive offer after largely pulling back at the end of 2017, with recruited assets to the wealth unit doubling year-over-year.\" cite MER-TRADE-2026-11-16-AH-01#1.\n\na1.RJF:\n1. \"Raymond James's 2025 10-K disclosed that employee financial advisors' compensation primarily includes a payout on revenues they generate plus participation in employee benefit plans.\" cite RJF-10K-2025#10.\n2. \"It disclosed that independent contractor financial advisors generally bear their own direct costs and receive a higher payout percentage on revenues than employee advisors.\" cite RJF-10K-2025#11.\n3. \"On its 2Q26 earnings call, its CEO stated that independent payouts are higher than employee payouts because independents cover their own overhead costs such as real estate and health insurance.\" cite RJF-TR-2026Q1#44.\n4. \"Its affiliation-options page (page content as of April 21, 2026) discloses payouts of up to 50% for Traditional Employee, 70-80% gross for Advisor Select, and 81-90% for Independent Contractor and Corporate RIA models.\" cite RJF-PR-web-affiliation-options#1, RJF-PR-web-affiliation-options#2.\n\nHmm, that's a list within one sentence. The instruction says \"Never run a list of items inside one sentence; write one sentence per item instead.\" So I should split the payout percentages. But those are really a2 content, and I'll cover them in a2.RJF. For a1.RJF, maybe just mention it discloses specific payout percentages by affiliation model without listing. Let me rephrase:\n\n4. \"Raymond James's affiliation-options recruiting page (page content as of April 21, 2026) discloses specific payout percentages by affiliation model.\" cite RJF-PR-web-affiliation-options#1, RJF-PR-web-affiliation-options#2.\n\nThen the detail in a2.RJF.\n\na2.RJF:\n1. \"Raymond James's affiliation-options page (page content as of April 21, 2026) discloses a payout of up to 50% for the Traditional Employee affiliation model.\" cite RJF-PR-web-affiliation-options#1.\n2. \"It discloses a 70-80% gross payout for the Advisor Select affiliation model.\" cite RJF-PR-web-affiliation-options#1.\n3. \"It discloses an 81% to 90% payout for the Independent Contractor affiliation model.\" cite RJF-PR-web-affiliation-options#1.\n4. \"It discloses an 81% to 90% payout for the Corporate RIA affiliation model.\" cite RJF-PR-web-affiliation-options#2.\n5. \"On its 2Q26 earnings call, the CEO stated the firm has tiered payout systems on the employee side, so higher production moves an advisor up the payout grid.\" cite RJF-TR-2026Q1#44.\n6. \"Its 2026 ADV disclosed that, depending on a financial advisor's annual revenue generation, the advisor can receive a higher portion of the fee paid to the firm.\" cite RJF-ADV-2026#50.\n\na3.RJF:\n1. \"Raymond James's 2026 ADV disclosed that the firm provides financial advisors with financial incentives for affiliating, including bonuses, transition assistance, deferred compensation arrangements, and enhanced pay-outs.\" cite RJF-ADV-2026#54.\n2. \"It disclosed that recognition club qualification can result in benefits such as paid travel, reimbursement of business-related expenses, and deferred compensation awards.\" cite RJF-ADV-2026#53.\n3. \"Its 2025 10-K disclosed that competitive pay packages include base salary, incentive bonus, and equity compensation programs.\" cite RJF-10K-2025#29.\n4. \"It disclosed that RSU awards may be granted in lieu of cash for a portion of the annual bonus awarded to officers and certain other employees receiving an annual bonus in excess of $275,000.\" cite RJF-10K-2025#678.\n\na4.RJF:\n1. \"Raymond James reported PCG recruiting and retention-related compensation of $117 million for the three months ended June 30, 2026.\" cite RJF-SUPP-2026Q2#14.\n2. \"It reported $111 million for the three months ended March 31, 2026.\" cite RJF-SUPP-2026Q1#14.\n3. \"It reported $107 million for the three months ended December 31, 2025.\" cite RJF-SUPP-2025Q4#12.\n4. \"Its CFO stated that fiscal 2025 adjusted compensation expense included $355 million of amortization of transition assistance and retention awards, up about 11% versus fiscal 2024.\" cite RJF-TR-2025Q3#20.\n5. \"Its 2025 10-K reported that loans to financial advisors, net increased $300 million due to recruiting activities.\" cite RJF-10K-2025#260.\n6. \"Its 2026 ADV disclosed financial incentives for affiliating including transition assistance, bonuses, deferred compensation arrangements, and repayable business transition or working capital loans.\" cite RJF-ADV-2026#54.\n\nWait, this might be too much. But a4 is \"recruiting compensation, transition pay, and forgivable loans\" - a rich cell with 9 items. I'll cover the main figures and the structure. Let me keep it reasonably complete but not exhaustive. Actually, the quarterly figures are the \"series\" - the question a4 is \"recency\" aspect. Let me give the series as instructed (\"a series asked by quarter gives the quarters\"). Actually a4 isn't explicitly \"by quarter\" but has quarterly figures. I'll give the most recent and maybe note the series. Hmm.\n\nActually the question overall is \"what has each firm disclosed about advisor compensation structures\" - a4 is about recruiting comp/transition/forgivable loans. I'll give the key disclosures: the recent quarterly figure ($117M for Q2 2026), the FY2025 $355M, the $300M loans increase, and the types of incentives.\n\nLet me not overdo. I'll include a few key ones.\n\nLet me finalize a4.RJF to 3-4 sentences:\n1. \"Raymond James reported PCG recruiting and retention-related compensation of $117 million for the three months ended June 30, 2026, and $111 million for the three months ended March 31, 2026.\" - wait, that's two figures in one sentence. Better separate.\n\nActually I'll do:\n1. \"Raymond James reported PCG recruiting and retention-related compensation of $117 million for the three months ended June 30, 2026.\" cite RJF-SUPP-2026Q2#14.\n2. \"Its CFO stated fiscal 2025 adjusted compensation expense included $355 million of amortization of transition assistance to recruited advisors and retention awards, up about 11% versus fiscal 2024.\" cite RJF-TR-2025Q3#20.\n3. \"Its 2025 10-K reported that loans to financial advisors, net increased $300 million due to recruiting activities.\" cite RJF-10K-2025#260.\n4. \"Its 2026 ADV disclosed financial incentives for affiliating including transition assistance, bonuses, deferred compensation arrangements, enhanced pay-outs, and repayable business transition or working capital loans.\" cite RJF-ADV-2026#54.\n\nThat's good coverage.\n\na5.RJF:\n1. \"Raymond James said on its 1Q26 earnings call that, commencing the fiscal first quarter of 2026, it began presenting recruiting and retention-related compensation expense in the Private Client Group segment for each reporting period.\" cite RJF-TR-2025Q4#16.\n2. \"Its CEO said the firm would begin breaking out, starting the following quarter, the upfront money amortization that hits compensation expense in the Private Client Group.\" cite RJF-TR-2025Q3#49.\n3. \"Its CEO said the firm has broken out the cost of recruiting and retention in its reporting, noting its annual recruiting is now equivalent to a medium-sized acquisition.\" cite RJF-TR-2026Q1#25.\n\na6 comparison (one claim, part_id \"a6\"):\n\"Raymond James discloses the most granular detail (specific payout percentages by affiliation model, plus recruiting/retention compensation figures), Morgan Stanley, Merrill, and Edward Jones disclose qualitative structures and incentive mechanics but no published payout grid, and Schwab discloses compensation only at the package and plan level without a payout grid; because the firms disclose on different bases (payout percentages versus general structure descriptions), the depth of disclosure cannot be directly ranked by a single shared metric.\"\n\nHmm, that's long and includes a comparison. The a6 aspect is \"Comparison of how much detail each firm actually discloses about advisor compensation\" and \"needs exactly one comparison claim\". The comparison should say whether comparison can be made on this evidence (valid/valid only some/not valid) and why.\n\nLet me write: \"A direct like-for-like comparison of disclosure depth cannot be made on a single shared basis: Raymond James publishes specific payout percentages and recruiting/retention figures, while Morgan Stanley, Edward Jones, Merrill, and Schwab disclose only qualitative compensation structures without a comparable payout grid or metric.\"\n\nCite: RJF-PR-web-affiliation-options#1, RJF-PR-web-affiliation-options#2, MS-10K-2025#153, EDJ-10K-2025#30, MER-ADV-2026#406, SCHW-10K-2025#50.\n\nThat's the comparison claim. Good.\n\nNow adjacent items:\n\na2.EDJ adjacent:\ntext: \"Edward Jones states that financial advisors are generally compensated on a commission basis, subject to a minimum guaranteed salary, and may receive additional compensation based on branch office and Partnership profitability, with most advisors receiving a portion of the Program Fee at the firm's discretion, but it does not disclose a specific payout grid or payout rate.\" \ndiffers_because: \"The passages describe Edward Jones' general advisor compensation structure (commission basis with a minimum guaranteed salary, additional compensation tied to branch and Partnership profitability, and a discretionary share of the Program Fee), but do not disclose a specific payout grid or payout rate.\"\ncite: EDJ-10K-2025#30, EDJ-ADV-2026#64.\n\na2.MER adjacent:\ntext: \"Merrill discloses that advisors are eligible for a compensation award from an incentive program based on meeting prior-year growth targets, and that an advisor faces a reduction in their incentive compensation grid after two consecutive years of missed growth in assets and liabilities, but it does not disclose an actual payout grid or payout rate.\"\ndiffers_because: \"Merrill describes the structure of its advisor incentive compensation award and the existence of an incentive compensation grid (growth-target-based, with a reduction for two consecutive years of missed growth in assets and liabilities), but it does not disclose an actual payout grid or payout rate (no payout percentages or rate schedule).\"\ncite: MER-ADV-2026#406.\n\na5.SCHW adjacent:\ntext: \"Schwab's 2026 ADV disclosed that, since June 2026, the ETF compensation disclosure was revised to reflect updates to the compensation arrangement between CS&Co. and sponsors or issuers of certain third-party exchange-traded products for platform services.\"\ndiffers_because: \"The disclosed change concerns CS&Co.'s own compensation received from third-party ETF sponsors/issuers for platform services (firm revenue), not how Schwab's financial consultants or wealth advisors are compensated.\"\ncite: SCHW-ADV-2026#88, SCHW-ADV-2026#87.\n\nNow, do I need to worry about the \"standard wording\" for advisor pay gaps? The code's gaps list doesn't include \"Payout grids are not public\" type gaps. So no.\n\nAlso, I should check: the \"answer_with_boundary\" and \"gap_with_adjacent\" modes - not applicable here since behavior is \"answer\".\n\nLet me also double check the comparison claim's part_id should be \"a6\" and the adjacent part_ids.\n\nNow, one concern: the instruction says \"Claim 1 answers the question directly (the headline fact, figure or verdict) and MUST cite the items it rests on.\" My headline claim cites multiple items. Good.\n\nAlso \"Do not restate evidence the question did not ask for\" - I'm sticking to the asked cells.\n\nLet me also make sure I'm not putting things in claims that should be adjacent or vice versa. a2.EDJ and a2.MER are \"different quantity (adjacent only)\" - so no claim, only adjacent. a5.SCHW is \"different quantity (adjacent only)\" - only adjacent.\n\na1.SCHW includes item 5 (adjusted EPS/return on tangible common equity as bonus criteria) and item 6 (2022 Stock Incentive Plan) and item 7 (deferred comp plan). I'll cover the main ones. Actually a3.SCHW covers the bonus criteria. Let me not duplicate too much.\n\nLet me also note the \"quote not verbatim\" items - never put in quotation marks. I'm not using quotation marks in my text (I'm paraphrasing), so that's fine.\n\nNow let me also verify citation chunk ids are all valid (in the allowed enum list). Let me check a few:\n\n- MS-10Q-2026Q2#93 \u2713 (in sources)\n- MS-10Q-2026Q1#73 \u2713\n- RJF-SUPP-2026Q2#14 \u2713\n- RJF-SUPP-2026Q1#14 \u2713\n- RJF-SUPP-2025Q4#12 \u2713\n- RJF-10K-2025#260 \u2713\n- RJF-TR-2025Q3#20 \u2713\n- SCHW-10K-2025#267 \u2713\n- SCHW-ADV-2026#88, #87 \u2713\n- MER-ADV-2026#408 \u2713\n- EDJ-10K-2025#222 \u2713\n- RJF-ADV-2026#53 \u2713\n- RJF-10K-2025#29 \u2713\n- RJF-10K-2025#678 \u2713\n\nAll good.\n\nNow the part_id enum - I need to check which part_ids are valid. The enum lists: a1.MS, a2.MS, ..., a6.MS, a1.SCHW...a6.SCHW, ..., a1, a2, a3, a4, a5, a6, \"\".\n\nSo for comparison I use \"a6\". For individual cells use \"a1.MS\" etc. For adjacent cells, use \"a2.EDJ\", \"a2.MER\", \"a5.SCHW\". These are all in enum. Good.\n\nHeadline claim part_id: \"\".\n\nLet me finalize and write the answer.\n\nLet me reconsider whether I've covered all fact cells. Fact cells (from Why list): a1.MS, a2.MS, a3.MS, a4.MS, a5.MS, a1.SCHW, a3.SCHW, a1.EDJ, a3.EDJ, a4.EDJ, a1.MER, a3.MER, a4.MER, a5.MER, a1.RJF, a2.RJF, a3.RJF, a4.RJF, a5.RJF. That's 19 cells. Plus a6 comparison.\n\nAdjacent cells: a2.EDJ, a2.MER, a5.SCHW (3 cells).\n\nGaps (code): a2.SCHW, a4.SCHW, a5.EDJ.\n\nTotal cells = 19 + 3 + 3 = 25, but there are 5 firms \u00d7 6 aspects = 30 cells. Wait, let me recount. 5 firms \u00d7 6 aspects = 30. Fact cells = 19. Adjacent = 3. Gaps = 3. Total = 25. What about a6.SCHW, a6.EDJ, a6.MER, a6.MS, a6.RJF? These are the per-firm a6 cells, but a6 is a comparison aspect handled by a single \"a6\" claim. So those per-firm a6 cells (a6.MS, a6.SCHW, etc.) are folded into the single a6 comparison claim. That accounts for the remaining 5 cells.\n\nActually wait, let me recount. The Why list only lists fact cells for a1-a5 (19 cells). The a6 comparison is a single claim. The a6.MS, a6.SCHW, a6.EDJ, a6.MER, a6.RJF cells in the evidence matrix are \"fact\" but they're per-firm detail for the comparison. The instruction says a6 \"needs exactly one comparison claim, part_id a6\". So I write one claim for a6 covering all firms, not five separate claims.\n\nSo total claims = 1 (headline) + 19 (a1-a5 cells) + 1 (a6) = 21 claims. But some cells have multiple sentences. That's a lot but fine.\n\nActually, let me reconsider the headline. Do I need a separate headline claim AND the comparison claim? The headline answers \"what has each firm disclosed\". The a6 comparison is \"how much detail each firm discloses\". These overlap a bit. But the instruction says claim 1 answers the question directly, and a6 needs its own comparison claim. I'll keep both but make the headline more of a factual overview and a6 the comparison verdict.\n\nActually, I worry the headline might duplicate. Let me make the headline concise and focused on \"the five have disclosed different things, here's the overview\" without the comparison verdict (which belongs to a6).\n\nLet me finalize.\n\nActually, I want to reconsider the number of sentences. The instruction says \"Each claim is ONE sentence (aim for 35 words or fewer)\". Many of my sentences are long. Let me try to keep them under ~40 words where possible. Some are unavoidably long due to quoted definitions. I'll do my best.\n\nLet me also reconsider: should I really write 3-4 sentences per cell? The instruction \"one cited sentence per asked item (per firm, per firm's series, per initiative)\" suggests roughly one sentence per firm-cell, but cells with multiple distinct facts can have multiple sentences. Given the richness, I think multiple sentences per cell is acceptable and better coverage. But I should be careful not to be excessive.\n\nI'll aim for 1-3 sentences per cell, covering the key facts.\n\nLet me write the final answer now.\n\nI'll also double-check the RJF payout date. The affiliation-options pages are \"page content as of 2026-04-21\". So I date with \"page content as of April 21, 2026\".\n\nLet me write the final JSON.\n\nFor the headline, I'll cite: RJF-PR-web-affiliation-options#1, RJF-PR-web-affiliation-options#2, EDJ-10K-2025#30, EDJ-ADV-2026#64, MER-ADV-2026#406, MS-10K-2025#153.\n\nLet me write it all out carefully now.\n\nActually, I realize I should double check some wording about \"in the 2Q26 earnings call\" for RJF-TR-2026Q1#44 - that's the transcript for period 2026-03-31, published 2026-04-22. So it's the 2Q fiscal 2026 earnings call (Raymond James fiscal year ends September 30, so March 31 2026 is Q2 fiscal 2026). Actually RJF's fiscal year ends Sept 30. So March 31 2026 is fiscal Q2 2026. The transcript is labeled \"RJF-TR-2026Q1\" in the chunk id but the period is 2026-03-31. Hmm. The source says \"period 2026-03-31\". Raymond James fiscal Q2 2026 (calendar Q1 2026). \n\nTo be safe, I'll just say \"on its earnings call for the period ended March 31, 2026\" or \"in the transcript dated...\" Actually, let me use the source line. The source is \"RJF transcript, period 2026-03-31\". I'll say \"on its earnings call for the quarter ended March 31, 2026\".\n\nActually simpler: \"Raymond James's CEO stated on its earnings call...\" without over-specifying quarter. But the instruction says date from source line. Let me say \"on the earnings call for the quarter ended March 31, 2026\".\n\nFor MS-TR-2025Q4#22: \"MS transcript, period 2025-12-31, published 2026-01-15\". This is the 4Q 2025 earnings call. I'll say \"on its 4Q 2025 earnings call\".\n\nFor RJF-TR-2025Q4#16: \"RJF transcript, period 2025-12-31\". Fiscal Q1 2026 (since RJF FY ends Sept 30, Dec 31 is Q1 FY2026). But I'll just say \"on its earnings call for the period ended December 31, 2025\".\n\nHmm, but a5.RJF item 1 says \"Commencing the fiscal first quarter of 2026\" and the source RJF-TR-2025Q4#16 has period 2025-12-31. Wait, that's confusing. Let me just quote what the item says: \"Commencing this quarter, we presented recruiting and retention-related compensation expense in the PCG segment\". The period is 2025-12-31 (which is RJF fiscal Q1 2026). So \"fiscal first quarter of 2026\" = quarter ended December 31, 2025.\n\nI'll phrase: \"On its earnings call for the quarter ended December 31, 2025, Raymond James said that, commencing the fiscal first quarter of 2026, it began presenting recruiting and retention-related compensation expense in the Private Client Group segment.\"\n\nActually the item 1 text I wrote says \"commencing the fiscal first quarter of 2026\" - which is what the quote says. Good, I'll keep it accurate.\n\nLet me not overthink quarter naming. I'll use the source period dates.\n\nLet me finalize. I'll write the answer now in the tool call.\n\nLet me make sure each claim's chunk_ids are exactly from the enum. I'll double check each.\n\nFinal answer structure ready. Let me write it.\n\nOne more check: the headline claim - should its part_id be \"\"? The enum includes \"\". Yes. I'll use \"\".\n\nLet me write everything.\n\nFor a1.RJF item 4, I merged two sources. Let me make it cleaner. Actually I'll write the payout detail in a2.RJF and in a1.RJF just note the affiliation options page discloses specific payouts. Fine.\n\nLet me also make sure I'm not double-covering too much. a1 is \"structure\", a2 is \"payout grid/rate\", a3 is \"bonus/incentive\". There's overlap but that's inherent in the data. I'll allocate: a1 = general structure, a2 = payout percentages/grids, a3 = bonuses/incentives.\n\nOK writing final now.\n\nI'll write the claims in firm order (MS, SCHW, EDJ, MER, RJF) and aspect order within each firm.\n\nLet me write out all claims as JSON array.\n\nFor cleanliness, I'll number mentally but just output.\n\nLet me finalize text strings.\n\nI need to be careful with word counts but I'll just write naturally.\n\nFinal answer.",
+  "first_claim_s": 234.16,
+  "stream_items": {
+    "first_claim_s": 234.16,
+    "shown": 64,
+    "held": 3
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Across the five firms, advisor compensation disclosures range from Raymond James's specific payout percentages by affiliation model to Edward Jones's and Merrill's commission- and incentive-based descriptions that omit a published payout grid.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1",
+          "RJF-PR-web-affiliation-options#2",
+          "EDJ-10K-2025#30",
+          "EDJ-ADV-2026#64",
+          "MER-ADV-2026#406"
+        ],
+        "part_id": ""
+      },
+      {
+        "text": "Morgan Stanley disclosed in its 2025 10-K that, for certain revenue-producing employees in the Wealth Management and Investment Management business segments, compensation is largely paid on formulaic payouts that link employee compensation to revenues.",
+        "chunk_ids": [
+          "MS-10K-2025#153"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "It also disclosed that deferred compensation for Wealth Management financial advisors is generally composed of 75% cash-based awards and 25% stock-based awards.",
+        "chunk_ids": [
+          "MS-10K-2025#193"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "In its 2026 ADV, Morgan Stanley disclosed that a Morgan Stanley Virtual Advisor is paid a base salary plus a discretionary bonus and does not retain any portion of the Morgan Stanley Advisory Fee.",
+        "chunk_ids": [
+          "MS-ADV-2026#173"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On its 4Q25 earnings call, management said the firm will increase the cash component of its advisor compensation.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#22"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley disclosed in its 2025 10-K that compensation for certain revenue-producing employees in the Wealth Management and Investment Management segments is largely paid on formulaic payouts linking employee compensation to revenues.",
+        "chunk_ids": [
+          "MS-10K-2025#153"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Its 2026 ADV disclosed that the amount of the client fee is a factor used in calculating advisor compensation, with advisors given credit for less than the total fee when the fee rate is below a certain threshold.",
+        "chunk_ids": [
+          "MS-ADV-2026#173"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Trade press reports that Morgan Stanley is increasing a pay threshold for advisors by 10% in 2027, meaning advisors must generate that much more revenue to see the same pay.",
+        "chunk_ids": [
+          "MS-TRADE-2026-10-26-IN-01#4"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley's 2026 ADV disclosed that a Morgan Stanley Virtual Advisor is paid a base salary plus a discretionary bonus.",
+        "chunk_ids": [
+          "MS-ADV-2026#173"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Deferred compensation for Wealth Management financial advisors is generally composed of 75% cash-based and 25% stock-based awards, under programs that generally contain vesting, clawback and cancellation provisions.",
+        "chunk_ids": [
+          "MS-10Q-2026Q2#93",
+          "MS-10K-2025#193",
+          "MS-10Q-2026Q1#73"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Its 2025 10-K stated that compensation and benefits expenses include formulaic programs and discretionary incentive compensation.",
+        "chunk_ids": [
+          "MS-10K-2025#152"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Trade press reports that a FINRA arbitration panel turned aside Morgan Stanley's attempt to claw back $2.46 million in recruiting bonus loans from former advisor Sam Te Su.",
+        "chunk_ids": [
+          "MS-TRADE-2026-11-10-IN-01#0"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Trade press also reports that Morgan Stanley sought to claw back recruiting bonus money from former advisor Darryl Cohen via promissory notes, with a FINRA arbitrator awarding the firm $8.13 million in damages plus $561,000 in legal fees.",
+        "chunk_ids": [
+          "MS-TRADE-2026-08-28-IN-01#0"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Trade press reports that Morgan Stanley is not introducing retention bonuses in its 2027 pay plan and is instead increasing a pay threshold for advisors by 10%.",
+        "chunk_ids": [
+          "MS-TRADE-2026-10-26-IN-01#4"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On its 4Q25 earnings call, Morgan Stanley said it will increase the cash component of advisor compensation to reduce accounting-driven volatility and simplify its compensation program.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#22"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "It also disclosed that beginning in the first quarter of 2026 it transitioned all economic hedges for its Wealth Management deferred cash-based compensation obligations to derivative instruments.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#22"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "Trade press reports that Morgan Stanley is increasing a pay threshold for advisors by 10% in 2027, requiring advisors to generate 10% more revenue to receive the same pay.",
+        "chunk_ids": [
+          "MS-TRADE-2026-10-26-IN-01#4"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "Schwab's 2025 10-K stated it offers a compensation package rewarding employee and company performance, encompassing base pay, performance-based incentive pay, equity awards, recognition awards, and health and wellness benefits.",
+        "chunk_ids": [
+          "SCHW-10K-2025#50"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "It disclosed a financial consultant career achievement plan, a nonqualified plan under which eligible financial consultants can receive earned cash payments after retirement contingent on performance, tenure, age, and client transitioning, with full vesting at age 60 and ten years of service.",
+        "chunk_ids": [
+          "SCHW-10K-2025#496"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab's 2026 ADV disclosed that Financial Consultants may receive compensation when clients purchase certain investments or products they recommend or introduce.",
+        "chunk_ids": [
+          "SCHW-ADV-2026#78"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "It also disclosed that SWAI and SWAI Associates' compensation does not vary based on their specific investment recommendations and is not tied to investment performance.",
+        "chunk_ids": [
+          "SCHW-ADV-2026#40"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab's 2025 10-K stated its compensation package includes performance-based incentive pay and equity awards in addition to base pay.",
+        "chunk_ids": [
+          "SCHW-10K-2025#50"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "It disclosed that adjusted diluted EPS and return on tangible common equity are used as components of performance criteria for employee bonus and certain executive management incentive compensation arrangements.",
+        "chunk_ids": [
+          "SCHW-10K-2025#267"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Edward Jones's 2025 10-K disclosed that financial advisors are generally compensated on a commission basis, subject to a minimum guaranteed salary, and may receive additional compensation based on their branch office and Partnership profitability.",
+        "chunk_ids": [
+          "EDJ-10K-2025#30"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Its 2026 ADV disclosed that most financial advisors receive a portion of the Program Fee, while some receive a salary in addition to or in lieu of it.",
+        "chunk_ids": [
+          "EDJ-ADV-2026#64"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "It disclosed that financial advisor bonuses are determined by the overall Partnership's profitability and the performance of individual financial advisors.",
+        "chunk_ids": [
+          "EDJ-10K-2025#264"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "It disclosed a non-qualified deferred compensation plan for certain financial advisors and retirement transition plans that compensate retiring advisors for providing client transition services.",
+        "chunk_ids": [
+          "EDJ-10K-2025#221",
+          "EDJ-10K-2025#222"
+        ],
+        "part_id": "a1.EDJ"
+      },
+      {
+        "text": "Edward Jones's 2025 10-K disclosed that financial advisor bonuses are determined by the overall Partnership's profitability and the performance of individual financial advisors.",
+        "chunk_ids": [
+          "EDJ-10K-2025#264"
+        ],
+        "part_id": "a3.EDJ"
+      },
+      {
+        "text": "Its 2026 ADV disclosed that the Program Fee, assets under care, and Reserve Line Advance balances impact most financial advisors' eligibility for a bonus and the bonus amount.",
+        "chunk_ids": [
+          "EDJ-ADV-2026#67"
+        ],
+        "part_id": "a3.EDJ"
+      },
+      {
+        "text": "It disclosed that most financial advisors are eligible for the Edward Jones Travel Award Program, with eligibility based on the amount of new and existing assets under care.",
+        "chunk_ids": [
+          "EDJ-ADV-2026#67"
+        ],
+        "part_id": "a3.EDJ"
+      },
+      {
+        "text": "Its 2025 10-K disclosed that if Partnership profitability decreases, bonuses paid to financial advisors may be decreased or eliminated.",
+        "chunk_ids": [
+          "EDJ-10K-2025#58"
+        ],
+        "part_id": "a3.EDJ"
+      },
+      {
+        "text": "Edward Jones's 2025 10-K disclosed that eligible retiring financial advisors are offered retirement transition plans compensating them for client transition services under a generally five-year agreement, with most paid ratably over four years.",
+        "chunk_ids": [
+          "EDJ-10K-2025#222"
+        ],
+        "part_id": "a4.EDJ"
+      },
+      {
+        "text": "Merrill's 2026 ADV disclosed that advisors earn compensation based on the revenue Merrill earns from the Merrill Lynch Fee, from Sales Charges on brokerage account securities transactions, and from referrals to Affiliates.",
+        "chunk_ids": [
+          "MER-ADV-2026#400"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "It disclosed that advisors are eligible for a compensation award, payable over a defined period, from an incentive program based on meeting prior-year growth targets in new households and in assets and liabilities.",
+        "chunk_ids": [
+          "MER-ADV-2026#406"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "It disclosed that advisors who join from other firms generally receive recruitment payments such as salary guarantees, upfront awards, and compensation contingent on continued employment.",
+        "chunk_ids": [
+          "MER-ADV-2026#408"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Its advisor recruiting page discloses base salary and unlimited earning potential.",
+        "chunk_ids": [
+          "MER-PR-web-advisor-development-program#1"
+        ],
+        "part_id": "a1.MER"
+      },
+      {
+        "text": "Merrill's 2026 ADV disclosed that advisors are eligible to receive a compensation award, payable over a defined period, from an incentive program based on meeting prior-year growth targets in new households and in assets and liabilities.",
+        "chunk_ids": [
+          "MER-ADV-2026#406"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "It disclosed that an advisor is subject to a reduction in their incentive compensation grid if they fail to achieve growth for two consecutive years in the assets and liabilities component of the award.",
+        "chunk_ids": [
+          "MER-ADV-2026#406"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "It disclosed that recruitment payments, including salary guarantees and upfront awards, are in addition to the incentive compensation to which advisors are otherwise entitled.",
+        "chunk_ids": [
+          "MER-ADV-2026#408"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "It disclosed that elements of field management compensation are based on revenues to Merrill and on the advisors they manage meeting strategic goals, including the growth in assets and liabilities component of the award.",
+        "chunk_ids": [
+          "MER-ADV-2026#411"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill's 2026 ADV disclosed that advisors who join from other firms generally receive payments that may include salary guarantees, upfront awards, and compensation contingent on continued employment such as deferred payments and recruitment loans, generally based on the size of the business at their prior firm.",
+        "chunk_ids": [
+          "MER-ADV-2026#408"
+        ],
+        "part_id": "a4.MER"
+      },
+      {
+        "text": "Trade press reports that Merrill executives said in October that the firm has returned to veteran broker recruiting with a more aggressive offer after largely pulling back at the end of 2017, with recruited assets to the wealth unit doubling year-over-year.",
+        "chunk_ids": [
+          "MER-TRADE-2026-11-16-AH-01#1"
+        ],
+        "part_id": "a5.MER"
+      },
+      {
+        "text": "Raymond James's 2025 10-K disclosed that employee financial advisors' compensation primarily includes a payout on revenues they generate plus participation in employee benefit plans.",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "It disclosed that independent contractor financial advisors generally bear their own direct costs and receive a higher payout percentage on revenues than employee advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#11"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "On its earnings call for the quarter ended March 31, 2026, its CEO stated that independent payouts are higher than employee payouts because independents cover their own overhead costs such as real estate and health insurance.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#44"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Its affiliation-options recruiting page (page content as of April 21, 2026) discloses specific payout percentages by affiliation model.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1",
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Raymond James's affiliation-options page (page content as of April 21, 2026) discloses a payout of up to 50% for the Traditional Employee affiliation model.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "It discloses a 70-80% gross payout for the Advisor Select affiliation model.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "It discloses an 81% to 90% payout for the Independent Contractor affiliation model.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "It discloses an 81% to 90% payout for the Corporate RIA affiliation model.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "On its earnings call for the quarter ended March 31, 2026, the CEO stated the firm has tiered payout systems on the employee side, so higher production moves an advisor up the payout grid.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#44"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Its 2026 ADV disclosed that, depending on a financial advisor's annual revenue generation, the advisor can receive a higher portion of the fee paid to the firm.",
+        "chunk_ids": [
+          "RJF-ADV-2026#50"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Raymond James's 2026 ADV disclosed that the firm provides financial advisors with financial incentives for affiliating, including bonuses, transition assistance, deferred compensation arrangements, and enhanced pay-outs.",
+        "chunk_ids": [
+          "RJF-ADV-2026#54"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "It disclosed that recognition club qualification can result in benefits such as paid travel, reimbursement of business-related expenses, and deferred compensation awards.",
+        "chunk_ids": [
+          "RJF-ADV-2026#53"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Its 2025 10-K disclosed that competitive pay packages include base salary, incentive bonus, and equity compensation programs.",
+        "chunk_ids": [
+          "RJF-10K-2025#29"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "It disclosed that RSU awards may be granted in lieu of cash for a portion of the annual bonus awarded to officers and certain other employees receiving an annual bonus in excess of $275,000.",
+        "chunk_ids": [
+          "RJF-10K-2025#678"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James reported PCG recruiting and retention-related compensation of $117 million for the three months ended June 30, 2026.",
+        "chunk_ids": [
+          "RJF-SUPP-2026Q2#14"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "Its CFO stated that fiscal 2025 adjusted compensation expense included $355 million of amortization of transition assistance to recruited advisors and retention awards, up about 11% versus fiscal 2024.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#20"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "Its 2025 10-K reported that loans to financial advisors, net increased $300 million due to recruiting activities.",
+        "chunk_ids": [
+          "RJF-10K-2025#260"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "Its 2026 ADV disclosed financial incentives for affiliating including transition assistance, bonuses, deferred compensation arrangements, enhanced pay-outs, and repayable business transition or working capital loans.",
+        "chunk_ids": [
+          "RJF-ADV-2026#54"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "On its earnings call for the quarter ended December 31, 2025, Raymond James said that, commencing the fiscal first quarter of 2026, it began presenting recruiting and retention-related compensation expense in the Private Client Group segment for each reporting period.",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#16"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Its CEO said the firm would begin breaking out, starting the following quarter, the upfront money amortization that hits compensation expense in the Private Client Group business.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#49"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Its CEO said the firm has broken out the cost of recruiting and retention in its reporting, noting its annual recruiting is now equivalent to a medium-sized acquisition.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#25"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "A direct like-for-like comparison of disclosure depth cannot be made on a single shared basis: Raymond James publishes specific payout percentages and recruiting/retention figures, while Morgan Stanley, Edward Jones, Merrill, and Schwab disclose only qualitative compensation structures without a comparable payout grid or metric.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1",
+          "RJF-PR-web-affiliation-options#2",
+          "MS-10K-2025#153",
+          "EDJ-10K-2025#30",
+          "MER-ADV-2026#406",
+          "SCHW-10K-2025#50"
+        ],
+        "part_id": "a6"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Edward Jones states that financial advisors are generally compensated on a commission basis, subject to a minimum guaranteed salary, and may receive additional compensation based on branch office and Partnership profitability, with most advisors receiving a portion of the Program Fee at the firm's discretion, but it does not disclose a specific payout grid or payout rate.",
+        "chunk_ids": [
+          "EDJ-10K-2025#30",
+          "EDJ-ADV-2026#64"
+        ],
+        "part_id": "a2.EDJ",
+        "differs_because": "The passages describe Edward Jones' general advisor compensation structure (commission basis with a minimum guaranteed salary, additional compensation tied to branch and Partnership profitability, and a discretionary share of the Program Fee), but do not disclose a specific payout grid or payout rate."
+      },
+      {
+        "text": "Merrill discloses that advisors are eligible for a compensation award from an incentive program based on meeting prior-year growth targets, and that an advisor faces a reduction in their incentive compensation grid after two consecutive years of missed growth in assets and liabilities, but it does not disclose an actual payout grid or payout rate.",
+        "chunk_ids": [
+          "MER-ADV-2026#406"
+        ],
+        "part_id": "a2.MER",
+        "differs_because": "Merrill describes the structure of its advisor incentive compensation award and the existence of an incentive compensation grid (growth-target-based, with a reduction for two consecutive years of missed growth in assets and liabilities), but it does not disclose an actual payout grid or payout rate (no payout percentages or rate schedule)."
+      },
+      {
+        "text": "Schwab's 2026 ADV disclosed that, since June 2026, the ETF compensation disclosure was revised to reflect updates to the compensation arrangement between CS&Co. and sponsors or issuers of certain third-party exchange-traded products for platform services.",
+        "chunk_ids": [
+          "SCHW-ADV-2026#88",
+          "SCHW-ADV-2026#87"
+        ],
+        "part_id": "a5.SCHW",
+        "differs_because": "The disclosed change concerns CS&Co.'s own compensation received from third-party ETF sponsors/issuers for platform services (firm revenue), not how Schwab's financial consultants or wealth advisors are compensated."
+      }
+    ],
+    "gaps": []
+  }
+}

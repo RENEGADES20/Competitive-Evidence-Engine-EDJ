@@ -1,0 +1,308 @@
+{
+  "question_id": "Q5",
+  "question": "Where is Morgan Stanley investing in technology for its advisors?",
+  "reduce_version": "v9",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-TR-2025Q2#3",
+    "MS-TR-2025Q3#8",
+    "MS-TR-2026Q3#16",
+    "MS-TR-2025Q3#13",
+    "MS-TR-2026Q1#36",
+    "MS-TR-2026Q3#49",
+    "MS-TR-2026Q3#34",
+    "MS-TR-2026Q3#8",
+    "MS-TR-2024Q4#44",
+    "MS-TR-2026Q2#23",
+    "MS-TR-2025Q4#9",
+    "MS-TR-2026Q1#43",
+    "MS-TR-2025Q4#21",
+    "MS-TR-2025Q1#73",
+    "MS-TR-2026Q3#35",
+    "MS-TR-2026Q1#44",
+    "MS-TR-2025Q4#8",
+    "MS-TR-2026Q1#66",
+    "MS-TR-2026Q3#32",
+    "MS-TR-2025Q4#72"
+  ],
+  "schema_fallback": [],
+  "enum_values": 68,
+  "at": "2026-11-24T00:14:19.200650-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 6769,
+    "output_tokens": 5659,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 5105,
+    "reasoning_tokens": 3053,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.3
+  },
+  "wall_s": 59.14,
+  "tokens_per_s": 95.69,
+  "ttft_s": 1.3,
+  "reasoning_content": "This is a single firm (Morgan Stanley) question about where it's investing in technology for advisors. Four aspects: a1, a2, a3, a4. Each aspect has a single cell a1.MS, a2.MS, a3.MS, a4.MS.\n\nI need to write claims covering the facts. The question asks \"Where is Morgan Stanley investing in technology for its advisors?\" This is a \"what do we know\" type question spanning four aspects.\n\nLet me write one cited sentence per item/main point. Actually the instructions say \"what do we know\" - the main points, one per thing the question asks, each cited. But each cell holds a fact. Let me write claims.\n\nEach claim is one sentence citing chunk ids. part_id for cells is the cell id (a1.MS etc.), or aspect id for spanning.\n\nLet me write a headline claim first answering directly, then cover aspects.\n\nActually I need to cover every cell that holds a fact. All four cells hold facts. I should write sentences citing each cell's items.\n\nLet me organize by aspect. Claim 1 answers the question directly (headline), citing items.\n\nLet me write.\n\na1.MS - where investing: platform investments, LeadIQ, Parable, DevGen, scale for AI/digital, Carta/Zero Hash, lending digital tools/automation, OpenAI, insights for FAs, technology stack AI.\n\na2.MS - specific tools: LeadIQ, LeadIQ matching, capabilities (alternatives, tax-efficient, digitized assets, family office, tailored lending), AI co-piloting corridors/super agents, Carta, Zero Hash, AI/digital tools.\n\na3.MS - AI/automation: LeadIQ, co-piloting, automation client acquisition, automation/AI ongoing.\n\na4.MS - management priorities: AI top priority, early AI use cases, scale continued investment, capabilities, resiliency, world-class tech, invest via human capital & tech AI adoption, technology stack AI, cyber resiliency, technology differentiator, digital asset transformation.\n\nThis is a lot. I need to write sentences per item, each cited. Let me write concise sentences.\n\nLet me draft each claim with part_id being the cell id.\n\nFor a1.MS, multiple items. I could write one sentence per item. Let me do that, but that's 11 items. That's fine per instructions \"a short run of such sentences is fine.\"\n\nActually let me be efficient but complete. Each item needs a cited sentence.\n\nLet me write.\n\nHeadline claim: Morgan Stanley is investing in technology for its advisors across its platform, AI tools, digital capabilities, and advisor-specific tools. Cite... hmm, need chunk ids. I'll cite a few representative items.\n\nActually claim 1 must cite items it rests on. Let me make claim 1 a general summary.\n\nLet me write it out.\n\nI'll write claims grouped, each one sentence citing its chunks.\n\na1 items (part_id a1.MS):\n1. Morgan Stanley says it is making ongoing investments in its world-class platform, including investments to support its advisors, a build-out of E*TRADE capabilities, and expansion of its workplace channel. [MS-TR-2025Q2#3]\n2. Morgan Stanley names LeadIQ, its AI-powered lead distribution platform for matching workplace and self-directed relationships and facilitating engagement with financial advisors, as an early AI use case. [MS-TR-2025Q3#8]\n3. Morgan Stanley names Parable, an interactive tool that analyzes and summarizes data, as an early AI use case. [MS-TR-2025Q3#8]\n4. Morgan Stanley names the DevGen AI tool, which enhances developer efficiency by modernizing code, as an early AI use case. [MS-TR-2025Q3#8]\n5. Morgan Stanley states its scale supports continued investment in future technology including AI and digital tools. [MS-TR-2026Q3#16]\n6. Morgan Stanley states it continues to invest in deepening competitive moats via expanded collaboration with Carta in private markets and in digital assets through announced partnerships with Zero Hash. [MS-TR-2025Q3#13]\n7. Morgan Stanley states it has put significant resources toward lending products, including digital tools, digital enhancements, and automation to help with paper backlog. [MS-TR-2026Q1#36]\n8. Morgan Stanley states it was overweighted to AI from the early days in wealth, including work with OpenAI. [MS-TR-2026Q3#49]\n9. Morgan Stanley states insights from size and scale allow FAs to tailor advice and equip its own tools to deliver that advice. [MS-TR-2026Q3#34]\n10. Morgan Stanley states it continues to invest across its technology stack, embracing AI tools to support infrastructure, business growth and people. [MS-TR-2026Q3#8]\n11. Morgan Stanley states it has been investing in processes and systems across technology, in better understanding its data, and in better servicing clients. [MS-TR-2024Q4#44]\n\nThat's 11 sentences. That might be a lot but it's fine. Actually, I should be careful not to be excessively verbose. The question is broad. But instructions say cover what was asked - every cell that holds a fact is cited by a sentence.\n\nLet me consolidate a bit. Items 2,3,4 all from MS-TR-2025Q3#8 are the same source naming three AI use cases. I could combine into one sentence? \"Run a list of items inside one sentence\" is forbidden - \"Never run a list of items inside one sentence; write one sentence per item instead.\"\n\nSo one sentence per item. LeadIQ, Parable, DevGen are three separate items in a1. But wait, in a1 they're items 2,3,4. Each needs its own sentence? \"one sentence per item\" yes.\n\nHmm, but this gets very long. Let me just do it carefully.\n\nActually, let me reconsider. The evidence matrix lists items for each cell. I need to cite every chunk id that holds a fact. But some chunk ids are shared across aspects (e.g., MS-TR-2025Q3#8 appears in a1 items 2,3,4 and a2 item1 and a3 item1 and a4 item2).\n\nI should write sentences for each cell covering its items. Let me be reasonable.\n\nLet me now write the full answer. I'll use part_id = a1.MS for a1 sentences, a2.MS, a3.MS, a4.MS.\n\nActually, given there's only one firm, could I use aspect ids (a1, a2, a3, a4)? The note says \"a cell id is the part_id of what you write from it\". The cell id is a1.MS. So use a1.MS.\n\nLet me write concise sentences.\n\nFor a2.MS (7 items):\n1. LeadIQ, AI-powered lead distribution platform matching workplace/self-directed relationships and facilitating engagement with FAs, among early AI use cases (live/pilot). [MS-TR-2025Q3#8]\n2. Investing in products like LeadIQ to match individuals with advisers. [MS-TR-2026Q2#23]\n3. Using scale to invest in broadening capabilities for FAs: alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, tailored lending. [MS-TR-2025Q4#9]\n4. Wealth team focused on AI co-piloting where FA has historical context; building corridors/super agents. [MS-TR-2026Q1#43]\n5. Expanded collaboration with Carta in private markets. [MS-TR-2025Q3#13]\n6. Digital assets through partnerships with Zero Hash. [MS-TR-2025Q3#13]\n7. Scale supports continued investment in future tech including AI and digital tools. [MS-TR-2026Q3#16]\n\na3.MS (4 items):\n1. LeadIQ AI-powered lead distribution platform. [MS-TR-2025Q3#8]\n2. Co-piloting for FAs, corridors/super agents. [MS-TR-2026Q1#43]\n3. Leveraging technology to improve automation and facilitate client acquisition openings, increasing education. [MS-TR-2025Q4#21]\n4. Ongoing investments in automation and AI, assessing where people over 5-10 years. [MS-TR-2025Q1#73]\n\na4.MS (11 items):\n1. CEO Edward Pick: AI top priority for advisory role, double overweight, existentially important to be trusted adviser. [MS-TR-2026Q3#49]\n2. CFO Sharon Yeshaya describes early AI use cases LeadIQ, DevGen AI, Parable. [MS-TR-2025Q3#8]\n3. CFO Sharon Yeshaya: scale supports continued investment in future tech including AI and digital tools. [MS-TR-2026Q3#16]\n4. CEO Ted Pick: using scale to invest in broadening capabilities for FAs. [MS-TR-2025Q4#9]\n5. CEO Edward Pick: ability to protect client assets, resiliency theme, technology can do early work for FAs. [MS-TR-2026Q3#35]\n6. CEO Edward Pick: world-class technology, cyber defense, trusted advisers as secret sauce. [MS-TR-2026Q1#44]\n7. CEO Ted Pick: invest in three segments via human capital and technology, growth plans embed increasing AI adoption. [MS-TR-2025Q4#8]\n8. CFO Sharon Yeshaya: invest across technology stack, embracing AI tools. [MS-TR-2026Q3#8]\n9. CEO Edward Pick: cyber resiliency top priority, AI efficiency and effectiveness. [MS-TR-2026Q1#66]\n10. CEO Edward Pick: built advantages, technology a differentiator. [MS-TR-2026Q3#32]\n11. CEO Ted Pick: digital asset transformation, Zero Hash partnership, crypto and tokenized assets, E*TRADE. [MS-TR-2025Q4#72]\n\nThis is a huge number of sentences. The instruction says \"a short run of such sentences is fine\" and \"cover what was asked: every cell that holds a fact ... is cited by a sentence\".\n\nI think I should write all of them. But that's ~33 sentences. That's a lot but it's what's asked. Let me be judicious - maybe I can combine within reason where they're truly the same fact. But instructions are clear about one sentence per item.\n\nActually wait - \"write one sentence per item\" refers to lists. And \"every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence\". This means at minimum each cell needs citation, not necessarily each item. But to be safe and thorough, I'll cover each item with a sentence.\n\nGiven the volume, let me write efficiently but completely. I'll aim for concise single sentences.\n\nLet me also note the \"quote not verbatim\" items must not be in quotation marks. I'm paraphrasing anyway without quotes.\n\nLet me write everything now.\n\nFor the headline claim 1, I'll summarize: \"Morgan Stanley is investing in technology for its advisors across its platform, AI tools, digital capabilities, and advisor-specific tools, as described by management across 2025-2026 earnings calls.\"\n\nCite a few chunks. I'll cite MS-TR-2025Q2#3, MS-TR-2026Q3#8, MS-TR-2025Q4#9.\n\npart_id for headline - it's a summary spanning all aspects. Could use \"\" (empty). Let me use \"\".\n\nActually claim 1 answers the question directly. I'll use part_id \"\".\n\nLet me write all claims.\n\nLet me be careful about dates. I should date statements from source lines. E.g. \"on the 2Q25 earnings call\", \"on the 3Q25 earnings call\".\n\nSource periods:\n- MS-TR-2025Q2#3: period 2025-06-30 \u2192 2Q25 earnings call\n- MS-TR-2025Q3#8: 2025-09-30 \u2192 3Q25 earnings call\n- MS-TR-2026Q3#16: 2026-09-30 \u2192 3Q26\n- MS-TR-2025Q3#13: 3Q25\n- MS-TR-2026Q1#36: 2026-03-31 \u2192 1Q26\n- MS-TR-2026Q3#49: 3Q26\n- MS-TR-2026Q3#34: 3Q26\n- MS-TR-2026Q3#8: 3Q26\n- MS-TR-2024Q4#44: 4Q24\n- MS-TR-2026Q2#23: 2Q26\n- MS-TR-2025Q4#9: 4Q25\n- MS-TR-2026Q1#43: 1Q26\n- MS-TR-2025Q4#21: 4Q25\n- MS-TR-2025Q1#73: 1Q25\n- MS-TR-2026Q3#35: 3Q26\n- MS-TR-2026Q1#44: 1Q26\n- MS-TR-2025Q4#8: 4Q25\n- MS-TR-2026Q1#66: 1Q26\n- MS-TR-2026Q3#32: 3Q26\n- MS-TR-2025Q4#72: 4Q25\n\nI'll add dates where helpful, but not every sentence needs it. I'll include dates for key ones. Actually instruction says \"Date what you state from its source line.\" I should include dates. Let me include them concisely.\n\nI'll write \"on the 3Q25 earnings call\" style. To keep it manageable, I'll include period dates.\n\nLet me now finalize. I'll write the claims array.\n\nGiven the length, I'll produce all sentences with part_id and chunk_ids.\n\nLet me write.",
+  "first_claim_s": 39.78,
+  "stream_items": {
+    "first_claim_s": 39.78,
+    "shown": 34,
+    "held": 0
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Morgan Stanley is investing in technology for its advisors across its platform, AI tools, digital capabilities, and advisor-specific capabilities, as management described across 2025 and 2026 earnings calls.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#3",
+          "MS-TR-2026Q3#8",
+          "MS-TR-2025Q4#9"
+        ],
+        "part_id": ""
+      },
+      {
+        "text": "On the 2Q25 earnings call, Morgan Stanley said it is making ongoing investments in its world-class platform, including investments to support its advisors, a build-out of E*TRADE capabilities, and the expansion of its workplace channel.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#3"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call, Morgan Stanley named LeadIQ, its AI-powered lead distribution platform that matches workplace and self-directed relationships and facilitates engagement with financial advisors, as one of its early AI use cases.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call, Morgan Stanley named Parable, an interactive tool that quickly analyzes and summarizes data, as one of its early AI use cases.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call, Morgan Stanley named the DevGen AI tool, which enhances developer efficiency by modernizing code, as one of its early AI use cases.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call, Morgan Stanley stated its scale supports continued investment in future technology, including AI and digital tools.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#16"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call, Morgan Stanley stated it continues to invest in deepening competitive moats through an expanded collaboration with Carta in private markets and in digital assets through announced partnerships with Zero Hash.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 1Q26 earnings call, Morgan Stanley stated it has put significant resources toward lending products, including digital tools, digital enhancements, and using automation to help with the paper backlog associated with various lending products.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#36"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call, Morgan Stanley stated it was overweighted to AI from the early days in wealth, including some of the work it did with OpenAI.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#49"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call, Morgan Stanley stated that insights from its size and scale allow its financial advisors to tailor advice and equip its own tools to deliver that advice to help clients achieve their goals.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#34"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call, Morgan Stanley stated it continues to invest across its technology stack, embracing AI tools to support its infrastructure, business growth and people.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#8"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the 4Q24 earnings call, Morgan Stanley stated it has been investing in its processes and systems across the technology side, in better understanding its data, and in better servicing its clients.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#44"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "In 2025Q3, Morgan Stanley stated that among its early AI use cases (some live and some in pilot) is LeadIQ, its AI-powered lead distribution platform focused on matching workplace and self-directed relationships and facilitating engagement with financial advisors.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "In 2026Q2, Morgan Stanley stated it is investing in products like LeadIQ that will allow it to match individuals with advisers.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#23"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "In 2025Q4, Morgan Stanley stated it is using its scale to invest in broadening capabilities for financial advisors that are difficult for others to replicate: alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#9"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "In 2026Q1, Morgan Stanley stated its wealth team is focused on AI co-piloting where a financial adviser has historical context of past client interactions, and that the firm is building corridors or super agents to drive efficiency and effectiveness across the wealth portfolio.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#43"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "In 2025Q3, Morgan Stanley stated it continues to invest and deepen its competitive moats through an expanded collaboration with Carta in private markets.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "In 2025Q3, Morgan Stanley stated it continues to invest in digital assets through announced partnerships with Zero Hash.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "In 2026Q3, Morgan Stanley stated its scale supports continued investment in future technology, including AI and digital tools.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#16"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "As of 2025-09-30, Morgan Stanley's early AI use cases in Wealth Management include LeadIQ, an AI-powered lead distribution platform that matches workplace and self-directed relationships and facilitates engagement with its financial advisors.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "As of 2026-03-31, Morgan Stanley's CEO described co-piloting for financial advisers, with Jed Finn under Andy Saperstein spending time on corridors or super agents to drive efficiency and effectiveness across the wealth portfolio.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#43"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "As of 2025-12-31, Morgan Stanley is leveraging technology to improve automation and facilitate client acquisition openings, as well as increasing education with its advisors and clients.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#21"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "As of 2025-03-31, Morgan Stanley has ongoing investments in automation and AI, and in assessing where it wants its people over the next five to ten years, in the context of a reduction in XFA headcount.",
+        "chunk_ids": [
+          "MS-TR-2025Q1#73"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call, CEO Edward Pick described AI as a top priority for the firm's advisory role, saying the firm is now double overweight on AI and that it is existentially important that Morgan Stanley be viewed as a trusted adviser in the middle of the ecosystem.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#49"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 3Q25 earnings call, CFO Sharon Yeshaya described early AI use cases including LeadIQ, DevGen AI (enhancing developer efficiency), and Parable (an interactive tool analyzing and summarizing data).",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call, CFO Sharon Yeshaya stated the firm's scale supports continued investment in future technology, including AI and digital tools.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#16"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call, CEO Ted Pick stated the firm is using its scale to invest in broadening capabilities for financial advisors that are difficult for others to replicate, including alternatives and privates, tax-efficient investing, digitized assets, family office and OCIO, and tailored lending.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#9"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call, CEO Edward Pick described the ability to protect client assets and a resiliency theme as critical to clients, and stated that although it is a people business, technology can help do a lot of the early work for financial advisers.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#35"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 1Q26 earnings call, CEO Edward Pick described the firm's world-class technology, world-class cyber defense, and the best trusted advisers sitting with the client as the secret sauce, including for the wealth management and financial adviser.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#44"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call, CEO Ted Pick stated the firm continues to invest in Wealth, Institutional Securities, and Investment Management via human capital and technology, with growth plans embedding increasing adoption of AI tools throughout the enterprise and client base.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#8"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call, CFO Sharon Yeshaya stated the firm continues to invest across its technology stack, embracing AI tools to support its infrastructure, business growth and people.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#8"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 1Q26 earnings call, CEO Edward Pick stated cyber resiliency is a top priority across all of the firm's businesses, and that AI will bring efficiency and effectiveness that should not be dismissed as it transforms the firm.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#66"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 3Q26 earnings call, CEO Edward Pick stated the firm has built advantages against its advisor-led platform that make technology a differentiator in its favor.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#32"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "On the 4Q25 earnings call, CEO Ted Pick described the early digital asset transformation in wealth, including a partnership with Zero Hash, expansion into crypto and tokenized asset capabilities, and continued work on the E*TRADE platform for the active self-directed community.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#72"
+        ],
+        "part_id": "a4.MS"
+      }
+    ],
+    "adjacent": [],
+    "gaps": []
+  }
+}

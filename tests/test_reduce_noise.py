@@ -15,7 +15,7 @@ NO_SOURCES = lambda entity: ""   # noqa: E731
 
 @pytest.fixture(autouse=True)
 def _reduce_v52(monkeypatch):
-    """These tests pin the list-form reduce v5.2 (the default is v8 since #292)."""
+    """These tests pin the list-form reduce v5.2 (the default is v5.2 again since #297)."""
     monkeypatch.setenv("REDUCE_PROMPT", "v5.2")
 
 

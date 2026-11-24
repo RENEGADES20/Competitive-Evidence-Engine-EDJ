@@ -1,0 +1,287 @@
+{
+  "question_id": "Q12",
+  "question": "How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?",
+  "reduce_version": "v9",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer_with_boundary",
+  "chunk_ids": [
+    "SCHW-10K-2025#13",
+    "SCHW-10K-2025#14",
+    "SCHW-TR-2025Q4#9",
+    "SCHW-TR-2025Q4#18",
+    "SCHW-TR-2025Q1#21",
+    "SCHW-TR-2025Q1#13",
+    "SCHW-DECK-2026-investor-day#130",
+    "SCHW-DECK-2026Q3#34",
+    "SCHW-TR-2026Q1#13",
+    "SCHW-TR-2026Q3#14",
+    "SCHW-TR-2025Q1#29",
+    "SCHW-DECK-2026Q2#28",
+    "SCHW-TR-2025Q2#15",
+    "SCHW-TR-2025Q4#16",
+    "SCHW-DECK-2026Q2#29",
+    "SCHW-TR-2024Q4#14",
+    "SCHW-TR-2026Q1#12",
+    "SCHW-TR-2025Q1#10",
+    "SCHW-DECK-2026-investor-day#38",
+    "SCHW-TR-2025Q2#9",
+    "SCHW-TR-2026Q3#11",
+    "SCHW-10K-2025#19",
+    "SCHW-10K-2025#122",
+    "SCHW-10K-2025#119",
+    "SCHW-10K-2025#136",
+    "SCHW-10K-2025#129",
+    "SCHW-10Q-2026Q1#16",
+    "SCHW-10Q-2025Q2#22",
+    "SCHW-10Q-2025Q3#22",
+    "SCHW-PR-2026-01-21-01#2",
+    "SCHW-10Q-2026Q1#19",
+    "SCHW-10Q-2026Q2#22",
+    "SCHW-TR-2026Q3#3",
+    "SCHW-DECK-2026Q3#52",
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#10",
+    "EDJ-TRADE-2026-09-30-WM-01#0",
+    "EDJ-TRADE-2026-09-30-WM-01#1",
+    "EDJ-10K-2025#132",
+    "EDJ-10K-2025#144",
+    "EDJ-10Q-2026Q1#60",
+    "EDJ-10K-2025#8",
+    "EDJ-TRADE-2026-08-18-IN-01#2"
+  ],
+  "schema_fallback": [],
+  "enum_values": 135,
+  "at": "2026-11-24T00:34:04.278232-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 14498,
+    "output_tokens": 12602,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 14498,
+    "reasoning_tokens": 10307,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.44
+  },
+  "wall_s": 173.34,
+  "tokens_per_s": 72.7,
+  "ttft_s": 2.44,
+  "reasoning_content": "Let me analyze the question and evidence. This is answer_with_boundary (normative part). I need to answer the evidence half; code adds hand-off sentence.\n\nThe question has a normative part (\"how could Edward Jones replicate\"), so I answer the factual/evidence part, and the comparison aspect a7 needs a comparison claim (part_id a7).\n\nLet me structure:\n\na1 (fact): How Schwab utilizes scale to cheaply acquire new clients - one or more sentences covering the main points.\n\na2 (series, proxy, adjacent only): Schwab's disclosed client acquisition cost - this goes in adjacent, not claims.\n\na3 (fact): scale-driven sources/channels - sentences.\n\na4 (series): new client/account growth figures - these are facts, a series. Since a4 is a series, I give the figures. But note basis break. This is a lot. The question asks \"How does Schwab utilize its scale...\" - actually the question is mainly about how Schwab utilizes scale and how EDJ could replicate. But code has decided aspects to cover.\n\nWait, let me re-read the shape instructions. \"Cover what was asked: every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence.\"\n\nSo I need to cover all aspects a1-a7 that hold facts.\n\na4 is a series of new client/account growth figures. That's a lot of items (25 items). But some are \"figure not found in its passage\" (item 25 marked figure not found). Also the series instruction: \"a series asked 'by quarter' gives the quarters\". But here the question doesn't ask by quarter specifically. Actually a4 metric is \"new client and new account growth figures Schwab reports\". \n\nHmm, this is a lot. But the question is really about scale and acquisition strategy. The aspects were auto-generated. I should cover what's asked.\n\nActually, let me think about the length. The question: \"How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?\"\n\nThis is answer_with_boundary because of the normative part (\"how could Edward Jones replicate\"). The evidence half should cover: a1 (how Schwab uses scale), a3 (scale-driven sources/channels), a4 (new client/account figures - a series), a5 (how EDJ acquires), a6 (EDJ cost structure), a7 (comparison - one comparison claim).\n\na2 is adjacent only.\n\nFor a7, the comparison aspect requires exactly one comparison claim with part_id a7. But a7 has \"a7.SCHW: not found (code gap)\" and \"a7.EDJ: fact\". The comparison claim should say whether the comparison can be made.\n\nWait, a7 is marked \"comparison\" aspect. \"Whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy\". This needs one comparison sentence with part_id a7.\n\nThe comparison sentence should say whether the comparison can be made on this evidence. Note a7.SCHW is \"not found (code gap)\" - meaning there's no Schwab evidence on this aspect. So the comparison can't be fully made from Schwab's side. But the normative part is what makes it answer_with_boundary.\n\nActually, the comparison claim: \"Whether and how Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy -> needs exactly one comparison claim, part_id a7\".\n\nLet me write the comparison: Schwab's evidence does not address whether/how EDJ could replicate (a7.SCHW not found), so the comparison is not valid from Schwab's side; EDJ's own materials describe its technology investments (RPMC/Aboon, Quicken stake) aimed at scaling advice and reaching new segments, but no evidence states EDJ could replicate Schwab's specific scale-based low-cost approach.\n\nNow let me think about the actual claims. I need to write one sentence per item (roughly), each citing chunk ids.\n\nActually the instruction says \"one cited sentence per asked item (per firm, per firm's series, per initiative)\". And \"every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence.\"\n\nThis could be a very long answer. Let me be reasonable but comprehensive.\n\nLet me draft.\n\nClaim 1 (headline, answers question directly): Schwab uses scale to spread costs, keep cost-to-serve low, and reinvest in client capabilities. Cite a1 items. Actually claim 1 answers the question directly. The question is about how Schwab uses scale to cheaply acquire clients.\n\nLet me write claims grouped by aspect.\n\na1.SCHW (fact) - several sentences:\n- Schwab states that as one of the largest investment services firms in the U.S., its scale lets it spread operating costs and amortize new investments over a large base of clients (SCHW-10K-2025#13).\n- Its operating efficiency coupled with scale and shared infrastructure creates a cost advantage enabling competitive pricing while profitably serving clients across channels (SCHW-10K-2025#14).\n- Its sheer scale combined with efficiency keeps cost-to-serve low, allowing investment in client capabilities (SCHW-TR-2025Q4#9).\n- Cost per account decreased 20% over last five years (SCHW-TR-2025Q4#18).\n- Marketing spend drives ~40% of new-to-firm retail clients (SCHW-TR-2025Q1#13).\n- Data & insight-led marketing model drives efficiency at scale (SCHW-DECK-2026-investor-day#130).\n- 90% of accounts opened digitally (SCHW-DECK-2026Q3#34).\n\nThat's a lot. But maybe I should be more selective. The instruction says \"Cover what was asked: every cell that holds a fact.\" Each item is a cell (part_id a1.SCHW for all items? No, each item is within a1.SCHW, and the part_id for a sentence about one cell is the cell id. But the cell id is \"a1.SCHW\" for all items in a1.SCHW).\n\nWait, looking at part_id enum: a1.SCHW, a2.SCHW, a3.SCHW, a4.SCHW, a7.SCHW, a5.EDJ, a6.EDJ, a7.EDJ, a1, a2, a3, a4, a5, a6, a7, \"\".\n\nSo the part_id for a sentence about a1.SCHW cell is \"a1.SCHW\". Multiple sentences can have the same part_id \"a1.SCHW\". Hmm, but \"one cited sentence per asked item\". Each item is a separate cell with the same part_id? That seems odd but the part_ids are per aspect-firm, not per item.\n\nActually, re-reading: \"a cell id is the part_id of what you write from it\". And cells are like \"a1.SCHW\" (fact), \"a2.SCHW\" (stand-in figure), etc. So each aspect-firm combination is one cell. The items within are pieces of evidence within that cell.\n\nSo for a1.SCHW, I write ONE fact claim (or a few sentences) covering the items. Wait, but there are 14 items. \"one cited sentence per asked item\" - but these are all one cell (a1.SCHW is one cell with multiple items).\n\nHmm, actually let me reconsider. The evidence matrix lists \"a1.SCHW The Charles Schwab Corporation: fact\" with item 1 through 14. So it's one cell (a1.SCHW) containing 14 evidence items.\n\nSo I write sentences for a1.SCHW that synthesize these items, all with part_id \"a1.SCHW\", citing the relevant chunk ids.\n\nThe instruction \"one cited sentence per asked item (per firm, per firm's series, per initiative)\" - this refers to when the question asks \"for each firm\" etc. Here, the question is more open.\n\nI think the right approach: write a moderate number of sentences per aspect, each cited. For a1.SCHW, maybe 3-5 sentences synthesizing.\n\nLet me be practical. I'll write:\n\nClaim 1 (headline): Schwab attributes its ability to cheaply acquire clients to its scale, which spreads operating costs and new-investment amortization over a large client base and keeps its cost-to-serve low. Cite #13, #14, SCHW-TR-2025Q4#9.\n\nThen additional a1 sentences.\n\nActually, let me structure the whole answer.\n\nLet me plan the claims list:\n\n1. a1.SCHW headline - scale spreads costs, keeps cost-to-serve low (cite 13, 14, TR-2025Q4#9)\n\n2. a1.SCHW - cost per account decreased 20% over 5 years (cite TR-2025Q4#18)\n\n3. a1.SCHW - marketing drives ~40% new-to-firm retail clients, data & insight-led model drives efficiency at scale (cite TR-2025Q1#13, DECK-2026-investor-day#130)\n\n4. a1.SCHW - 90% accounts opened digitally (cite DECK-2026Q3#34)\n\n5. a3.SCHW - scale-driven sources/channels: shared infrastructure, structural cost advantage, data & insight-led marketing, multiple growth levers across Retail/Advisor Services/Workplace (cite #14, DECK-2026Q3#34, DECK-2026-investor-day#38)\n\n6. a3.SCHW - TOA ratio 1.5 (cite TR-2025Q1#10)\n\n7. a3.SCHW - thinkorswim ~half of new-to-firm retail clients (cite TR-2025Q4#16)\n\n8. a4.SCHW - new client/account figures: This is a series. I should give the figures. But there are many periods with a basis break.\n\nActually the question doesn't directly ask for these figures - it's an aspect the code added. But \"every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence.\" a4 is \"The new client and new account growth figures Schwab reports\" - a series. Since it's a series with basis breaks, I state each basis with its own periods.\n\nThis is getting very long. Let me focus. The question is really about how Schwab uses scale and how EDJ could replicate. The a4 figures are secondary but code wants them covered.\n\nLet me write a4 as a series. The key figures:\n- 2024: core net new assets $366.9B, 4.2M new accounts (cite #136)\n- 2025: core net new assets $519.4B, 4.7M new accounts (cite #129)\n- 2026Q1: $140.0B core NNA, 1.3M new accounts (cite 10Q-2026Q1#19)\n- 2026Q2: $119.8B, 1.4M accounts (cite 10Q-2026Q2#22)\n- 2026Q3: $190B core NNA, 1.2M accounts (cite TR-2026Q3#3)\n\nGiven the basis break note, I should state each basis with its own periods and not join them. But actually the instruction says \"state each basis with its own periods; never join them.\"\n\nThis is a huge amount of content. Let me be efficient but cover the essential figures. Given \"a single fact or figure: 1-3 sentences\" vs \"a series... by quarter\". The question doesn't ask \"by quarter\" - a4 is a series of new client/account figures.\n\nHmm. I think I should include the headline figures (annual 2024 and 2025, plus recent quarters) as a series.\n\nActually, let me reconsider the scope. The instructions say to cover every cell that holds a fact. But this could balloon. I'll aim for comprehensive but reasonable.\n\nLet me also handle a2 (adjacent only) - the cost per account figures go in adjacent with differs_because. Actually a2 says \"stand-in figure (adjacent only)\". So the cost per account figures go in adjacent.\n\na2 items:\n- GAAP cost per client account $442 in 2020 (SCHW-DECK-2026Q2#29)\n- cost per client account decreased >25% last decade (SCHW-TR-2024Q4#14)\n- cost per account 20% over 5 years (SCHW-TR-2025Q4#18)\n- cost per account >20% over decade (SCHW-TR-2025Q1#21)\n\nThese are \"stand-in figure\" for client acquisition cost. They go in adjacent with differs_because explaining they're cost per account, not cost per new client.\n\na5.EDJ (fact): how EDJ acquires clients:\n- branch office model (EDJ-10K-2025#10)\n- initiatives: High Net Worth, Workplace, digital platform (EDJ-10K-2025#88)\n- advisors + RPMC/Aboon workplace (EDJ-TRADE-2026-09-30-WM-01#0, #1)\n\na6.EDJ (fact): cost structure:\n- operating expenses $15,610M, +11% (EDJ-10K-2025#132)\n- income before allocations $2,090M, margin 11.7% (EDJ-10K-2025#132)\n- FA comp & benefits $6,969M +12% (EDJ-10K-2025#144)\n- variable comp $2,710M +11% (EDJ-10K-2025#144)\n- comm & data processing $1,162M +16% (EDJ-10K-2025#144)\n- advertising $43M 2026Q1 vs $39M 2025Q1 (EDJ-10Q-2026Q1#60)\n\nThese are about cost structure/economics relative to Schwab's scale. I should state them but not compare to Schwab (no same_basis).\n\na7 comparison claim (part_id a7): whether/how EDJ could replicate.\n\nNow, the answer_with_boundary behavior: evidence half only. Code adds hand-off sentence. So I should NOT write \"Schwab could...\" or normative recommendations. The comparison claim a7 should be a factual assessment of whether the comparison can be made.\n\nLet me write the a7 comparison: \"Whether Edward Jones could replicate Schwab's scale-based low-cost acquisition strategy cannot be determined from this evidence: Schwab's cited materials do not address Edward Jones's ability to replicate its approach, and Edward Jones's cited materials describe its own technology and digital initiatives rather than any plan to adopt Schwab's scale-based model.\"\n\nNow let me think about the headline claim (claim 1). The question: \"How does Schwab utilize its scale to cheaply acquire new clients and how could Edward Jones replicate a similar strategy?\"\n\nAnswer directly: Schwab uses its scale to spread operating costs and investments over a large client base, creating a cost advantage and low cost-to-serve that lets it price competitively and reinvest in acquisition capabilities; Edward Jones's cited materials describe its own branch-based and technology initiatives, not a replication of Schwab's model.\n\nFor answer_with_boundary, the first claim answers the factual part directly and MUST cite items.\n\nLet me write it out now. I'll aim for a thorough but not absurd answer.\n\nLet me now write each claim with citations.\n\nHeadline (a1.SCHW, could also span): Schwab attributes low-cost client acquisition to scale that spreads operating costs and new-investment amortization over a large client base, creating a cost advantage that enables competitive pricing. Cite SCHW-10K-2025#13, SCHW-10K-2025#14.\n\nThen additional a1.SCHW sentences.\n\nLet me finalize claims list with part_ids:\n\n1. a1.SCHW - headline (cite #13, #14)\n2. a1.SCHW - cost-to-serve low (cite SCHW-TR-2025Q4#9)\n3. a1.SCHW - cost per account -20% 5yrs (cite SCHW-TR-2025Q4#18)\n4. a1.SCHW - marketing 40% new-to-firm retail, data insight-led (cite SCHW-TR-2025Q1#13, SCHW-DECK-2026-investor-day#130)\n5. a1.SCHW - 90% digital (cite SCHW-DECK-2026Q3#34)\n6. a1.SCHW - thinkorswim ~half new-to-firm retail (cite SCHW-TR-2025Q4#16)\n7. a3.SCHW - growth levers across Retail/Advisor Services/Workplace (cite SCHW-DECK-2026-investor-day#38)\n8. a3.SCHW - TOA ratio 1.5 (cite SCHW-TR-2025Q1#10)\n9. a3.SCHW - AI distribution channels, scale data tech (cite SCHW-TR-2026Q1#12)\n10. a4.SCHW - 2024 figures (cite SCHW-10K-2025#136)\n11. a4.SCHW - 2025 figures (cite SCHW-10K-2025#129)\n12. a4.SCHW - 2026Q1 (cite SCHW-10Q-2026Q1#19)\n13. a4.SCHW - 2026Q2 (cite SCHW-10Q-2026Q2#22)\n14. a4.SCHW - 2026Q3 (cite SCHW-TR-2026Q3#3)\n15. a5.EDJ - branch model (cite EDJ-10K-2025#10)\n16. a5.EDJ - initiatives HNW/Workplace/digital (cite EDJ-10K-2025#88)\n17. a5.EDJ - advisors + workplace RPMC (cite EDJ-TRADE-2026-09-30-WM-01#0, #1)\n18. a6.EDJ - operating expenses (cite EDJ-10K-2025#132)\n19. a6.EDJ - income before allocations (cite EDJ-10K-2025#132)\n20. a6.EDJ - FA comp (cite EDJ-10K-2025#144)\n21. a6.EDJ - advertising (cite EDJ-10Q-2026Q1#60)\n22. a7 - comparison (cite relevant)\n\nThat's a lot. But it's what's asked.\n\nActually, I need to be careful about a4. The item 25 has \"figure not found in its passage: do not state this figure\" - so I skip $450B YTD figure.\n\nAlso item 24 combines 1.2M accounts and $190B core NNA in one quote - I can state both in one sentence.\n\nFor a4, the basis break note says \"whole firm: 2024, ... 2026Q3; first half of 2026: 2026; year-to-date 2026 (nine months): 2026 -> state each basis with its own periods; never join them\".\n\nSo I should be careful. The annual figures (2024, 2025) are whole firm annual. The quarterly figures (2026Q1, 2026Q2, 2026Q3) are quarterly. I can state them separately. I should not join quarterly into annual for 2026.\n\nActually there are also items for 2025Q1, Q2, Q3, Q4 and first-half/first-nine-months. Those are also valid cells. But I can't reasonably list every single period. The instruction: \"a single fact or figure: 1 to 3 sentences\" vs \"a series... by quarter\". The question doesn't ask \"by quarter\" explicitly, so I'll give the newest/annual figures.\n\nActually, \"When the items give several periods for the same figure, state the newest one unless the question asks for a series.\"\n\na4 is marked as \"series\" aspect. So the question effectively asks for a series. Hmm. But it's a series of \"new client and new account growth figures.\"\n\nGiven the volume, I'll provide a reasonable series: the annual figures for 2024 and 2025, plus the most recent quarters. Actually, let me give the key series: 2024 annual, 2025 annual, and 2026 quarters (Q1, Q2, Q3). That captures the growth story.\n\nI'll also mention the definition of core net new assets (item 1) maybe. Actually a4 item 1-3 are definitions. I could state the definition briefly. But that might be too much. The instruction says give each firm's own definition alongside figures for a figure/series per firm. So I should state Schwab's definition of core net new client assets.\n\nLet me include one sentence: Schwab defines core net new client assets as net new client assets before significant one-time inflows/outflows (cite #119). And new brokerage accounts definition (cite #122).\n\nOK this is getting really long but I'll proceed comprehensively.\n\nLet me write the final text for each claim, keeping each to one sentence, 35 words or fewer ideally.\n\nLet me write:\n\nClaim 1 (a1.SCHW): \"Schwab states that, as one of the largest investment services firms in the U.S., its scale lets it spread operating costs and amortize new investments over a large base of clients.\" cite #13\n\nClaim 2 (a1.SCHW): \"Schwab states that operating efficiency coupled with scale and shared infrastructure across businesses creates a cost advantage enabling competitive pricing while profitably serving clients across channels.\" cite #14\n\nClaim 3 (a1.SCHW): \"On the 4Q25 earnings call, Schwab said its sheer scale combined with efficiency efforts keeps its cost-to-serve clients low, allowing investment in client capabilities that fuel growth.\" cite SCHW-TR-2025Q4#9\n\nClaim 4 (a1.SCHW): \"Schwab states its scale and expense discipline decreased cost per account 20% over the last five years.\" cite SCHW-TR-2025Q4#18\n\nClaim 5 (a1.SCHW): \"Schwab states its marketing spend drives approximately 40% of new-to-firm retail clients, and its data and insight-led marketing model drives efficiency at scale.\" cite SCHW-TR-2025Q1#13, SCHW-DECK-2026-investor-day#130\n\nClaim 6 (a1.SCHW): \"Schwab states that 90% of accounts are opened digitally and that it leverages scale to maintain a structural cost advantage while investing in growth.\" cite SCHW-DECK-2026Q3#34\n\nClaim 7 (a1.SCHW): \"Schwab states that in 2025 about half of new-to-firm retail clients initiated access to its thinkorswim trading platform.\" cite SCHW-TR-2025Q4#16\n\nClaim 8 (a3.SCHW): \"Schwab cites multiple growth levers across its platform for winning new clients across Retail, Advisor Services, and Workplace channels.\" cite SCHW-DECK-2026-investor-day#38\n\nClaim 9 (a3.SCHW): \"Schwab cites its transfer of assets ratio of 1.5, meaning for every dollar leaving Schwab, $1.50 comes from competitors.\" cite SCHW-TR-2025Q1#10\n\nClaim 10 (a3.SCHW): \"CEO Rick Wurster cites Schwab's massive scale, data and technological prowess, saying AI opens up new distribution channels for growth.\" cite SCHW-TR-2026Q1#12\n\nClaim 11 (a3.SCHW): \"Schwab states its data and insight-led marketing model drives efficiency at scale, describing marketing as a core growth engine for consistent client and asset growth.\" cite SCHW-DECK-2026-investor-day#130\n\nHmm, I'm duplicating. Let me merge item 5 of a3 into claim 5 or make separate. Actually a3 item 5 and a1 item 7 are same quote. I already covered in claim 5. Let me not duplicate; but the instruction says every cell must be cited. a3 item 5 (SCHW-DECK-2026-investor-day#130) is already cited in claim 5 which I put under a1.SCHW. But the cell part_id differs (a3.SCHW). \n\nHmm, should I have separate claims for a3.SCHW? The instruction: \"every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence (its cell id as part_id)\". So a3.SCHW needs its own sentence(s) with part_id a3.SCHW.\n\nSo I need to cover a3.SCHW separately. Claim 8-11 cover a3.SCHW. Let me include the data/insight-led marketing in a3.SCHW.\n\nLet me reorganize:\n\na3.SCHW claims:\n- growth levers across Retail/Advisor Services/Workplace (DECK-2026-investor-day#38)\n- data & insight-led marketing drives efficiency at scale (DECK-2026-investor-day#130)\n- TOA ratio 1.5 (TR-2025Q1#10)\n- AI distribution channels (TR-2026Q1#12)\n- thinkorswim ~half new-to-firm retail (TR-2025Q4#16)\n\nActually thinkorswim is in a1 and a3. I'll put it in a3 (item 9) or a1 (item 14). It's in both. I'll put it once. Let me put in a1.SCHW since a1 is \"how Schwab utilizes scale\". Actually thinkorswim is more of a channel. Let me keep it in a3.\n\nLet me simplify. I'll write:\n\na1.SCHW (how Schwab uses scale):\n1. scale spreads costs (13)\n2. cost advantage competitive pricing (14)\n3. cost-to-serve low (TR-2025Q4#9)\n4. cost per account -20% (TR-2025Q4#18)\n5. marketing 40%, data insight-led (TR-2025Q1#13 + investor-day#130)\n6. 90% digital (DECK-2026Q3#34)\n\na3.SCHW (channels):\n7. growth levers Retail/Advisor/Workplace (investor-day#38)\n8. TOA 1.5 (TR-2025Q1#10)\n9. thinkorswim half new-to-firm retail (TR-2025Q4#16)\n10. AI distribution channels (TR-2026Q1#12)\n\na4.SCHW (figures):\n11. definition core NNA (119)\n12. 2024: $366.9B, 4.2M accounts (136)\n13. 2025: $519.4B, 4.7M accounts (129)\n14. 2026Q1: $140.0B, 1.3M accounts (10Q-2026Q1#19)\n15. 2026Q2: $119.8B, 1.4M accounts (10Q-2026Q2#22)\n16. 2026Q3: $190B, 1.2M accounts (TR-2026Q3#3)\n\na5.EDJ:\n17. branch model (10)\n18. initiatives HNW/Workplace/digital (88)\n19. advisors + RPMC workplace (trade#0, #1)\n\na6.EDJ:\n20. operating expenses $15,610M +11% (132)\n21. income before allocations $2,090M margin 11.7% (132)\n22. FA comp $6,969M +12% (144)\n23. variable comp $2,710M +11% (144)\n24. comm/data $1,162M +16% (144)\n25. advertising $43M Q1 2026 vs $39M (10Q-2026Q1#60)\n\na7 comparison:\n26. comparison claim (part_id a7)\n\nadjacent (a2.SCHW):\n- cost per account $442 2020\n- cost per account -25% decade\n- cost per account -20% 5yrs\n- cost per account -20% decade\n\nThese are \"stand-in figure\" for client acquisition cost. differs_because: cost per account is total expenses per account, not cost of acquiring a new client.\n\nLet me write the differs_because: \"Cost per account measures total expenses spread over average accounts, not the cost of acquiring a new client.\"\n\nAlso the adjacent a2 has multiple items. \"one adjacent item per cell\" - but a2.SCHW is one cell with 4 items. Hmm, \"A cell marked 'adjacent only' goes in adjacent, never in claims, one adjacent item per cell\". So one adjacent item for a2.SCHW cell. But there are 4 items. \n\nActually, re-reading: \"one adjacent item per cell, each with differs_because\". So a2.SCHW is one cell, so one adjacent item. But it has 4 items of evidence. I'll write one adjacent text that mentions the key stand-in figure ($442 in 2020) and maybe the trend.\n\nActually, let me reconsider. \"one adjacent item per cell\" - the cell is a2.SCHW. So one adjacent entry with part_id a2.SCHW. I'll write one sentence covering the stand-in figure.\n\nLet me write: \"Schwab reports that GAAP cost per client account (total expenses excluding interest divided by average active brokerage accounts) was $442 in 2020, and states cost per account has decreased more than 20% over the last five years.\" cite SCHW-DECK-2026Q2#29, SCHW-TR-2025Q4#18.\n\ndiffers_because: \"Cost per account is total expenses spread over average accounts, not the cost of acquiring a new client.\"\n\nNow for the comparison a7 claim. The normative part is the boundary. The evidence for a7: a7.SCHW \"not found (code gap)\", a7.EDJ has fact items about EDJ's model and tech investments.\n\nThe comparison claim should state whether the comparison can be made. Since a7.SCHW is not found (Schwab doesn't address EDJ replicating), and EDJ items describe EDJ's own initiatives (branch model, tech investments for scaling), the comparison about \"whether/how EDJ could replicate\" is not directly answered.\n\nComparison sentence: \"Whether Edward Jones could replicate Schwab's scale-based low-cost acquisition strategy cannot be determined from this evidence, because Schwab's cited materials do not address Edward Jones replicating its approach and Edward Jones's materials describe its own branch-based and technology initiatives rather than any plan to adopt Schwab's scale model.\" cite EDJ-10K-2025#10, EDJ-10K-2025#8, EDJ-10K-2025#88.\n\nActually for comparison, I should cite items. The comparison rests on the gap (a7.SCHW not found) and EDJ's own evidence.\n\nLet me write it citing EDJ items that show EDJ's own approach.\n\nNow, the a7.EDJ fact items also need to be cited somewhere (they're facts). Wait, a7 is the comparison aspect. a7.EDJ has fact items (EDJ's branch model, strategic ambition, initiatives, Quicken stake, RPMC). These are facts under the a7 aspect. \n\nHmm, but a7 is \"comparison\" - \"needs exactly one comparison claim, part_id a7\". So a7 gets exactly ONE claim (the comparison claim). But a7.EDJ has fact items. Do I cite those separately with part_id a7.EDJ?\n\nThe instruction: \"For each aspect marked comparison, one sentence (part_id that aspect's id) says whether the comparison can be made... and why.\"\n\nSo a7 gets one sentence with part_id a7. But a7.EDJ has fact items that should be covered. These facts (EDJ's model, tech investments) are also largely covered in a5.EDJ and a6.EDJ. \n\nActually, looking more carefully: a7.EDJ items are: branch model (10), strategic ambition tech scaling (8), initiatives (88), Quicken stake (trade#2), RPMC (trade#1). Some overlap with a5/a6.\n\nThe instruction says \"every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence\". a7.EDJ is a cell holding facts. But a7 is marked comparison, needing exactly one claim with part_id a7.\n\nThis is a bit contradictory. I think the resolution: the comparison claim (part_id a7) covers the comparison. The a7.EDJ facts can be cited within that comparison claim or I may add them. But \"exactly one comparison claim\" for a7.\n\nActually, I think the a7.EDJ fact items can be covered by citing them in the comparison sentence (since they're the EDJ side of the comparison). And the Quicken/RPMC items might be relevant to \"how EDJ could replicate\" - EDJ's tech investments are its own path, not replicating Schwab.\n\nLet me include the key a7.EDJ facts in the comparison claim or as separate a7.EDJ sentences. Given \"exactly one comparison claim part_id a7\", I'll write one comparison claim and cite the EDJ facts within it, plus I could add a7.EDJ sentences. But to be safe, I'll write the single comparison claim (part_id a7) and possibly separate a7.EDJ fact sentences.\n\nHmm, actually let me re-read: \"For each aspect marked comparison, one sentence (part_id that aspect's id) says whether the comparison can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why, citing the items it rests on.\"\n\nSo exactly one sentence for the comparison aspect, part_id a7. The a7.EDJ fact items would be cited within that sentence as needed, OR they're already covered elsewhere.\n\nGiven the Quicken stake (item 4) and RPMC (item 5) are about EDJ's tech/digital initiatives that could be relevant to \"how EDJ could replicate\", I should mention them. But they're trade press, attributed.\n\nActually, let me reconsider. The a7.EDJ facts are distinct from a5/a6 facts. But since a7 is comparison with one claim, and the question's normative part is boundary... The answer_with_boundary means I answer the evidence half and code adds hand-off for the normative part.\n\nI think the cleanest approach: write the single comparison claim (part_id a7) that assesses whether the comparison can be made, citing the key items. The a7.EDJ fact items can be folded into that claim or I can add them as additional claims with part_id a7.EDJ.\n\nActually, \"needs exactly one comparison claim, part_id a7\" - so one claim with part_id a7. The a7.EDJ facts... let me include them as separate claims with part_id a7.EDJ? But part_id a7.EDJ is in the enum. And the instruction says \"every cell that holds a fact... cited by a sentence (its cell id as part_id)\".\n\nI'll add a7.EDJ sentences for the EDJ facts (Quicken, RPMC, strategic ambition) and one a7 comparison claim. But wait, \"exactly one comparison claim\" - does that restrict to one sentence total for a7, or one comparison-verdict sentence?\n\nI'll interpret: one comparison verdict sentence (part_id a7), plus the a7.EDJ fact cells get their own sentences (part_id a7.EDJ). Actually, a7.EDJ fact items overlap heavily with a5 and a6 (initiatives #88 is in a5, a6, and a7; branch model #10 in a5 and a7; RPMC in a5 and a7).\n\nTo avoid over-duplication, I'll cover the unique a7.EDJ items (Quicken stake #2, strategic ambition #8, RPMC #1) in the a7 area.\n\nLet me finalize a simpler structure. I'll write:\n\na7 comparison claim (part_id a7): \"Whether Edward Jones could replicate Schwab's scale-based low-cost acquisition strategy cannot be determined on this evidence, because Schwab's cited materials do not address Edward Jones replicating its approach, while Edward Jones's cited materials describe its own branch-based model and technology investments rather than any adoption of Schwab's scale model.\" cite EDJ-10K-2025#10, EDJ-10K-2025#8, EDJ-10K-2025#88.\n\nThen also mention Quicken/RPMC as a7.EDJ facts? Actually these are relevant to \"how EDJ could\" - EDJ is investing in digital (Quicken, RPMC) to scale. I could include one a7.EDJ sentence: \"Edward Jones announced a minority stake in Quicken and is integrating a workplace retirement plan management platform (RPMC) into its advisor workstation.\" cite trade#2, trade#1.\n\nBut these are trade press. Attributed as \"trade press reports\".\n\nLet me include them as a7.EDJ fact sentences. Actually, I realize these also appear in a5.EDJ (item 3 is RPMC trade) and a7.EDJ (items 4, 5). I've covered RPMC in a5.EDJ claim 19. The Quicken stake is unique to a7.\n\nLet me just include Quicken in the a7 area as an a7.EDJ fact sentence, and the comparison claim.\n\nOK let me finalize. I'll write a comprehensive but organized answer.\n\nActually, I'm overcomplicating. Let me settle on the final structure and write it.\n\nClaims (in order):\n\n1. a1.SCHW: headline - scale spreads costs (cite #13)\n2. a1.SCHW: cost advantage competitive pricing (cite #14)\n3. a1.SCHW: cost-to-serve low (cite SCHW-TR-2025Q4#9)\n4. a1.SCHW: cost per account -20% 5yr (cite SCHW-TR-2025Q4#18)\n5. a1.SCHW: marketing 40% + data insight-led (cite SCHW-TR-2025Q1#13, SCHW-DECK-2026-investor-day#130)\n6. a1.SCHW: 90% digital (cite SCHW-DECK-2026Q3#34)\n\n7. a3.SCHW: growth levers (cite SCHW-DECK-2026-investor-day#38)\n8. a3.SCHW: TOA 1.5 (cite SCHW-TR-2025Q1#10)\n9. a3.SCHW: thinkorswim half new-to-firm retail (cite SCHW-TR-2025Q4#16)\n10. a3.SCHW: AI distribution channels (cite SCHW-TR-2026Q1#12)\n\n11. a4.SCHW: definition core NNA (cite #119)\n12. a4.SCHW: 2024 $366.9B, 4.2M (cite #136)\n13. a4.SCHW: 2025 $519.4B, 4.7M (cite #129)\n14. a4.SCHW: 2026Q1 $140.0B, 1.3M (cite 10Q-2026Q1#19)\n15. a4.SCHW: 2026Q2 $119.8B, 1.4M (cite 10Q-2026Q2#22)\n16. a4.SCHW: 2026Q3 $190B, 1.2M (cite TR-2026Q3#3)\n\n17. a5.EDJ: branch model (cite EDJ-10K-2025#10)\n18. a5.EDJ: initiatives (cite EDJ-10K-2025#88)\n19. a5.EDJ: advisors + workplace RPMC (cite trade#0, #1)\n\n20. a6.EDJ: operating expenses (cite EDJ-10K-2025#132)\n21. a6.EDJ: income before allocations (cite EDJ-10K-2025#132)\n22. a6.EDJ: FA comp (cite EDJ-10K-2025#144)\n23. a6.EDJ: advertising (cite EDJ-10Q-2026Q1#60)\n\n24. a7: comparison (cite EDJ-10K-2025#10, #8, #88)\n\nAdjacent:\n25. a2.SCHW: cost per account $442 2020 (cite SCHW-DECK-2026Q2#29, SCHW-TR-2025Q4#18)\n\nHmm, but I'm dropping several items (variable comp, comm/data processing, Quicken). Let me think about what's essential. The instruction says \"every cell that holds a fact... cited by a sentence.\" So I should cover all items within each cell? That's a lot but the items within a cell can be covered by a sentence synthesizing.\n\nActually re-reading: \"every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence\". A cell = aspect-firm combination (e.g., a6.EDJ). Each cell contains multiple items. One sentence per cell? Or one sentence per item?\n\n\"one cited sentence per asked item (per firm, per firm's series, per initiative)\" - this suggests per item.\n\nBut \"a cell id is the part_id of what you write from it\" - and cells are the aspect-firm. Items within don't have separate part_ids.\n\nI think the practical approach: write enough sentences to cover the material facts, each cited, with the cell's part_id. I don't need one sentence per item literally, but should cover the substance.\n\nFor a6.EDJ, I'll cover operating expenses, income before allocations, FA comp, variable comp, comm/data, advertising - maybe in 3-4 sentences to keep it manageable.\n\nLet me include variable comp and comm/data processing since they're part of cost structure.\n\nFor a6.EDJ, combine into:\n- operating expenses $15,610M +11% (132)\n- income before allocations $2,090M, 11.7% margin (132)\n- FA comp $6,969M +12%; variable comp $2,710M +11%; comm/data $1,162M +16% (144) - could be one sentence each or combined\n- advertising $43M Q1 2026 (10Q#60)\n\nI'll write these as separate sentences to be safe, but combine variable comp and comm/data.\n\nLet me also include the Quicken stake for a7 (it's an EDJ fact about how it could scale digitally). Actually Quicken item is in a7.EDJ (item 4). And RPMC item 5 in a7.EDJ. These are about EDJ's potential path. Since a7 is comparison with one claim, but a7.EDJ facts should be cited. I'll add a7.EDJ sentences.\n\nActually, I worry about \"exactly one comparison claim, part_id a7\". Let me make the comparison claim part_id a7, and put the Quicken/RPMC facts under a7.EDJ (separate part_id, which is allowed since a7.EDJ is in enum).\n\nLet me add:\n- a7.EDJ: strategic ambition tech scaling (cite EDJ-10K-2025#8)\n- a7.EDJ: Quicken stake (cite trade#2)\n- a7.EDJ: RPMC integration (cite trade#1)\n\nBut these overlap with a5/a6. RPMC is already in a5 (claim 19). Quicken and strategic ambition #8 are unique to a7.\n\nI'll add:\n- a7.EDJ: strategic ambition (EDJ-10K-2025#8) - continue investing in technology to scale financial planning, attract new segments\n- a7.EDJ: Quicken stake (trade#2)\n\nThen the a7 comparison claim.\n\nThis is getting quite long but comprehensive. Let me write it all out now and be efficient.\n\nActually, let me reconsider the total scope and be pragmatic. The answer will be long but that's required given the evidence matrix. Let me write final text now.\n\nFor dates: I should date statements from their source line. E.g., \"In its 2025 10-K (filed 2026-02-25)...\" or \"on the 4Q25 earnings call\".\n\nLet me write concise sentences.\n\nFinal answer construction. I'll write all claims.\n\nNote the behavior is answer_with_boundary, so I answer the evidence half. The question's normative part (\"how could Edward Jones replicate\") is the boundary - code adds hand-off sentence. So I should NOT recommend how EDJ could replicate. I just provide evidence.\n\nLet me write.\n\nFor part_id values, I'll use:\n- a1.SCHW for claims 1-6\n- a3.SCHW for claims 7-10\n- a4.SCHW for claims 11-16\n- a5.EDJ for claims 17-19\n- a6.EDJ for claims 20-23\n- a7.EDJ for a7 EDJ fact claims\n- a7 for comparison claim\n\nLet me write final.\n\nActually, let me reconsider whether I need the a7.EDJ separate fact claims. The instruction says comparison aspects get \"one sentence (part_id that aspect's id)\". And \"every cell that holds a fact... cited by a sentence (its cell id as part_id)\".\n\na7.EDJ is a cell with facts. So I should cite it. But the \"exactly one comparison claim part_id a7\" refers to the comparison verdict.\n\nI'll include a7.EDJ facts (strategic ambition, Quicken, RPMC) as separate claims with part_id a7.EDJ, then the comparison verdict with part_id a7.\n\nBut some of these overlap. RPMC already covered in a5. Strategic ambition #8 and Quicken #2 are new. Let me add those two as a7.EDJ, and keep the comparison verdict citing EDJ's own approach.\n\nLet me finalize and write everything now.\n\nI'll write the comparison claim carefully: \"Whether Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy cannot be assessed on this evidence: Schwab's cited materials contain no statement about Edward Jones replicating its approach, and Edward Jones's materials describe its own branch-based and technology investments rather than adoption of Schwab's scale model.\"\n\nCite: EDJ-10K-2025#10, EDJ-10K-2025#8, EDJ-10K-2025#88.\n\nNow writing.\n\nFor gaps: code added none. So gaps array empty.\n\nLet me write the submit_answer call.\n\nI need to be careful with chunk_ids exactly matching.\n\nLet me finalize each claim text with citations.\n\nI'll now write it all out.",
+  "first_claim_s": 152.92,
+  "stream_items": {
+    "first_claim_s": 152.92,
+    "shown": 25,
+    "held": 2
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer_with_boundary",
+    "claims": [
+      {
+        "text": "Schwab states in its 2025 10-K that, as one of the largest investment services firms in the U.S., its scale lets it spread operating costs and amortize new investments over a large base of clients.",
+        "chunk_ids": [
+          "SCHW-10K-2025#13"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Schwab states in its 2025 10-K that its operating efficiency, coupled with scale and shared infrastructure across businesses, creates a cost advantage enabling competitive pricing while profitably serving clients across channels.",
+        "chunk_ids": [
+          "SCHW-10K-2025#14"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "On the 4Q25 earnings call, Schwab said its sheer scale combined with efficiency efforts keeps its cost-to-serve clients low, allowing it to invest in client capabilities that fuel growth.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#9"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "On the 4Q25 earnings call, Schwab said its scale combined with expense discipline decreased its cost per account 20% over the last five years.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#18"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "On the 1Q25 earnings call, Schwab said its marketing spend drives approximately 40% of new-to-firm retail clients, and its investor-day deck states its data and insight-led marketing model drives efficiency at scale.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q1#13",
+          "SCHW-DECK-2026-investor-day#130"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "In its 3Q26 deck, Schwab states that 90% of accounts are opened digitally and that it leverages its scale to maintain a structural cost advantage while continuing to invest in growth.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q3#34"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "In its 2026 investor-day deck, Schwab cites multiple growth levers across its leading platform for winning new clients across Retail, Advisor Services, and Workplace channels.",
+        "chunk_ids": [
+          "SCHW-DECK-2026-investor-day#38"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "On the 1Q25 earnings call, Schwab cited its transfer of assets ratio of 1.5, meaning for every dollar that leaves Schwab, $1.50 comes from competitors.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q1#10"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "On the 4Q25 earnings call, Schwab stated that in 2025 about half of new-to-firm retail clients initiated access to its thinkorswim trading platform.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#16"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "On the 1Q26 earnings call, CEO Rick Wurster cited Schwab's massive scale, data and technological prowess, saying AI opens up new distribution channels for growth.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q1#12"
+        ],
+        "part_id": "a3.SCHW"
+      },
+      {
+        "text": "Schwab defines core net new client assets in its 2025 10-K as net new client assets before significant one-time inflows or outflows (generally greater than $25 billion) and activity from off-platform brokered CDs.",
+        "chunk_ids": [
+          "SCHW-10K-2025#119"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "For full-year 2024, Schwab reported core net new assets of $366.9 billion (up 20% from 2023) and 4.2 million new brokerage accounts (up 10% year-over-year).",
+        "chunk_ids": [
+          "SCHW-10K-2025#136"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "For full-year 2025, Schwab reported core net new assets of $519.4 billion (up 42% from 2024) and 4.7 million new brokerage accounts (up 13% from 2024).",
+        "chunk_ids": [
+          "SCHW-10K-2025#129"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "In the first quarter of 2026, Schwab reported core net new assets of $140.0 billion (up 2% year-over-year) and 1.3 million new brokerage accounts (up 10%).",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q1#19"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "In the second quarter of 2026, Schwab reported core net new assets of $119.8 billion (up 49% year-over-year) and 1.4 million new brokerage accounts (up 26%).",
+        "chunk_ids": [
+          "SCHW-10Q-2026Q2#22"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "On the 3Q26 earnings call, Schwab reported that clients opened 1.2 million brokerage accounts in the third quarter of 2026 and that it attracted $190 billion in core net new assets, up 38% over the prior year.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#3"
+        ],
+        "part_id": "a4.SCHW"
+      },
+      {
+        "text": "In its 2025 10-K, Edward Jones states its branch office model serves clients through deep, personal relationships and comprehensive advice and planning with financial advisors located in the communities where clients live and work.",
+        "chunk_ids": [
+          "EDJ-10K-2025#10"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "In its 2025 10-K, Edward Jones states it targets new clients through High Net Worth, Workplace, and a new digital platform focused on attracting and retaining Next Generation investors.",
+        "chunk_ids": [
+          "EDJ-10K-2025#88"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "Trade press reports that Edward Jones advisors leverage the firm's local footprint to prospect and win workplace retirement plans, with a technology platform (leveraging Aboon Workplace) covering the full plan lifecycle from prospecting to servicing.",
+        "chunk_ids": [
+          "EDJ-TRADE-2026-09-30-WM-01#0",
+          "EDJ-TRADE-2026-09-30-WM-01#1"
+        ],
+        "part_id": "a5.EDJ"
+      },
+      {
+        "text": "In its 2025 10-K, Edward Jones reports operating expenses increased 11% to $15,610 million in 2025, and income before allocations of $2,090 million with a margin of 11.7%.",
+        "chunk_ids": [
+          "EDJ-10K-2025#132"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "In its 2025 10-K, Edward Jones reports financial advisor compensation and benefits expense increased 12% to $6,969 million in 2025, and variable compensation increased 11% to $2,710 million.",
+        "chunk_ids": [
+          "EDJ-10K-2025#144"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "In its 2025 10-K, Edward Jones reports communications and data processing expense increased 16% to $1,162 million in 2025 due to investments in new tools and technology.",
+        "chunk_ids": [
+          "EDJ-10K-2025#144"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "In its 1Q26 10-Q, Edward Jones reports advertising expense of $43 million in the first quarter of 2026, compared with $39 million in the first quarter of 2025.",
+        "chunk_ids": [
+          "EDJ-10Q-2026Q1#60"
+        ],
+        "part_id": "a6.EDJ"
+      },
+      {
+        "text": "In its 2025 10-K, Edward Jones states its strategic ambition includes continuing to invest in technology to scale its ability to provide financial planning and to attract and serve new client segments.",
+        "chunk_ids": [
+          "EDJ-10K-2025#8"
+        ],
+        "part_id": "a7.EDJ"
+      },
+      {
+        "text": "Trade press reports Edward Jones has taken a minority stake in the personal finance app Quicken, with the stated intention of integrating Quicken's capabilities into Edward Jones, though the firm says it is still determining the deployment strategy.",
+        "chunk_ids": [
+          "EDJ-TRADE-2026-08-18-IN-01#2"
+        ],
+        "part_id": "a7.EDJ"
+      },
+      {
+        "text": "Whether Edward Jones could replicate Schwab's scale-based low-cost client acquisition strategy cannot be assessed on this evidence, because Schwab's cited materials contain no statement about Edward Jones replicating its approach, and Edward Jones's cited materials describe its own branch-based model and technology initiatives rather than any adoption of Schwab's scale model.",
+        "chunk_ids": [
+          "SCHW-10K-2025#13",
+          "EDJ-10K-2025#10",
+          "EDJ-10K-2025#8"
+        ],
+        "part_id": "a7"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Schwab reports that GAAP cost per client account (total expenses excluding interest divided by average active brokerage accounts) was $442 in 2020, and on the 4Q25 earnings call stated its scale and expense discipline decreased cost per account 20% over the last five years.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#29",
+          "SCHW-TR-2025Q4#18"
+        ],
+        "part_id": "a2.SCHW",
+        "differs_because": "Cost per account is total expenses spread over average accounts, not the cost of acquiring a new client."
+      }
+    ],
+    "gaps": []
+  }
+}

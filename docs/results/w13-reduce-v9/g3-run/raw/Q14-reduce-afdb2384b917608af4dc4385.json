@@ -1,0 +1,347 @@
+{
+  "question_id": "Q14",
+  "question": "How does Raymond James's affiliation-choice model work commercially?",
+  "reduce_version": "v9",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "RJF-10K-2025#10",
+    "RJF-PR-web-affiliation-options#0",
+    "RJF-PR-web-affiliation-options#1",
+    "RJF-10K-2025#11",
+    "RJF-TR-2026Q1#44",
+    "RJF-TR-2026Q2#26",
+    "RJF-DECK-2025-investor-day#38",
+    "RJF-PR-web-affiliation-options#2",
+    "RJF-TR-2024Q3#93",
+    "RJF-10K-2025#223",
+    "RJF-10K-2025#227",
+    "RJF-TR-2025Q3#8",
+    "RJF-TR-2025Q3#4",
+    "RJF-TR-2026Q2#6",
+    "RJF-TR-2026Q2#5",
+    "RJF-TR-2026Q1#4",
+    "RJF-10K-2025#28",
+    "RJF-SUPP-2025Q3#43",
+    "RJF-TR-2026Q2#59",
+    "RJF-TR-2025Q3#26",
+    "RJF-TR-2026Q1#5",
+    "RJF-TR-2025Q4#50",
+    "RJF-TR-2025Q4#98",
+    "RJF-TR-2026Q2#60",
+    "RJF-TR-2024Q4#23",
+    "RJF-TRADE-2026-09-29-IN-01#4"
+  ],
+  "schema_fallback": [],
+  "enum_values": 86,
+  "at": "2026-11-24T00:39:45.012460-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 10003,
+    "output_tokens": 9728,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 8339,
+    "reasoning_tokens": 6833,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.86
+  },
+  "wall_s": 121.53,
+  "tokens_per_s": 80.05,
+  "ttft_s": 1.86,
+  "reasoning_content": "Let me write the answer. This is a single firm (RJF), five aspects. I need to write claims with citations, one sentence per item/cell where applicable, plus adjacent items where relevant.\n\nLet me think about the structure. Aspects a1, a2, a3, a4, a5. For a fact aspect (a1, a2, a5), I write one or more sentences covering the main points. For series (a3, a4), one sentence per period/point.\n\nNote item 2 in a2 is marked \"also under a1: write it once\". So I write it once, presumably in a1.\n\nLet me construct the answer.\n\nClaim 1 answers the question directly.\n\nLet me organize:\n\na1 (part_id \"a1\" spans... actually a1.RJF? The cell id is a1.RJF. But part_id enum includes \"a1.RJF\" and \"a1\". The instruction says \"part_id: the cell id for a sentence about one cell; the aspect id for a sentence spanning firms or cells.\" Since single firm, cell id a1.RJF is appropriate for single-cell claims. But actually for multiple sentences about same aspect... each sentence cites its cell. Let me use a1.RJF for each sentence in aspect a1.\n\nWait, let me re-read. \"part_id: the cell id for a sentence about one cell; the aspect id for a sentence spanning firms or cells.\" So sentences about a single cell use that cell's id (a1.RJF, a2.RJF, a3.RJF, a4.RJF, a5.RJF).\n\nThe comparison aspect doesn't exist here (no aspect marked comparison). All aspects are fact or series.\n\nLet me write.\n\nClaim 1 (headline): Raymond James offers multiple affiliation options under the AdvisorChoice\u00ae brand\u2014employee, independent contractor, and third-party RIA/broker-dealer\u2014and is commercially agnostic about how advisors affiliate. Cite RJF-10K-2025#10, RJF-TR-2026Q2#26.\n\nActually let me answer directly. The question: \"How does Raymond James's affiliation-choice model work commercially?\" So answer combines a1 and a2 primarily, plus results (a3, a4) and rationale (a5).\n\nLet me write sentences for each aspect.\n\na1: How it works (employee vs independent contractor options)\n- Sentence 1 (headline, part a1.RJF): Raymond James offers multiple affiliation options, which it refers to as AdvisorChoice\u00ae, under which financial advisors affiliate directly as employees or independent contractors, or as employees of third-party RIAs and broker-dealers serviced through its RIA and Custody Services division. [RJF-10K-2025#10]\n- Sentence 2: The affiliation options include Traditional Employee, Advisor Select, Independent Contractor, Bank & Credit Union, and Corporate RIA. [RJF-PR-web-affiliation-options#0]\n- Sentence 3: Employee financial advisors work in a traditional branch supported by local management and administrative staff, and their compensation primarily includes a payout on revenues they generate plus participation in the firm's employee benefit plans. [RJF-10K-2025#10]\n- Sentence 4: Independent contractor financial advisors are generally responsible for all of their direct costs and, accordingly, receive a higher payout percentage on the revenues they generate than employee financial advisors. [RJF-10K-2025#11] (this is the \"write it once\" item)\n- Sentence 5: Management states it is agnostic about how an advisor affiliates\u2014employee, independent contractor, or RIA custody\u2014wanting advisors to choose based on fit with its culture, values, platform, and capabilities. [RJF-TR-2026Q2#26]\n\nThat's a1. Maybe also item 1,3,8,11. Item 10 about FID may be more detail\u2014could include. I'll keep it reasonably concise but cover main points.\n\nActually I should be careful about the \"write it once\" instruction\u2014item 2 in a2 is same as item 8 in a1. I'll write it in a1.\n\na2: Commercially (payouts, fees, economics)\n- Payout details. Under Traditional Employee: up to 50% payout plus full benefits. [RJF-PR-web-affiliation-options#1]\n- Advisor Select: 70-80% gross payout plus full benefits. [RJF-PR-web-affiliation-options#1]\n- Independent Contractor: 81% to 90% payout, build own benefits. [RJF-PR-web-affiliation-options#1]\n- Bank & Credit Union: competitive compensation package from financial institution in partnership with RJ. [RJF-PR-web-affiliation-options#2]\n- Corporate RIA: 81% to 90% payout, build own benefits. [RJF-PR-web-affiliation-options#2]\n- RIA & Custody Services: work with RIA or B/D to determine compensation. [RJF-PR-web-affiliation-options#2]\n- RIA custody margin higher on P&L basis because attachment revenue booked lower. [RJF-TR-2024Q3#93]\n- Tiered payout systems on employee side. [RJF-TR-2026Q1#44]\n\nThat's a lot. Each sentence per item. I should write them.\n\na3: Advisor recruitment and retention results (series). One sentence per point. But note basis break\u2014whole firm for 2023-09-30, 2024-09-30, 2025-09-30; domestic channels for 2026-03-31, 2026-06-30.\n\n- 2025-09-30: 8,943 total (3,878 employee, 5,065 independent contractor). [RJF-10K-2025#227]\n- 2024-09-30: 8,787 (3,826 employee, 4,961 IC). [RJF-10K-2025#227]\n- 2023-09-30: 8,712 (3,693 employee, 5,019 IC). [RJF-10K-2025#227]\n- Ended fiscal 2025 with record number, 2% higher. [RJF-TR-2025Q3#8]\n- FY2025 recruited advisors record T12 production $407M. [RJF-TR-2025Q3#4]\n- First 9 months FY2026: recruited T12 production $393M, >$56B assets. [RJF-TR-2026Q2#6]\n- Q3 FY2026 (June 30, 2026): $156M T12, ~$23B assets. [RJF-TR-2026Q2#5]\n- Q2 FY2026 (March 31, 2026): $141M T12, ~$21B assets. [RJF-TR-2026Q1#4]\n- FY2025 domestic retention very strong. [RJF-10K-2025#28]\n- 97% advisor satisfaction. [RJF-TR-2026Q2#26]\n\nI should state the basis break. The code adds caveat about basis break, so I need to state each basis with its own periods. I should mention in text which basis.\n\na4: Client assets and net new assets. Only item 1 is a definition, no actual figures. So a4 has just a definition. Hmm, the aspect is \"series, metric net_new_assets\" but only one item is a definition of net new assets. So I state the definition.\n\nActually the definition item is a fact/definition, not a series of figures. So one sentence.\n\na5: Management's strategic rationale. One sentence per key point. There are 11 items. I should cover main points.\n\n- Don't lead with highest check; lead with culture and capabilities; competitive economics required; disciplined on transition assistance. [RJF-TR-2026Q2#59]\n- Focus on long term, stable platform, attract/retain with culture, service, platform rather than largest check. [RJF-TR-2025Q3#26]\n- Value independence for objective advice. [RJF-TR-2025Q3#26]\n- Largest addressable market; agnostic. [RJF-TR-2026Q2#26]\n- Advisors don't have to choose between culture and capabilities. [RJF-TR-2026Q1#5]\n- Largest addressable market across affiliation options with critical mass. [RJF-TR-2025Q4#50]\n- Recruiting is marathon not sprint. [RJF-TR-2025Q4#98]\n- Consistency critical. [RJF-TR-2026Q2#60]\n- Best of both worlds. [RJF-TR-2024Q4#23]\n- Balance sheet and independence differentiator. [RJF-TR-2025Q3#8]\n- Advisor is the client; individualized recruitment (trade press). [RJF-TRADE-2026-09-29-IN-01#4]\n\nThat's a lot of sentences. The instruction says \"a comparison: one sentence per firm...\" but this is fact. \"what do we know/how/what is the strategy: the main points, one per thing the question asks.\"\n\nI need to cover every cell that holds a fact. Every item is a fact I should cite. Hmm, but there are many items. The instruction says \"Cover what was asked: every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence.\"\n\nSo I should cite each item. That's 11 items in a5, plus a1 (5 items essentially), a2 (8 items), a3 (10 items), a4 (1 item).\n\nWait, this is going to be very long. But the instruction is explicit: every cell holds a fact and should be cited by a sentence.\n\nActually, let me reconsider. The items within an aspect are all part of one cell (a5.RJF). So \"every cell that holds a fact\" means each cell (a1.RJF, a2.RJF, a3.RJF, a4.RJF, a5.RJF) needs to be cited. But the items within a cell are the evidence for that cell's fact.\n\nHmm, actually re-reading: \"every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence (its cell id as part_id...)\". So each cell gets cited by at least one sentence. But the evidence items are multiple.\n\nI think the intent is: I write sentences covering the evidence, citing chunk ids. I don't necessarily need one sentence per item, but I should cover the facts asked. Given the richness, I'll write comprehensive but reasonable sentences.\n\nLet me be pragmatic and cover all the meaningful facts with citations, grouping where natural but keeping \"one sentence per item\" spirit for figures.\n\nActually the guidance: \"a single fact or figure: 1-3 sentences\" ... \"for each firm: one cited sentence per asked item\". This is a \"how does it work\" question, so it's more open. I'll write thorough sentences.\n\nLet me draft the full answer now.\n\nFor the part_id, I'll use a1.RJF etc for each sentence. Actually, could I use \"a1\" for a sentence spanning? No, single firm, single cell, use a1.RJF.\n\nWait, but there might be a subtlety. The aspect id \"a1\" is for \"a sentence spanning firms or cells.\" Since there's only one firm, each sentence is about one cell, so use cell id a1.RJF.\n\nLet me write it all.\n\nClaims:\n\nHeadline (answer directly, cite items): \n\nActually, I'll make the first claim the direct answer. Let me structure:\n\nClaim 1 (direct answer): Raymond James's affiliation-choice model, AdvisorChoice\u00ae, lets financial advisors affiliate as employees, independent contractors, or through third-party RIAs/broker-dealers, with each option carrying distinct payout and economics. Cite RJF-10K-2025#10, RJF-PR-web-affiliation-options#1.\n\nHmm but the headline claim must cite items it rests on. Let me keep it simple.\n\nLet me just write all claims in order a1, a2, a3, a4, a5.\n\nFor part_id, I'll assign appropriately.\n\nLet me write each sentence carefully with citations.\n\na1 sentences (part a1.RJF):\n\n1. \"Raymond James offers multiple affiliation options, which it refers to as AdvisorChoice\u00ae, under which financial advisors affiliate directly as either employees or independent contractors, or as employees of third-party RIAs and broker-dealers serviced through its RIA and Custody Services division, according to the FY2025 10-K.\" [RJF-10K-2025#10]\n\n2. \"AdvisorChoice\u00ae is described as a platform of dynamic options and the freedom to choose among them, letting advisors match their professional goals to the affiliation option that is right for them.\" [RJF-PR-web-affiliation-options#0]\n\n3. \"The affiliation options listed by Raymond James include Traditional Employee, Advisor Select, Independent Contractor, Bank & Credit Union, and Corporate RIA.\" [RJF-PR-web-affiliation-options#0]\n\n4. \"Employee financial advisors work in a traditional branch supported by local management and administrative staff, serve predominantly retail clients, and are compensated primarily through a payout on the revenues they generate, also participating in the firm's employee benefit plans.\" [RJF-10K-2025#10]\n\n5. \"Independent contractor financial advisors are generally responsible for all of their direct costs and, accordingly, receive a higher payout percentage on the revenues they generate than employee financial advisors.\" [RJF-10K-2025#11]\n\n6. \"On the earnings call for the quarter ended March 31, 2026, management stated independent payouts are higher than employee payouts because independent advisors cover their own overhead, real estate, and health insurance, while the employee side uses tiered payout systems where higher production moves an advisor up the payout grid.\" [RJF-TR-2026Q1#44]\n\n7. \"Independent contractor financial advisors may affiliate directly or through an affiliated bank or credit union in the Financial Institutions Division, and with specific approval may conduct certain other approved business activities such as insurance products, independent RIA services, and accounting and tax services.\" [RJF-10K-2025#11]\n\n8. \"On the earnings call for the quarter ended June 30, 2026, management stated it is agnostic about how an advisor affiliates\u2014employee, independent contractor, or RIA custody\u2014wanting advisors to choose based on fit with its culture, values, platform, and capabilities.\" [RJF-TR-2026Q2#26]\n\n9. \"In its 2025 investor day deck, Raymond James described the affiliation spectrum as ranging from employee (RJA) to independent contractor (ICD) to RIA & Custody Services, noting that the movement to independence is not channel-specific.\" [RJF-DECK-2025-investor-day#38]\n\na2 sentences (part a2.RJF):\n\n1. \"Under the Traditional Employee model, advisors receive up to a 50% payout plus the full array of competitive employee benefits offerings.\" [RJF-PR-web-affiliation-options#1]\n\n2. \"Under the Advisor Select model, advisors receive a 70-80% gross payout plus the full array of competitive employee benefits offerings, and run their own branch.\" [RJF-PR-web-affiliation-options#1]\n\n3. \"Under the Independent Contractor model, advisors receive an 81% to 90% payout and leverage third-party partnerships to build their own benefits package.\" [RJF-PR-web-affiliation-options#1]\n\n4. \"Under the Bank & Credit Union model, advisors receive a competitive compensation package from the financial institution in partnership with Raymond James.\" [RJF-PR-web-affiliation-options#2]\n\n5. \"Under the Corporate RIA model, advisors receive an 81% to 90% payout and build their own benefits package through third-party partnerships.\" [RJF-PR-web-affiliation-options#2]\n\n6. \"Under the RIA & Custody Services model, advisors work with their RIA or broker/dealer to determine compensation and create their own benefits package.\" [RJF-PR-web-affiliation-options#2]\n\n7. \"On the earnings call for the quarter ended September 30, 2024, management stated the margin on a P&L basis is actually higher for RIA custody because the attachment revenue booked is much lower, whereas other businesses gross up revenues pre-payout, and ROCA varies with the RIA's asset mix and pricing structure.\" [RJF-TR-2024Q3#93]\n\n8. \"For firms affiliated through the RIA and Custody Services division, revenues related to their assets in the PCG segment are included in Account and service fees.\" [RJF-10K-2025#223]\n\nAlso item 9 and 10 in a2 are same as a1 items 6 (RJF-TR-2026Q1#44). I already covered in a1. Actually a2 item 9 = \"independent payouts higher because overhead\" (RJF-TR-2026Q1#44), item 10 = \"tiered payout employee side\" (RJF-TR-2026Q1#44). These are covered in a1 sentence 6. I think that's fine\u2014I wrote it once in a1.\n\nActually, the \"write it once\" note was specifically on a2 item 2 (same as a1 item 8). The other overlaps (a2 item 9/10 with a1 item 9) I covered in a1. That's fine.\n\na3 sentences (part a3.RJF) - series:\n\nI need to note basis break. I'll state the basis in each sentence.\n\n1. \"As of September 30, 2025, Raymond James reported 8,943 total financial advisors across the whole firm, consisting of 3,878 employee financial advisors and 5,065 independent contractor advisors.\" [RJF-10K-2025#227]\n\n2. \"As of September 30, 2024, the firm reported 8,787 total financial advisors, consisting of 3,826 employees and 4,961 independent contractors.\" [RJF-10K-2025#227]\n\n3. \"As of September 30, 2023, the firm reported 8,712 total financial advisors, consisting of 3,693 employees and 5,019 independent contractors.\" [RJF-10K-2025#227]\n\n4. \"On the fiscal 2025 fourth-quarter earnings call, management said Raymond James ended fiscal 2025 with a record number of financial advisors, 2% higher than the prior year, reflecting solid advisor retention and strong recruiting results.\" [RJF-TR-2025Q3#8]\n\n5. \"For fiscal 2025, Raymond James reported record trailing 12-month production for recruited financial advisors of $407 million.\" [RJF-TR-2025Q3#4]\n\n6. \"Through the first 9 months of fiscal 2026, Raymond James recruited advisors with trailing 12-month production totaling $393 million and more than $56 billion of client assets at their previous firms.\" [RJF-TR-2026Q2#6]\n\n7. \"In the fiscal third quarter ended June 30, 2026, Raymond James recruited financial advisors to its domestic independent contractor and employee channels with trailing 12-month production totaling $156 million and nearly $23 billion of client assets at their previous firms.\" [RJF-TR-2026Q2#5]\n\n8. \"In the fiscal second quarter ended March 31, 2026, Raymond James recruited financial advisors to its domestic independent contractor and employee channels with trailing 12-month production totaling $141 million and nearly $21 billion of client assets at their previous firms.\" [RJF-TR-2026Q1#4]\n\n9. \"For the year ended September 30, 2025, Raymond James's domestic financial advisor retention remained very strong.\" [RJF-10K-2025#28]\n\n10. \"On the earnings call for the quarter ended June 30, 2026, CEO Paul Shoukry cited a 97% advisor satisfaction rate with the firm's surveys, which he described as the best he knows of in the industry.\" [RJF-TR-2026Q2#26]\n\na4 sentence (part a4.RJF):\n\n1. \"Raymond James defines domestic Private Client Group net new assets as domestic Private Client Group client inflows, including dividends and interest, less domestic Private Client Group client outflows, including commissions, advisory fees, and other fees.\" [RJF-SUPP-2025Q3#43]\n\nThere are no actual figures for net new assets, only the definition. So a4 has just this definition. Should I add a gap? No, code added no gaps. The aspect is \"series, metric net_new_assets\" but only definition found. I'll state the definition. Actually maybe I should note there are no reported figures? But code gaps says \"none\". So I just state the definition.\n\nHmm, but wait\u2014the aspect is a series asking for client assets and net new assets. Only one item found (a definition). So the answer for a4 is just the definition. That seems thin but that's what evidence shows.\n\na5 sentences (part a5.RJF):\n\n1. \"On the earnings call for the quarter ended June 30, 2026, management stated Raymond James does not lead with the highest transition check but leads with culture and capabilities, requiring competitive economics while offering a differentiated value proposition and remaining disciplined on transition assistance and advisor economics.\" [RJF-TR-2026Q2#59]\n\n2. \"On the earnings call for the quarter ended September 30, 2025, management stated the firm is focused on the long term and providing a stable platform, attracting and retaining advisors with its unique culture, leading service, and robust platform rather than the largest check.\" [RJF-TR-2025Q3#26]\n\n3. \"Management also stated Raymond James values independence to foster an environment where advisors can provide objective advice, unlike competitors that change comp plans each year to cross-sell bank products.\" [RJF-TR-2025Q3#26]\n\n4. \"Management stated the firm has the largest addressable market in the industry because it offers all affiliation options and is agnostic about how advisors affiliate, wanting them drawn to its culture, values, platform, and capabilities.\" [RJF-TR-2026Q2#26]\n\n5. \"Management stated advisors do not have to choose between culture and capabilities, as the firm offers a unique combination of an advisor- and client-focused culture with leading technology, products, and solutions.\" [RJF-TR-2026Q1#5]\n\n6. \"Management stated the firm has the largest addressable market across its affiliation options\u2014from employee to independent contractor to RIA custody\u2014with critical mass and decades of experience in all of them.\" [RJF-TR-2025Q4#50]\n\n7. \"Management described advisor recruiting as a long-term marathon, not a sprint, targeting advisors who want to stay long-term rather than those moving for the highest check.\" [RJF-TR-2025Q4#98]\n\n8. \"Management stated consistency is a critical concept in recruiting and retaining advisors, focusing on finding advisors who are good cultural fits with the firm across affiliation options.\" [RJF-TR-2026Q2#60]\n\n9. \"Management described a 'best of both worlds' value proposition combining the scope and breadth of products and capabilities with a culture anchored on putting people first.\" [RJF-TR-2024Q4#23]\n\n10. \"Management stated its strong balance sheet and commitment to independence is proving to be a differentiator for advisors evaluating alternatives.\" [RJF-TR-2025Q3#8]\n\n11. \"Trade press reports that management (CEO Paul Shoukry and Elwyn) stated the advisor, not the home office, is the client, and that the firm builds its advisory ranks through individualized recruitment rather than large-scale acquisitions, evaluating each prospective advisor one-on-one.\" [RJF-TRADE-2026-09-29-IN-01#4]\n\nThis is very long but comprehensive. Let me finalize.\n\nFor the direct answer (claim 1), I'll make the first sentence answer the question directly. Actually the first claim should answer directly. Let me make the first a1 sentence serve as the direct answer, or add a dedicated headline.\n\nActually, I'll just start with a headline claim that answers directly, then proceed. But the headline must cite items. Let me make the first sentence of a1 the direct answer.\n\nI think the structure is fine. Let me combine into the answer.\n\nFor gaps: none. Adjacent: none? Let me check. There's no \"adjacent only\" cells marked. Actually let me check\u2014there are no adjacent items in the evidence. So adjacent = [].\n\nWait, there might be adjacent items implied. Let me look. The instructions mention \"A cell marked 'adjacent only' goes in adjacent.\" I don't see any marked adjacent-only. So adjacent empty.\n\nGaps: code adds none. So gaps = [].\n\nLet me finalize part_ids. Each sentence gets its cell's part_id.\n\nFor the headline direct answer, I'll attach part_id \"a1.RJF\" or maybe use \"a1\". Actually, let me make the first sentence a direct answer covering the whole model, which spans multiple aspects. I could use part_id \"\" (empty) for a headline? The enum includes \"\". But better to attach to a specific cell.\n\nActually, simpler: make the first claim the a1 headline and let it serve as direct answer. I'll just order claims a1 first.\n\nLet me write the final JSON.\n\nActually, I realize I should double check the \"quote not verbatim\" items\u2014never put in quotation marks. I used some quotes like 'marathon, not a sprint' and 'best of both worlds'. Let me check which items are marked quote not verbatim:\n\n- RJF-PR-web-affiliation-options#0 item 2: quote not verbatim - I paraphrase, no quotes. Good, I didn't use quotes.\n- RJF-TR-2026Q1#44 item 9: quote not verbatim. I paraphrase. Good.\n- RJF-10K-2025#223 item 12: quote not verbatim. I paraphrase \"Account and service fees\" - that's a term, not a quote. Fine.\n- RJF-TR-2025Q3#26 items: item 2 quote not verbatim. Item 3 no mark (can quote). I paraphrase anyway.\n- RJF-TR-2026Q2#60: quote not verbatim. I paraphrase. Good.\n- RJF-TRADE...: quote not verbatim. I paraphrase. Good.\n\nFor item 9 a5 (RJF-TR-2024Q4#23): not marked quote not verbatim, but I wrote 'best of both worlds' in quotes. That's fine since it's verbatim? The quote given is \"We are unique in having the scope and breadth...\" which doesn't contain \"best of both worlds\" exactly. Hmm. Let me paraphrase without quotes to be safe. Actually \"best of both worlds\" appears in the cell's description, not the quote. Let me just say: describes a value proposition combining scope and breadth of products and capabilities with a culture anchored on putting people first. Avoid quotes.\n\nFor item 7 a5 (RJF-TR-2025Q4#98): quote given \"We have to have a competitive check...\" The phrase \"marathon, not a sprint\" is in the cell description. Not marked quote not verbatim. But to be safe, I'll paraphrase: describes advisor recruiting as a long-term effort. Actually the description says \"a long-term 'marathon, not a sprint'\". This is from the description, not marked not-verbatim. I'll use it carefully. Actually I'll paraphrase to avoid issues: \"Management described advisor recruiting as a long-term effort, targeting advisors who want to stay long-term rather than those moving for the highest check.\"\n\nLet me finalize without risky quotes. For a5 item 11, \"the advisor, not the home office, is the client\" - paraphrase fine.\n\nFor a2 item 7, ROCA is a term, fine.\n\nAlso for a5 item 8, quote not verbatim, paraphrase.\n\nLet me also check the \"Account and service fees\" \u2014 RJF-10K-2025#223 quote not verbatim, so no quotes. I'll write \"included in Account and service fees\" without quotes. It's a financial statement line item name, fine.\n\nNow let me also reconsider: should the headline claim cite a2 or a1? The question is \"How does the affiliation-choice model work commercially?\" So the commercial aspect (a2) is central. Let me make the direct answer mention payouts/economics.\n\nDirect answer claim: \"Raymond James's affiliation-choice model, AdvisorChoice\u00ae, lets financial advisors affiliate as employees or independent contractors (or through third-party RIAs/broker-dealers), with payout levels rising as advisors take on more of their own costs\u2014from up to 50% for Traditional Employee to 70-80% for Advisor Select to 81-90% for Independent Contractor and Corporate RIA.\" Cite RJF-10K-2025#10, RJF-PR-web-affiliation-options#1.\n\nHmm, but this spans a1 and a2. I could give it part_id \"\" or use the aspect id \"a1\"? Let me just make it part of the flow. I'll assign it part_id \"a1.RJF\" since it's primarily a1, but it also touches a2. Actually, to be safe, I'll write two headline sentences or just make the first a1 sentence and first a2 sentence clear.\n\nActually, simpler approach: The instructions say \"Claim 1 answers the question directly.\" I'll write a single headline sentence that cites both RJF-10K-2025#10 and RJF-PR-web-affiliation-options#1 (the payouts). Then continue with detailed aspects.\n\nLet me assign part_id \"\" to the headline? The enum allows \"\". But that might not be ideal. I'll use \"a1\" for a spanning sentence? The aspect id for a sentence spanning cells is \"a1\", \"a2\" etc. But this spans a1 and a2.\n\nHmm, honestly the cleanest: make the first claim a concise direct answer and give it a part_id. I'll use \"a1.RJF\" since the model description is a1's core, and the direct answer primarily describes the model. Actually the \"commercially\" part is a2.\n\nI'll just do: first claim part_id \"a1.RJF\" answering how it works (the model), then a2 sentences cover commercially. The direct answer to \"how does it work commercially\" is essentially covered across both.\n\nLet me just write a headline that answers and cite both. I'll set part_id to \"a1\" (aspect id, spanning). Actually no\u2014\"a1\" is the aspect for a1 only.\n\nI'll keep it simple and not overthink part_ids. I'll assign the headline to \"a1.RJF\" and make the headline focus on the model description plus note commercial structure.\n\nLet me write final now.\n\nActually, I'll reconsider whether to include every single item as separate sentence. The instructions are quite explicit about coverage. I'll include all as I drafted. It's long but correct.\n\nLet me write the final answer JSON.\n\nFor adjacent: empty array.\nFor gaps: empty array.\nanswerable: true.\nbehavior: \"answer\".\n\nLet me finalize text, making sure each sentence \u2264 35 words ideally (aim). Some will be longer; I'll try to keep concise.\n\nLet me write out final.",
+  "first_claim_s": 98.27,
+  "stream_items": {
+    "first_claim_s": 98.27,
+    "shown": 37,
+    "held": 2
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Raymond James offers multiple affiliation options, which it refers to as AdvisorChoice\u00ae, under which financial advisors affiliate directly as either employees or independent contractors, or as employees of third-party RIAs and broker-dealers serviced through its RIA and Custody Services division, per the FY2025 10-K.",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "AdvisorChoice\u00ae is described as a platform of dynamic options and the freedom to choose among them, letting advisors match their professional goals to the affiliation option that is right for them.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "The affiliation options listed by Raymond James include Traditional Employee, Advisor Select, Independent Contractor, Bank & Credit Union, and Corporate RIA.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#0"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Employee financial advisors work in a traditional branch supported by local management and administrative staff, serve predominantly retail clients, and are compensated primarily through a payout on revenues they generate, also participating in the firm's employee benefit plans.",
+        "chunk_ids": [
+          "RJF-10K-2025#10"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Independent contractor financial advisors are generally responsible for all of their direct costs and, accordingly, receive a higher payout percentage on the revenues they generate than employee financial advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#11"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended March 31, 2026, management stated independent payouts are higher than employee payouts because independent advisors cover their own overhead, real estate, and health insurance, while the employee side uses tiered payout systems where higher production moves an advisor up the payout grid.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#44"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Independent contractor financial advisors may affiliate directly or through an affiliated bank or credit union in the Financial Institutions Division, and with specific approval may conduct certain other approved business activities such as insurance products, independent RIA services, and accounting and tax services.",
+        "chunk_ids": [
+          "RJF-10K-2025#11"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended June 30, 2026, management stated it is agnostic about how an advisor affiliates\u2014employee, independent contractor, or RIA custody\u2014wanting advisors to choose based on fit with its culture, values, platform, and capabilities.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#26"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "In its 2025 investor day deck, Raymond James described the affiliation spectrum as ranging from employee (RJA) to independent contractor (ICD) to RIA & Custody Services, noting the movement to independence is not channel-specific.",
+        "chunk_ids": [
+          "RJF-DECK-2025-investor-day#38"
+        ],
+        "part_id": "a1.RJF"
+      },
+      {
+        "text": "Under the Traditional Employee model, advisors receive up to a 50% payout plus the full array of competitive employee benefits offerings.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Under the Advisor Select model, advisors receive a 70-80% gross payout plus the full array of competitive employee benefits offerings, and run their own branch.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Under the Independent Contractor model, advisors receive an 81% to 90% payout and leverage third-party partnerships to build their own benefits package.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#1"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Under the Bank & Credit Union model, advisors receive a competitive compensation package from the financial institution in partnership with Raymond James.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Under the Corporate RIA model, advisors receive an 81% to 90% payout and build their own benefits package through third-party partnerships.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Under the RIA & Custody Services model, advisors work with their RIA or broker/dealer to determine compensation and create their own benefits package.",
+        "chunk_ids": [
+          "RJF-PR-web-affiliation-options#2"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended September 30, 2024, management stated the margin on a P&L basis is actually higher for RIA custody because the attachment revenue booked is much lower, whereas other businesses gross up revenues pre-payout, and ROCA varies with the RIA's asset mix and pricing structure.",
+        "chunk_ids": [
+          "RJF-TR-2024Q3#93"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "For firms affiliated through the RIA and Custody Services division, revenues related to their assets in the PCG segment are included in Account and service fees.",
+        "chunk_ids": [
+          "RJF-10K-2025#223"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "As of September 30, 2025, Raymond James reported 8,943 total financial advisors across the whole firm, consisting of 3,878 employee financial advisors and 5,065 independent contractor advisors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "As of September 30, 2024, the firm reported 8,787 total financial advisors, consisting of 3,826 employees and 4,961 independent contractors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "As of September 30, 2023, the firm reported 8,712 total financial advisors, consisting of 3,693 employees and 5,019 independent contractors.",
+        "chunk_ids": [
+          "RJF-10K-2025#227"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the fiscal 2025 fourth-quarter earnings call, management said Raymond James ended fiscal 2025 with a record number of financial advisors, 2% higher than the prior year, reflecting solid advisor retention and strong recruiting results.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#8"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "For fiscal 2025, Raymond James reported record trailing 12-month production for recruited financial advisors of $407 million.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#4"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Through the first 9 months of fiscal 2026, Raymond James recruited advisors with trailing 12-month production totaling $393 million and more than $56 billion of client assets at their previous firms.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#6"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "In the fiscal third quarter ended June 30, 2026, Raymond James recruited financial advisors to its domestic independent contractor and employee channels with trailing 12-month production totaling $156 million and nearly $23 billion of client assets at their previous firms.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#5"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "In the fiscal second quarter ended March 31, 2026, Raymond James recruited financial advisors to its domestic independent contractor and employee channels with trailing 12-month production totaling $141 million and nearly $21 billion of client assets at their previous firms.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#4"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "For the year ended September 30, 2025, Raymond James's domestic financial advisor retention remained very strong.",
+        "chunk_ids": [
+          "RJF-10K-2025#28"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended June 30, 2026, CEO Paul Shoukry cited a 97% advisor satisfaction rate with the firm's surveys, which he described as the best he knows of in the industry.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#26"
+        ],
+        "part_id": "a3.RJF"
+      },
+      {
+        "text": "Raymond James defines domestic Private Client Group net new assets as domestic Private Client Group client inflows, including dividends and interest, less domestic Private Client Group client outflows, including commissions, advisory fees, and other fees.",
+        "chunk_ids": [
+          "RJF-SUPP-2025Q3#43"
+        ],
+        "part_id": "a4.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended June 30, 2026, management stated Raymond James does not lead with the highest transition check but leads with culture and capabilities, requiring competitive economics while offering a differentiated value proposition and remaining disciplined on transition assistance and advisor economics.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#59"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "On the earnings call for the quarter ended September 30, 2025, management stated the firm is focused on the long term and providing a stable platform, attracting and retaining advisors with its unique culture, leading service, and robust platform rather than the largest check.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#26"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Management also stated Raymond James values independence to foster an environment where advisors can provide objective advice, unlike competitors that change comp plans each year to cross-sell bank products.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#26"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Management stated the firm has the largest addressable market in the industry because it offers all affiliation options and is agnostic about how advisors affiliate, wanting them drawn to its culture, values, platform, and capabilities.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#26"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Management stated advisors do not have to choose between culture and capabilities, as the firm offers a unique combination of an advisor- and client-focused culture with leading technology, products, and solutions.",
+        "chunk_ids": [
+          "RJF-TR-2026Q1#5"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Management stated the firm has the largest addressable market across its affiliation options\u2014from employee to independent contractor to RIA custody\u2014with critical mass and decades of experience in all of them.",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#50"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Management described advisor recruiting as a long-term effort, targeting advisors who want to stay long-term rather than those moving for the highest check.",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#98"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Management stated consistency is a critical concept in recruiting and retaining advisors, focusing on finding advisors who are good cultural fits with the firm across its affiliation options.",
+        "chunk_ids": [
+          "RJF-TR-2026Q2#60"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Management described a value proposition combining the scope and breadth of products and capabilities with a strong culture anchored on putting people first.",
+        "chunk_ids": [
+          "RJF-TR-2024Q4#23"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Management stated its strong balance sheet and commitment to independence is proving to be a differentiator for advisors evaluating alternatives.",
+        "chunk_ids": [
+          "RJF-TR-2025Q3#8"
+        ],
+        "part_id": "a5.RJF"
+      },
+      {
+        "text": "Trade press reports that management (CEO Paul Shoukry and Elwyn) stated the advisor, not the home office, is the client, and that the firm builds its advisory ranks through individualized recruitment rather than large-scale acquisitions, evaluating each prospective advisor one-on-one.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#4"
+        ],
+        "part_id": "a5.RJF"
+      }
+    ],
+    "adjacent": [],
+    "gaps": []
+  }
+}

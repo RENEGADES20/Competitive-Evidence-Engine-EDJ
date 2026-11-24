@@ -1,0 +1,524 @@
+{
+  "question_id": "Q13",
+  "question": "How does Morgan Stanley convert workplace and stock-plan participants into wealth management clients?",
+  "reduce_version": "v9",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-TR-2025Q4#7",
+    "MS-TR-2026Q1#24",
+    "MS-TR-2024Q4#94",
+    "MS-TR-2025Q3#13",
+    "MS-TR-2026Q2#16",
+    "MS-TR-2025Q4#12",
+    "MS-TR-2024Q4#9",
+    "MS-TR-2025Q2#34",
+    "MS-TR-2026Q1#13",
+    "MS-TR-2025Q3#42",
+    "MS-DECK-2026-strategic-update#22",
+    "MS-10Q-2025Q3#60",
+    "MS-TR-2025Q3#15",
+    "MS-TR-2025Q4#20",
+    "MS-TR-2025Q1#13",
+    "MS-TR-2026Q2#21",
+    "MS-TR-2026Q2#28",
+    "MS-TR-2025Q2#35",
+    "MS-TR-2025Q3#25",
+    "MS-DECK-2026-strategic-update#13",
+    "MS-DECK-2026-strategic-update#32",
+    "MS-TR-2026Q3#23",
+    "MS-TR-2026Q3#15",
+    "MS-SUPP-2026Q2#37",
+    "MS-10Q-2026Q2#16",
+    "MS-DECK-2026-strategic-update#23",
+    "MS-TR-2026Q2#23",
+    "MS-TR-2024Q4#77",
+    "MS-TR-2025Q3#43",
+    "MS-TR-2026Q3#13",
+    "MS-TR-2024Q4#13",
+    "MS-TR-2025Q3#8",
+    "MS-TR-2026Q2#59",
+    "MS-TR-2025Q1#70",
+    "MS-10Q-2026Q2#61",
+    "MS-SUPP-2026Q3#17",
+    "MS-10K-2025#164",
+    "MS-TR-2024Q4#26",
+    "MS-TR-2026Q3#32",
+    "MS-TR-2025Q4#19",
+    "MS-TR-2026Q2#14",
+    "MS-TR-2026Q3#16"
+  ],
+  "schema_fallback": [],
+  "enum_values": 136,
+  "at": "2026-11-24T00:37:04.176339-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 13875,
+    "output_tokens": 13101,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 12211,
+    "reasoning_tokens": 8617,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.22
+  },
+  "wall_s": 156.42,
+  "tokens_per_s": 83.76,
+  "ttft_s": 2.22,
+  "reasoning_content": "Let me analyze the question. I need to write an answer for Morgan Stanley on how it converts workplace and stock-plan participants into wealth management clients.\n\nThe aspects:\n- a1 [fact]: strategy description\n- a2 [fact]: channel and pipeline description\n- a3 [fact]: programs, offerings, services\n- a4 [fact]: how advisors/firm engage participants\n- a5 [series]: conversion rates, penetration figures, counts\n- a6 [series, proxy, adjacent only]: closest disclosed figure\n- a7 [recency]: new initiatives/pilots\n- a8 [comparison]: position vs competitors\n\nI need to write claims with part_ids. Let me map part_ids:\n- a1.MS, a2.MS, a3.MS, a4.MS, a5.MS, a7.MS for individual firm fact/series aspects\n- a6.MS is adjacent only\n- a8 is comparison (needs one claim, part_id a8)\n- a1, a2, etc. are aspect ids for sentences spanning firms (not needed since single firm)\n\nSince this is single firm, I should use a1.MS, a2.MS, etc. for individual cell claims, and a8 for comparison.\n\nWait, let me look at the part_id enum. It includes both a1.MS and a1. For single firm, I think the cell id (a1.MS) is what I write from. The aspect id (a1) is for \"sentence spanning firms.\" Since only one firm, I'll use a1.MS etc.\n\nLet me write claims.\n\nFirst claim answers the question directly (headline). Then cover each aspect.\n\nLet me structure:\n\nClaim 1 (headline, answers directly): Morgan Stanley's three channels... Actually the headline should answer \"How does Morgan Stanley convert workplace and stock-plan participants into wealth management clients?\"\n\nLet me use a1.MS item 1: \"Morgan Stanley describes its three channels\u2014financial advisors, Workplace, and E*TRADE\u2014as comprising its 'strategic client acquisition model,' positioning Workplace as the top of the funnel for acquiring wealth management clients.\"\n\nActually let me think about the headline. The headline should answer directly. Something like: Morgan Stanley converts workplace/stock-plan participants into wealth clients through its client acquisition funnel (Workplace at top of funnel), channel migration into the advisor-led channel, referral models (Carta, LeadIQ), and financial wellness/advice offerings.\n\nLet me write one headline sentence citing key items.\n\nThen per aspect, write cited sentences.\n\nLet me plan the claims:\n\nHeadline (a1? or empty part_id): Actually the first claim answers the question directly. I'll make it cite a few key chunks. But part_id... I'll assign to a1.MS maybe? Or use \"\" empty? Let me look. The part_id enum has \"\" as an option.\n\nActually, let me think. The instruction says \"Claim 1 answers the question directly... and MUST cite the items it rests on.\" Then \"Cover what was asked: every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence.\"\n\nSo I need to cover each aspect. Let me write a headline claim and then aspect claims.\n\nFor the headline, I could use a1.MS or \"\". Let me use \"\" for the headline? Actually, let me reconsider. The headline could be part of a1 (strategy). Hmm.\n\nLet me just write a headline claim with part_id \"\" and cite MS-TR-2025Q4#7, MS-TR-2026Q1#24.\n\nActually, I think a cleaner approach: headline claim as a1.MS item 1 (the strategic client acquisition model), which IS the strategy description. But the headline should be more comprehensive.\n\nLet me write:\n\nHeadline (part_id \"\"): Morgan Stanley converts workplace and stock-plan participants into wealth management clients through its strategic client acquisition model in which the Workplace channel sits at the top of the funnel, with assets migrating over time into the advisor-led channel. Cite MS-TR-2025Q4#7, MS-TR-2026Q1#24, MS-TR-2024Q4#94.\n\nThen aspect claims.\n\na1.MS (strategy): \n- MS-TR-2025Q4#7 (strategic client acquisition model)\n- MS-TR-2026Q1#24 (funnel: retain vested assets, channel migration)\n- MS-TR-2024Q4#94 ($300 billion channel migration since 2020)\n- MS-TR-2025Q3#13 (migration attributed to investments)\n- MS-TR-2026Q2#16 (Workplace brings relationships/assets, deliver advice)\n- MS-TR-2025Q4#12 (MS at Work early trusted advisor)\n- MS-TR-2024Q4#9 (self-directed and Workplace channels drive funnel)\n- MS-TR-2025Q2#34 (70% net new assets)\n- MS-TR-2026Q1#13 ($400 billion new adviser-led assets)\n- MS-TR-2025Q3#42 (Carta referral)\n- MS-DECK-2026-strategic-update#22 (client lifecycle)\n\nI need to cover all cells but can write multiple sentences. Each sentence one claim. Actually I can write multiple sentences per aspect, each with part_id a1.MS.\n\nThis is a lot. Let me be thorough but efficient. I should write a sentence for each item essentially, or combine where they're about the same point? The instruction says \"one sentence per asked item\" for lists, and \"every cell that holds a fact... is cited by a sentence.\"\n\nActually the instruction says \"Cover what was asked: every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence (its cell id as part_id...).\"\n\nHmm, this suggests each cell gets cited by a sentence. But that's a LOT of sentences. Let me interpret: I should make sure all the facts are covered, citing chunk ids. I can group related items into sentences but each sentence must cite all chunks it rests on.\n\nLet me be pragmatic and write comprehensive sentences per aspect, each citing relevant chunks. I'll aim to cover all key items.\n\nActually, let me reconsider the scope. The question is fairly broad. I'll write a thorough answer covering each aspect with multiple sentences where needed.\n\nLet me draft.\n\nHeadline claim (part_id \"\"): \n\"Morgan Stanley converts workplace and stock-plan participants into wealth management clients through a client acquisition funnel in which the Workplace channel is the top of the funnel, and workplace assets migrate over time into the advisor-led channel via referral models, financial education, and advice offerings.\" cite MS-TR-2025Q4#7, MS-TR-2026Q1#24, MS-TR-2024Q4#94, MS-TR-2026Q2#28.\n\nActually maybe simpler headline. Let me write it as answering directly.\n\nLet me now write each aspect.\n\na1.MS - strategy description. Multiple sentences:\n\nS1: \"Morgan Stanley describes its three channels\u2014financial advisors, Workplace, and E*TRADE\u2014as together comprising its 'strategic client acquisition model,' with Workplace positioned as the top of the funnel for acquiring wealth management clients.\" cite MS-TR-2025Q4#7.\n\nS2: \"On the fourth-quarter 2025 call, management described the funnel as beginning with retaining vested workplace assets (which translates into net new assets), followed over time by channel migration where workplace assets seek advice and move into the adviser-led channel.\" cite MS-TR-2026Q1#24.\n\nS3: \"Morgan Stanley defines channel migration as workplace assets that began in the Workplace channel moving into the advisor-led channel, with $300 billion doing so since 2020.\" cite MS-TR-2024Q4#94.\n\nS4: \"The firm attributes the migration of workplace-originated assets into the advisor-led channel to its consistent investments in its differentiated platform.\" cite MS-TR-2025Q3#13.\n\nS5: \"On the second-quarter 2026 call, management said Workplace brings relationships and assets onto the platform, then the firm delivers advice and solutions to build fee-based assets.\" cite MS-TR-2026Q2#16.\n\nS6: \"Morgan Stanley describes its Morgan Stanley at Work business as positioning it as an early trusted advisor to private companies, where employees benefit from management of equity compensation plans, liquidity opportunities, and full-service advice as companies grow.\" cite MS-TR-2025Q4#12.\n\nS7: \"The firm describes its investments in the self-directed and Workplace channels as driving its differentiated client acquisition funnel.\" cite MS-TR-2024Q4#9.\n\nS8: \"Morgan Stanley states that 70% of the flows originating from workplace are net new assets to the firm.\" cite MS-TR-2025Q2#34.\n\nS9: \"Since 2020, Morgan Stanley states it has generated over $400 billion of new adviser-led assets from relationships that originated from either Workplace or E*TRADE.\" cite MS-TR-2026Q1#13.\n\nS10: \"Morgan Stanley describes a referral-based partnership with Carta under which private companies moving from private to public are referred to Morgan Stanley.\" cite MS-TR-2025Q3#42.\n\nS11: \"The strategic-update deck depicts a client lifecycle in which workplace founders and employees move from financial wellness and equity compensation through to full-service wealth advice and asset allocation as companies go public.\" cite MS-DECK-2026-strategic-update#22.\n\nThat's a lot. I'll include all.\n\na2.MS - channel/pipeline description:\n\nS1: \"Morgan Stanley defines the workplace channel as including equity compensation solutions for companies, their executives and employees.\" cite MS-10Q-2025Q3#60.\n\nS2: \"The firm defines stock plan participants as total accounts with vested and/or unvested stock plan assets in the workplace channel, with individuals holding accounts in multiple plans counted in each plan.\" cite MS-10Q-2025Q3#60.\n\nS3: \"On the third-quarter 2025 call, the CFO described the workplace channel as a powerful asset acquisition tool, with the reopening of the IPO market supporting net new assets.\" cite MS-TR-2025Q3#15.\n\nS4: \"On the second-quarter 2026 call, the CFO said Workplace is a strong contributor to the top of the funnel, with stock plan IPO flows representing just over half of overall net new assets that quarter.\" cite MS-TR-2026Q2#16.\n\nS5: \"The CEO said the financial advisors, Workplace, and E*TRADE channels together comprise the firm's strategic client acquisition model.\" cite MS-TR-2025Q4#7.\n\nS6: \"Advisor-led assets originating from workplace and E*TRADE relationships grew to a record $99 billion for full-year 2025, versus historical averages of around $60 billion per year.\" cite MS-TR-2025Q4#20.\n\nS7: \"In the first quarter of 2025, assets migrating to the advisor-led channel that originated from the workplace channel increased by an incremental $20 billion, adding to roughly $300 billion accumulated from workplace since the channel expanded in 2020.\" cite MS-TR-2025Q1#13.\n\nS8: \"On the second-quarter 2026 call, the firm said it has about 70% of the top 100 unicorns by market cap in its workplace pipeline, with IPOs serving as a source of net new assets at the top of the funnel.\" cite MS-TR-2026Q2#21.\n\nS9: \"The CFO said 70% of the flows that originate from the workplace channel are actually net new assets to the firm.\" cite MS-TR-2025Q2#34.\n\nS10: \"On the second-quarter 2026 call, the CFO said the firm is working on a referral model that can begin as early as the financial education spot to convert workplace clients into advice-based relationships.\" cite MS-TR-2026Q2#28.\n\nS11: \"The CEO said the Morgan Stanley at Work business positions the firm as an early trusted advisor to over 50,000 private companies.\" cite MS-TR-2025Q4#12.\n\nS12: \"On the second-quarter 2025 call, the CFO said the firm historically had about $16 billion per year originating from workplace and was running ahead of that in 2025.\" cite MS-TR-2025Q2#35.\n\nS13: \"On the third-quarter 2025 call, the CFO cited a $300 billion workplace migration figure and about $60 billion of migration per year historically, saying workplace has contributed to net new assets, fee-based flows, and channel migration.\" cite MS-TR-2025Q3#25.\n\nS14: \"The strategic update deck showed advisor-led flows from workplace and E*TRADE of approximately $60 billion average for 2020-2024 and approximately $100 billion for 2025.\" cite MS-DECK-2026-strategic-update#13, MS-DECK-2026-strategic-update#32.\n\nS15: \"On the third-quarter 2026 call, the CEO described attachment points that bring clients to E*TRADE and, where appropriate, fee-based flows that make their way to advisers, with clients acquired in the corporate stock plan (workplace) context.\" cite MS-TR-2026Q3#23.\n\nS16: \"The CFO said the firm's pipeline and connectivity across channels allows it to build relationships early and deepen them over time.\" cite MS-TR-2026Q3#15.\n\na3.MS - programs/offerings/services:\n\nS1: \"Morgan Stanley's Workplace channel includes equity compensation solutions (stock plan administration) for companies, their executives and employees, as the entry point through which workplace participants are engaged.\" cite MS-SUPP-2026Q2#37.\n\nS2: \"The firm's Wealth Management segment provides workplace services, including stock plan administration, and retirement plan services, as one of three channels (Advisor-Led, Self-Directed and Workplace).\" cite MS-10Q-2026Q2#16.\n\nS3: \"The strategic-update deck shows a client lifecycle offering spanning financial wellness and employee benefits, founders wealth strategies, full-service wealth advice and asset allocation, family office solutions, trust and estate planning, private shares trading and lending, and IPO execution and support services.\" cite MS-DECK-2026-strategic-update#22.\n\nS4: \"The firm's 'MS at Work' offering provides stock plan and 401(k) administration, cap table management, cash management solutions, and private capital markets/tender/financing and IPO services for late-stage/IPO companies.\" cite MS-DECK-2026-strategic-update#23.\n\nS5: \"Morgan Stanley uses referral models and technology such as the LeadIQ product to match individuals (including workplace participants) with advisers, with the goal of becoming their principal financial adviser.\" cite MS-TR-2026Q2#23.\n\nS6: \"Through its exclusive partnership with Carta, private stock plan/corporate companies are referred to Morgan Stanley as they go public, providing a seamless experience to convert participants into wealth clients.\" cite MS-TR-2024Q4#77.\n\nS7: \"Morgan Stanley offers advice-based services to founders and individuals of private companies through its Carta relationship, deepening relationships as companies transition from private to public.\" cite MS-TR-2025Q3#43.\n\nS8: \"The firm's referral model for workplace participants can begin as early as the financial education spot and with 401(k) assets, to help individuals understand where they could use advice.\" cite MS-TR-2026Q2#28.\n\nS9: \"Morgan Stanley continues to expand its retirement capabilities and deepen engagement with plan participants, creating opportunities to build advice-based relationships over time.\" cite MS-TR-2026Q3#13.\n\nS10: \"Morgan Stanley provides financial wellness programs to company employees as part of the Integrated Firm, spanning from advice in corporate boardrooms to financial wellness programs for employees.\" cite MS-TR-2024Q4#13.\n\na4.MS - how advisors/firm engage:\n\nS1: \"Morgan Stanley uses an AI-powered lead distribution platform called LeadIQ that matches workplace and self-directed relationships and facilitates engagement with financial advisors.\" cite MS-TR-2025Q3#8.\n\nS2: \"For workplace participants who do not yet have an advice-based relationship, the firm works a referral model that can begin as early as the financial education spot and through 401(k) assets.\" cite MS-TR-2026Q2#28.\n\nS3: \"Morgan Stanley drives channel migration from workplace to advisor-led through technology and investment, as workplace assets begin seeking advice.\" cite MS-TR-2026Q1#24.\n\nS4: \"Assets that originate from workplace migrate into the advisor-led channel as a result of consistent investments into its differentiated platform.\" cite MS-TR-2025Q3#13.\n\nS5: \"Morgan Stanley at Work, through its exclusive partnership with Carta, positions the firm as an early trusted advisor to private companies, and employees benefit from equity compensation plan management, liquidity opportunities, and full-service advice.\" cite MS-TR-2025Q4#12.\n\nS6: \"The firm begins at the top of the funnel with corporate coverage, using the Integrated Firm to build corporate relationships that lead to workplace relationships.\" cite MS-TR-2026Q2#59.\n\nS7: \"Advisors engage retail clients by sending 'next best actions,' and Morgan Stanley has seen increased responses to these engagements.\" cite MS-TR-2025Q1#70.\n\na5.MS - conversion rates/penetration/counts (series):\n\nS1: \"Morgan Stanley states that since 2020 it has seen $300 billion of assets initiate in the Workplace channel and move into the advisor-led channel.\" cite MS-TR-2024Q4#94.\n\nS2: \"The firm states it has seen about $60 billion of workplace-to-advisor-led migration per year, and as of the third quarter of 2025 was exceeding that pace on a full-year basis.\" cite MS-TR-2025Q3#25.\n\nS3: \"The firm defines 'Advisor-Led Flows from Workplace and E*TRADE' as assets brought into advisor-led relationships where the initial account was workplace or self-directed.\" cite MS-DECK-2026-strategic-update#32.\n\na6.MS - adjacent only. These go in adjacent, not claims.\n\na7.MS - new initiatives/pilots/developments:\n\nS1: \"As of the third quarter of 2025, Morgan Stanley reports LeadIQ, an AI-powered lead distribution platform focusing on matching workplace and self-directed relationships, as one of its early AI use cases, some live and some in pilot.\" cite MS-TR-2025Q3#8.\n\nS2: \"As of the fourth quarter of 2024, the firm reports a recently announced partnership with Carta that puts it at the center of new client stock plan opportunities as private companies consider going public.\" cite MS-TR-2024Q4#26.\n\nS3: \"As of the third quarter of 2025, Morgan Stanley reports deepening its competitive moats through an expanded collaboration with Carta in private markets and announced partnerships with Zero Hash in digital assets.\" cite MS-TR-2025Q3#13.\n\nS4: \"As of the fourth quarter of 2025, the firm reports that its Morgan Stanley at Work business, through its exclusive partnership with Carta, positions it as an early trusted advisor to over 50,000 private companies.\" cite MS-TR-2025Q4#12.\n\na8 - comparison (one claim, part_id a8):\n\n\"Morgan Stanley positions its workplace and stock-plan conversion efforts as a differentiated and industry-leading client acquisition funnel: management states it is in a singular position in the industry due to the integrated scaling of the funnel, cites about 70% of the top 100 unicorns in its workplace pipeline, and claims industry-leading growth demonstrated by net new assets and fee-based flows.\" cite multiple.\n\nActually the comparison claim should say whether the comparison can be made on this evidence. But a8 has fact items (item 1-8). Wait, a8 is marked \"comparison\" aspect. But the evidence items are \"fact\" type. Let me re-read.\n\nAspect a8: \"How does the firm position its workplace and stock-plan participant conversion efforts relative to competitors or the industry?\" The items are all \"fact\" (describing how MS positions itself). There's no cross-firm comparison data. So the comparison claim should state that the firm positions itself as industry-leading/singular, but a true cross-firm comparison can't be made because these are the firm's own claims.\n\nActually the instruction for comparison: \"For each aspect marked comparison, one sentence (part_id that aspect's id) says whether the comparison can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why.\"\n\nHmm, but a8's items are fact items (MS's own positioning). Since it's single firm, and the items describe how MS positions itself relative to competitors/industry (self-positioning, not objective comparison), I should write one comparison claim that says the evidence shows MS's own positioning claims, not an objective cross-firm comparison.\n\nLet me write: \"The comparison cannot be made on objective cross-firm evidence: the items are Morgan Stanley's own self-positioning statements (e.g., a singular position in the industry, industry-leading growth, 70% of the top 100 unicorns) rather than independently measured competitor data.\" cite MS-TR-2026Q3#32, MS-TR-2025Q3#13, MS-TR-2026Q2#21, MS-TR-2025Q4#19, MS-TR-2026Q2#14, MS-TR-2026Q3#16, MS-TR-2024Q4#9, MS-TR-2026Q2#16.\n\nBut wait, I should also report the positioning facts. Actually the a8 items should be reported. Hmm.\n\nLet me think about how to handle a8. The aspect asks \"How does the firm position... relative to competitors/industry?\" So I need to report the positioning (which is fact), and then the comparison claim states whether a true comparison can be made.\n\nActually, re-reading: the comparison sentence is required for \"each aspect marked comparison.\" The a8 aspect is marked comparison in the structure (the header says \"a8 [comparison]\"). So I need exactly one comparison claim, part_id a8.\n\nBut I also need to report the fact items in a8. Hmm. The evidence matrix for a8 lists items as \"fact\" but the aspect is \"comparison.\" \n\nActually wait, looking more carefully: the aspects list says \"a8 [comparison]: How does the firm position...\" and \"-> needs exactly one comparison claim, part_id a8\".\n\nSo I think a8 needs exactly one claim (part_id a8) that reports the positioning AND/OR states comparison validity. Let me write one sentence that captures the positioning and the comparison status.\n\nGiven the items are all MS's self-positioning, I'll write one comparison claim summarizing that MS positions itself as industry-leading/differentiated, and note that these are self-positioning claims not an objective comparison.\n\nActually, let me write the comparison claim to report the positioning (which is what the aspect asks) and then note comparison validity. Since it's one sentence per the \"exactly one comparison claim\" requirement, I'll combine.\n\nLet me write:\n\na8 comparison claim: \"Morgan Stanley positions its workplace and stock-plan participant conversion as industry-leading and differentiated, claiming a singular position in the industry from its integrated client acquisition funnel, about 70% of the top 100 unicorns in its workplace pipeline, and industry-leading net new assets; however, these are the firm's own self-positioning statements, so an objective cross-firm comparison cannot be made on this evidence.\"\n\ncite: MS-TR-2026Q3#32, MS-TR-2026Q2#21, MS-TR-2025Q4#19, MS-TR-2026Q3#16.\n\nHmm but I want to cover more items. Let me include MS-TR-2025Q3#13, MS-TR-2026Q2#14, MS-TR-2024Q4#9, MS-TR-2026Q2#16 too. But a single sentence can cite many chunks.\n\nActually, let me split: The comparison aspect needs exactly one comparison claim. But can I also report fact items in separate claims with part_id a8? The instruction says \"needs exactly one comparison claim, part_id a8\". So exactly one claim for a8.\n\nI'll write one comprehensive comparison claim citing the key positioning items.\n\nLet me finalize. Also note the standard wording: I need to be careful about \"quote not verbatim\" items - never put in quotation marks.\n\nAlso for figures: give the firm's own definition alongside figures.\n\nFor a6 adjacent: I need to write adjacent items with differs_because. a6.MS has 11 items, all adjacent only (stand-in figure). The instruction: \"A cell marked 'adjacent only' goes in adjacent, never in claims, one adjacent item per cell, each with differs_because.\"\n\nWait, a6.MS is the whole cell marked \"stand-in figure (adjacent only)\". So all 11 items go in adjacent. But should I write one adjacent item per item (11 items) or one per cell?\n\n\"one adjacent item per cell\" - so one adjacent item for the a6.MS cell. But there are 11 items with different figures. Hmm.\n\nActually the a6 aspect is a \"proxy\" stand-in figure, adjacent only. The items are the closest disclosed figures. I think I should write adjacent entries for these stand-in figures, each with differs_because explaining why they're not the actual conversion figure.\n\nThe instruction for adjacent: \"one adjacent item per cell, each with differs_because from the cell, in your words with the same meaning.\"\n\nHmm, \"one adjacent item per cell\" - a6.MS is one cell. But it has many items. Let me reconsider. Actually each item in the matrix might be treated as needing adjacent representation. But the guidance says \"one adjacent item per cell.\"\n\nGiven the complexity, I think the intent is to write adjacent entries capturing the stand-in figures (since a6 is proxy/adjacent only), explaining how each differs from actual conversion.\n\nActually, re-reading more carefully. The a6 items are various stand-in figures. They should go in adjacent with differs_because explaining they're not actual participant conversion counts.\n\nLet me write adjacent entries for the key stand-in figures. The differs_because for a6 should be something like \"These are stand-in figures (advisor-led flows, stock plan participant counts, net new assets), not direct measures of participant conversion into wealth management clients.\"\n\nActually, I think the cleanest is to write a few adjacent items capturing the stand-in figures, each with a differs_because noting it's a proxy, not a conversion metric.\n\nLet me write adjacent items for a6.MS:\n\n1. Advisor-Led Flows from Workplace and E*TRADE: ~$60B avg 2020-2024 vs ~$100B 2025. differs_because: \"This measures assets brought into advisor-led relationships, not a conversion rate or count of individual participants converted.\"\n\n2. Record $99 billion advisor-led assets originating from workplace/E*TRADE FY2025. differs: same.\n\n3. Over $400 billion new adviser-led assets since 2020. differs.\n\n4. Over $1.2 trillion adviser-led assets sourced from workplace/E*TRADE, ~20%. differs.\n\n5. 70% of workplace flows are net new assets. differs.\n\n6. $20 billion incremental Q1 2025. differs.\n\n7. 6.6M stock plan participants June 30 2026. differs: \"counts total accounts, not converted clients.\"\n\n8. 6.7M stock plan participants Sep 30 2026. differs.\n\n9-11. Wealth Management NNA. differs.\n\nThat's a lot of adjacent items. But the instruction says \"one adjacent item per cell.\" So maybe I should write ONE adjacent item summarizing? But that doesn't capture all figures.\n\nHmm, let me reconsider. Actually maybe I'm overcomplicating. The guidance \"one adjacent item per cell\" - a6.MS is one cell. But the cell has 11 items of stand-in figures. I think I should provide adjacent entries that capture the meaningful stand-in figures.\n\nActually, let me re-read the overall instruction for adjacent:\n\n\"A cell marked 'adjacent only' goes in adjacent, never in claims, one adjacent item per cell, each with differs_because from the cell, in your words with the same meaning.\"\n\nI think \"one adjacent item per cell\" means one adjacent entry per cell (not one per item). But the a6 cell contains multiple stand-in figures. \n\nGiven the basis break note: \"whole firm: 2025Q1; Workplace channel: 2026-06-30, 2026-09-30 -> state each basis with its own periods; never join them.\"\n\nThis suggests I should state the figures by basis. The stock plan participants (6.6M, 6.7M) are Workplace channel basis. The NNA figures are whole firm.\n\nI think I'll write a reasonable number of adjacent items. Let me write:\n\nAdjacent item 1 (a6.MS): Stock plan participants in the workplace channel \u2014 6.6 million at June 30, 2026 and 6.7 million at September 30, 2026. differs_because: \"This counts total accounts with vested/unvested stock plan assets, not participants converted into wealth management clients.\"\n\nAdjacent item 2 (a6.MS): Advisor-Led Flows from Workplace and E*TRADE ~$60B avg 2020-2024 vs ~$100B 2025. differs_because: \"This is advisor-led asset flow from workplace/self-directed originations, a stand-in for conversion, not a conversion rate or count of participants.\"\n\nAdjacent item 3 (a6.MS): Wealth Management net new assets $356.3B (2025), $251.7B (2024), $282.3B (2023). differs_because: \"Net new assets are whole-firm wealth management flows, not a measure of workplace participant conversion.\"\n\nHmm, but I want to be faithful. Let me write adjacent items that capture the main stand-in figures. Actually, given \"one adjacent item per cell,\" I think maybe I should consolidate. But there's tension.\n\nI'll write a few adjacent items, each representing a distinct stand-in figure type, with differs_because. This captures the proxy nature.\n\nLet me write:\n\nAdjacent 1 (part_id a6.MS): \"Morgan Stanley reports 6.6 million stock plan participants in the workplace channel at June 30, 2026, versus 6.5 million at December 31, 2025, and 6.7 million at September 30, 2026.\" cite MS-10Q-2026Q2#61, MS-SUPP-2026Q3#17. differs_because: \"Stock plan participant counts measure total accounts with vested/unvested stock plan assets, not participants converted into wealth management clients.\"\n\nAdjacent 2: \"The strategic update deck shows Advisor-Led Flows from Workplace and E*TRADE of approximately $60 billion average for 2020-2024 versus approximately $100 billion in 2025.\" cite MS-DECK-2026-strategic-update#13, MS-DECK-2026-strategic-update#32. differs_because: \"These are asset flows into advisor-led relationships, a proxy for conversion, not a conversion rate or count of participants.\"\n\nAdjacent 3: \"Morgan Stanley reports Wealth Management net new assets of $356.3 billion in 2025, $251.7 billion in 2024, and $282.3 billion in 2023.\" cite MS-10K-2025#164. differs_because: \"Net new assets are whole-segment client asset inflows, not a measure of workplace participant conversion.\"\n\nAdjacent 4: \"Since 2020, Morgan Stanley states it has generated over $400 billion of new adviser-led assets from relationships originating from Workplace or E*TRADE, and over $1.2 trillion total adviser-led assets sourced from these channels (roughly 20% of adviser-led assets).\" cite MS-TR-2026Q1#13. differs_because: \"These are advisor-led asset figures originating from workplace/E*TRADE, a stand-in for conversion, not a count of participants converted.\"\n\nAdjacent 5: \"Morgan Stanley states 70% of workplace-originated flows are net new assets to the firm.\" cite MS-TR-2025Q2#34. differs_because: \"This is the share of workplace flows that are net new assets, not a participant conversion rate.\"\n\nAdjacent 6: \"In Q1 2025, assets migrating to the advisor-led channel that originated from workplace added an incremental $20 billion, adding to roughly $300 billion accumulated since 2020.\" cite MS-TR-2025Q1#13. differs_because: \"This is channel-migration asset value, not a conversion count.\"\n\nHmm, this is a lot of adjacent items. But it's fine\u2014adjacent is allowed multiple. Actually the instruction said \"one adjacent item per cell\" which I read as one per cell. But given the cell has 11 items, and I'm consolidating to ~6, I think that's a reasonable interpretation. Actually, let me reconsider \u2014 maybe I should be more concise and just do a few key adjacent items.\n\nActually, I realize the guidance \"one adjacent item per cell\" likely means: for each cell marked adjacent-only, provide adjacent items (possibly one). The key requirement is differs_because for each.\n\nI'll provide a handful of adjacent items capturing the distinct stand-in metrics. This is fine.\n\nActually, let me reconsider whether to include all 11 items or consolidate. The evidence list will show all items anyway (\"the reader sees every item in the evidence list below the answer\"). Wait, but actually the evidence isn't shown in my answer - the submit_answer tool has claims, adjacent, gaps. The reader of the final output sees claims, adjacent, gaps, and presumably the evidence matrix is separately available.\n\nGiven the caveat about basis break, I should state each basis with its own periods and not join them. So I should keep whole-firm (NNA) separate from Workplace channel (stock plan participants).\n\nOK let me just write a comprehensive answer. Let me finalize the structure.\n\nFor the headline claim part_id, I'll use \"\". Actually, let me check the enum again - it includes \"\" as an option. Good.\n\nActually, I think a cleaner approach: make the headline claim part of a1.MS (the strategy is literally the answer to \"how\"). But the headline should answer the overall question. Let me use \"\" for headline.\n\nHmm, but then the a1.MS claims also answer strategy. There might be redundancy. Let me make the headline a concise direct answer, and then a1.MS covers strategy in detail.\n\nLet me write the headline concisely:\n\nHeadline (\"\"): \"Morgan Stanley converts workplace and stock-plan participants into wealth management clients through its client acquisition funnel, in which the Workplace channel is the top of the funnel; workplace assets then migrate over time into the advisor-led channel via referral models, financial education, and advice offerings.\" cite MS-TR-2025Q4#7, MS-TR-2026Q1#24, MS-TR-2024Q4#94, MS-TR-2026Q2#28, MS-TR-2025Q3#8.\n\nThat's a good headline.\n\nNow let me write everything out. This is going to be long but comprehensive.\n\nLet me finalize the part_ids for claims:\n- headline: \"\" \n- a1.MS: strategy sentences\n- a2.MS: channel/pipeline\n- a3.MS: programs/offerings\n- a4.MS: engagement\n- a5.MS: conversion figures (series)\n- a7.MS: new initiatives\n- a8: comparison (exactly one)\n\nFor a5 (series), I need to give definitions alongside figures.\n\nLet me also double check: a5 items are:\n1. $300B since 2020 migrated from Workplace to advisor-led. (MS-TR-2024Q4#94)\n2. ~$60B per year migration. (MS-TR-2025Q3#25)\n3. Definition of Advisor-Led Flows from Workplace and E*TRADE. (MS-DECK-2026-strategic-update#32)\n\nSo a5 is really about migration figures and the definition. I'll write these as a series.\n\nNote item 2 says \"as of Q3 2025 was exceeding that pace.\" item 1 says $300B since 2020.\n\nLet me write a5:\nS1: \"Morgan Stanley states that since 2020 (over roughly the last five years) it has seen $300 billion of assets initiate in the Workplace channel and move into the advisor-led channel.\" cite MS-TR-2024Q4#94.\nS2: \"The firm states it has seen about $60 billion of workplace-to-advisor-led migration per year, and as of the third quarter of 2025 was exceeding that pace on a full-year basis.\" cite MS-TR-2025Q3#25.\nS3: \"The firm defines 'Advisor-Led Flows from Workplace and E*TRADE' as assets brought into advisor-led relationships where the initial account was workplace or self-directed.\" cite MS-DECK-2026-strategic-update#32.\n\nGood.\n\nNow, let me also reconsider whether I should include every single item. The instruction says \"every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence.\" This strongly implies I should cite every item. I'll be thorough.\n\nLet me now write the final answer. I'll be careful with \"quote not verbatim\" - don't use quotation marks for those.\n\nLet me also make sure dates/sources are attributed properly with \"on the ... call\" or \"in the ...\".\n\nLet me write it all out now.\n\nFor a8 comparison claim, part_id \"a8\" (the aspect id, not a8.MS). The enum has \"a8\" and \"a8.MS\". Since comparison claim uses aspect id a8.\n\nActually wait, looking at the enum, both a8 and a8.MS exist. The instruction says \"one sentence (part_id that aspect's id)\". For comparison aspects, use the aspect id \"a8\".\n\nLet me write the comparison claim:\n\n\"Morgan Stanley positions its workplace and stock-plan conversion efforts as industry-leading and differentiated\u2014claiming a singular position in the industry from its integrated client acquisition funnel, about 70% of the top 100 unicorns in its workplace pipeline, and industry-leading net new assets\u2014but these are the firm's own self-positioning statements rather than independently measured competitor data, so an objective cross-firm comparison cannot be made on this evidence.\"\n\ncite: MS-TR-2026Q3#32, MS-TR-2026Q2#21, MS-TR-2025Q4#19, MS-TR-2026Q3#16, MS-TR-2025Q3#13, MS-TR-2026Q2#14, MS-TR-2024Q4#9, MS-TR-2026Q2#16.\n\nOK. Let me write the full submission now.\n\nI need to be careful about sentence length (35 words or fewer aim). Some of my sentences are long. Let me trim.\n\nActually, let me just write reasonably and not obsess over 35 words for every sentence, but keep them concise.\n\nLet me write everything.\n\nFor the gaps parameter: code says gaps none. So I pass empty array.\n\nCaveats are added by code, don't repeat.\n\nanswerable: true.\n\nLet me write.\n\nLet me now carefully compose all claims with correct chunk ids.\n\nI'll write it out fully.\n\nFor headline, I'll include key citations.\n\nLet me finalize.",
+  "first_claim_s": 119.62,
+  "stream_items": {
+    "first_claim_s": 119.62,
+    "shown": 52,
+    "held": 7
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Morgan Stanley converts workplace and stock-plan participants into wealth management clients through its client acquisition funnel, in which the Workplace channel is the top of the funnel, and workplace assets migrate over time into the advisor-led channel via referral models, financial education, and advice offerings.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#7",
+          "MS-TR-2026Q1#24",
+          "MS-TR-2024Q4#94",
+          "MS-TR-2026Q2#28",
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": ""
+      },
+      {
+        "text": "Morgan Stanley describes its three channels\u2014financial advisors, Workplace, and E*TRADE\u2014as together comprising its strategic client acquisition model, with Workplace positioned as the top of the funnel for acquiring wealth management clients.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#7"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the first-quarter 2026 call, the CFO described the funnel as beginning with retaining vested workplace assets (which translates into net new assets), followed over time by channel migration where workplace assets seek advice and move into the adviser-led channel.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#24"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley defines channel migration as workplace assets that began in the Workplace channel moving into the advisor-led channel, with $300 billion doing so since 2020.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#94"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "The firm attributes the migration of workplace-originated assets into the advisor-led channel to its consistent investments in its differentiated platform.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "On the second-quarter 2026 call, management said Workplace brings relationships and assets onto the platform, then the firm delivers advice and solutions to build fee-based assets.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#16"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley describes its Morgan Stanley at Work business as positioning it as an early trusted advisor to private companies, where employees benefit from management of equity compensation plans, liquidity opportunities, and full-service advice as companies grow.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#12"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "The firm describes its investments in the self-directed and Workplace channels as driving its differentiated client acquisition funnel.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#9"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley states that 70% of the flows that originate from workplace are net new assets to the firm.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#34"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Since 2020, Morgan Stanley states it has generated over $400 billion of new adviser-led assets from relationships that originated from either Workplace or E*TRADE.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#13"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley describes a referral-based partnership with Carta under which private companies moving from private to public are referred to Morgan Stanley, supporting conversion onto its platform.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#42"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "The strategic-update deck depicts a client lifecycle in which workplace founders and employees move from financial wellness and equity compensation through to full-service wealth advice and asset allocation as companies go public.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#22"
+        ],
+        "part_id": "a1.MS"
+      },
+      {
+        "text": "Morgan Stanley defines the workplace channel as including equity compensation solutions for companies, their executives and employees.",
+        "chunk_ids": [
+          "MS-10Q-2025Q3#60"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "The firm defines stock plan participants as total accounts with vested and/or unvested stock plan assets in the workplace channel, with individuals holding accounts in multiple plans counted in each plan.",
+        "chunk_ids": [
+          "MS-10Q-2025Q3#60"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the third-quarter 2025 call, the CFO described the workplace channel as a powerful asset acquisition tool, with the reopening of the IPO market supporting net new assets.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#15"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the second-quarter 2026 call, the CFO said Workplace is a strong contributor to the top of the funnel, with stock plan IPO flows representing just over half of overall net new assets that quarter.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#16"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "The CEO said the financial advisors, Workplace, and E*TRADE channels together comprise the firm's strategic client acquisition model.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#7"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Advisor-led assets originating from workplace and E*TRADE relationships grew to a record $99 billion for full-year 2025, versus historical averages of around $60 billion per year.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#20"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "In the first quarter of 2025, assets migrating to the advisor-led channel that originated from the workplace channel increased by an incremental $20 billion, adding to roughly $300 billion accumulated from workplace since the channel expanded in 2020.",
+        "chunk_ids": [
+          "MS-TR-2025Q1#13"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the second-quarter 2026 call, the firm said it has about 70% of the top 100 unicorns by market cap in its workplace pipeline, with IPOs serving as a source of net new assets at the top of the funnel.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#21"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "The CFO said 70% of the flows that originate from the workplace channel are actually net new assets to the firm.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#34"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the second-quarter 2026 call, the CFO said the firm is working on a referral model that can begin as early as the financial education spot to convert workplace clients into advice-based (advisor-led) relationships.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#28"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "The CEO said the Morgan Stanley at Work business positions the firm as an early trusted advisor to over 50,000 private companies.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#12"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the second-quarter 2025 call, the CFO said the firm historically had about $16 billion per year originating from workplace and was running ahead of that in 2025.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#35"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the third-quarter 2025 call, the CFO cited a $300 billion workplace migration figure and about $60 billion of migration per year historically, saying workplace has contributed to net new assets, fee-based flows, and channel migration.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#25"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "The strategic update deck showed advisor-led flows from workplace and E*TRADE of approximately $60 billion average for 2020-2024 and approximately $100 billion for 2025.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#13",
+          "MS-DECK-2026-strategic-update#32"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "On the third-quarter 2026 call, the CEO described attachment points that bring clients to E*TRADE and, where appropriate, fee-based flows that make their way to advisers, with clients acquired in the corporate stock plan (workplace) context.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#23"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "The CFO said the firm's pipeline and connectivity across channels allows it to build relationships early and deepen them over time.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#15"
+        ],
+        "part_id": "a2.MS"
+      },
+      {
+        "text": "Morgan Stanley's Workplace channel includes equity compensation solutions (stock plan administration) for companies, their executives and employees, serving as the entry point through which workplace participants are engaged.",
+        "chunk_ids": [
+          "MS-SUPP-2026Q2#37"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "The firm's Wealth Management segment provides workplace services, including stock plan administration, and retirement plan services, as one of three channels (Advisor-Led, Self-Directed and Workplace).",
+        "chunk_ids": [
+          "MS-10Q-2026Q2#16"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "The strategic-update deck shows a client lifecycle offering spanning financial wellness and employee benefits, founders wealth strategies, full-service wealth advice and asset allocation, family office solutions, trust and estate planning, private shares trading and lending, and IPO execution and support services.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#22"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "The firm's MS at Work offering provides stock plan and 401(k) administration, cap table management, cash management solutions, and private capital markets/tender/financing and IPO services for late-stage/IPO companies.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#23"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley uses referral models and technology such as the LeadIQ product to match individuals (including workplace participants) with advisers, with the goal of becoming their principal financial adviser.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#23"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Through its exclusive partnership with Carta, private stock plan/corporate companies are referred to Morgan Stanley as they go public, providing a seamless experience to convert those participants into wealth clients.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#77"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley offers advice-based services to founders and individuals of private companies through its Carta relationship, deepening relationships as companies transition from private to public.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#43"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "The firm's referral model for workplace participants can begin as early as the financial education spot and with 401(k) assets, to help individuals understand where they could use advice.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#28"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley continues to expand its retirement capabilities and deepen engagement with plan participants, creating opportunities to build advice-based relationships over time.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#13"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley provides financial wellness programs to company employees as part of the Integrated Firm, spanning from advice in corporate boardrooms to financial wellness programs for employees.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#13"
+        ],
+        "part_id": "a3.MS"
+      },
+      {
+        "text": "Morgan Stanley uses an AI-powered lead distribution platform called LeadIQ that matches workplace and self-directed relationships and facilitates engagement with financial advisors.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "For workplace participants who do not yet have an advice-based relationship, the firm works a referral model that can begin as early as the financial education spot and through 401(k) assets.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#28"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley drives channel migration from workplace to advisor-led through technology and investment, as workplace assets begin seeking advice.",
+        "chunk_ids": [
+          "MS-TR-2026Q1#24"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Assets that originate from workplace migrate into the advisor-led channel as a result of consistent investments into its differentiated platform.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley at Work, through its exclusive partnership with Carta, positions the firm as an early trusted advisor to private companies, and employees benefit from equity compensation plan management, liquidity opportunities, and full-service advice.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#12"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "The firm begins at the top of the funnel with corporate coverage, using the Integrated Firm to build corporate relationships that lead to workplace relationships.",
+        "chunk_ids": [
+          "MS-TR-2026Q2#59"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Advisors engage retail clients by sending next best actions, and Morgan Stanley has seen increased responses to these engagements.",
+        "chunk_ids": [
+          "MS-TR-2025Q1#70"
+        ],
+        "part_id": "a4.MS"
+      },
+      {
+        "text": "Morgan Stanley states that since 2020 it has seen $300 billion of assets initiate in the Workplace channel and move into the advisor-led channel.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#94"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "The firm states it has seen about $60 billion of workplace-to-advisor-led migration per year, and as of the third quarter of 2025 was exceeding that pace on a full-year basis.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#25"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "The firm defines Advisor-Led Flows from Workplace and E*TRADE as assets brought into advisor-led relationships where the initial account was workplace or self-directed.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#32"
+        ],
+        "part_id": "a5.MS"
+      },
+      {
+        "text": "As of the third quarter of 2025, Morgan Stanley reports LeadIQ, an AI-powered lead distribution platform focusing on matching workplace and self-directed relationships, as one of its early AI use cases, some live and some in pilot.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#8"
+        ],
+        "part_id": "a7.MS"
+      },
+      {
+        "text": "As of the fourth quarter of 2024, the firm reports a recently announced partnership with Carta that puts it at the center of new client stock plan opportunities as private companies consider going public.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#26"
+        ],
+        "part_id": "a7.MS"
+      },
+      {
+        "text": "As of the third quarter of 2025, Morgan Stanley reports deepening its competitive moats through an expanded collaboration with Carta in private markets and announced partnerships with Zero Hash in digital assets.",
+        "chunk_ids": [
+          "MS-TR-2025Q3#13"
+        ],
+        "part_id": "a7.MS"
+      },
+      {
+        "text": "As of the fourth quarter of 2025, the firm reports that its Morgan Stanley at Work business, through its exclusive partnership with Carta, positions it as an early trusted advisor to over 50,000 private companies.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#12"
+        ],
+        "part_id": "a7.MS"
+      },
+      {
+        "text": "Morgan Stanley positions its workplace and stock-plan conversion efforts as industry-leading and differentiated\u2014claiming a singular position in the industry from its integrated client acquisition funnel, about 70% of the top 100 unicorns in its workplace pipeline, and industry-leading net new assets\u2014but these are the firm's own self-positioning statements rather than independently measured competitor data, so an objective cross-firm comparison cannot be made on this evidence.",
+        "chunk_ids": [
+          "MS-TR-2026Q3#32",
+          "MS-TR-2026Q2#21",
+          "MS-TR-2025Q4#19",
+          "MS-TR-2026Q3#16",
+          "MS-TR-2025Q3#13",
+          "MS-TR-2026Q2#14",
+          "MS-TR-2024Q4#9",
+          "MS-TR-2026Q2#16"
+        ],
+        "part_id": "a8"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Morgan Stanley reports 6.6 million stock plan participants in the workplace channel at June 30, 2026 (versus 6.5 million at December 31, 2025) and 6.7 million at September 30, 2026.",
+        "chunk_ids": [
+          "MS-10Q-2026Q2#61",
+          "MS-SUPP-2026Q3#17"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Stock plan participant counts measure total accounts with vested/unvested stock plan assets, not participants converted into wealth management clients."
+      },
+      {
+        "text": "The strategic update deck shows Advisor-Led Flows from Workplace and E*TRADE of approximately $60 billion average for 2020-2024 versus approximately $100 billion in 2025.",
+        "chunk_ids": [
+          "MS-DECK-2026-strategic-update#13",
+          "MS-DECK-2026-strategic-update#32"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "These are asset flows into advisor-led relationships, a proxy for conversion, not a conversion rate or count of participants converted."
+      },
+      {
+        "text": "Since 2020, Morgan Stanley states it has generated over $400 billion of new adviser-led assets from relationships originating from Workplace or E*TRADE, and over $1.2 trillion total adviser-led assets sourced from these channels (roughly 20% of adviser-led assets).",
+        "chunk_ids": [
+          "MS-TR-2026Q1#13"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "These are advisor-led asset figures originating from workplace/E*TRADE, a stand-in for conversion, not a count of participants converted into wealth management clients."
+      },
+      {
+        "text": "Morgan Stanley reports Wealth Management net new assets of $356.3 billion in 2025, $251.7 billion in 2024, and $282.3 billion in 2023.",
+        "chunk_ids": [
+          "MS-10K-2025#164"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "Net new assets are whole-segment client asset inflows, not a measure of workplace participant conversion."
+      },
+      {
+        "text": "Morgan Stanley states that 70% of the flows that originate from workplace are net new assets to the firm.",
+        "chunk_ids": [
+          "MS-TR-2025Q2#34"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "This is the share of workplace-originated flows that are net new assets, not a participant conversion rate or count."
+      },
+      {
+        "text": "In the first quarter of 2025, assets migrating to the advisor-led channel that originated from the workplace channel added an incremental $20 billion, adding to roughly $300 billion accumulated since 2020.",
+        "chunk_ids": [
+          "MS-TR-2025Q1#13"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "This is channel-migration asset value, not a count of participants converted into wealth management clients."
+      }
+    ],
+    "gaps": []
+  }
+}

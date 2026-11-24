@@ -246,8 +246,26 @@ no lists inside a sentence, the most important evidence only (the evidence list 
 one comparison sentence per comparison aspect; no why-lines. Code, v8 only: a holding cell the answer does not cite
 gets no part gap (`part_coverage` state `evidence_list`); empty cells and code gaps keep theirs; computability
 statements go to the Computability box (see "Computation claims"); other checks as v7. The mock writes claim 1, the
-comparison claims, then one sentence per further aspect, at most 5. **Default since #292: v8** (it passed the plan rule
-at reduce effort `low`; effort `off` failed Q24, see the results doc).
+comparison claims, then one sentence per further aspect, at most 5. **Default from #292 to #297: v8** (it passed the plan
+rule at reduce effort `low` on 4 questions; effort `off` failed Q24, see the results doc). **Default since #297: v5.2
+again** (v8 at off scored 14/30 in #295, v9 at low 19/30 in #297, both below v5.2's 24/30).
+
+#297 (plans/0297-reduce-v9.md, results `docs/results/w13-reduce-v9.md`): **prompt v9, length follows the question.**
+`REDUCE_PROMPT` also takes `v9` (a synthesis version, same form rule; list form keeps v5.2). Claim 1 answers directly
+and must cite; then exactly what the question asks: a single fact 1-3 sentences; "for each firm" / "by quarter" /
+list one cited sentence per asked item; a comparison one sentence per firm plus the comparison sentence; "what do we
+know / how" the main points. No sentence cap; evidence the question did not ask for is not restated. Kept from v8:
+the Computability box, no why-lines. Back from v7: future positions attributed and dated, no own forecast; trade
+press attributed; the advisor-pay wording. New: newest period unless a series is asked; a figure keeps its item's
+label; each firm's metric definition alongside its figures; a non-reporting firm is said not to report, never zero
+or a near-neighbour metric; source kinds and deployed vs intended kept apart when the question separates them.
+Code, v9 only (`validate.asked_cell`): a cell is *asked* when it holds a fact or an accepted derivation, its aspect is
+not comparison and not proxy, and its role is named, all or research, or competitor with the firm in the aspect's
+`asked_firms`. An asked cell no sentence covers (by cell id, or an aspect-id sentence citing its chunks) gets a
+`part_gap`; any other holding cell is covered by the evidence list (`evidence_list`, as v8). The check is on
+citations, not on what the sentence says (a sentence citing a series may state one quarter). The mock writes claim 1,
+the comparison claims, then one sentence per asked cell, with no cap. **Gate 3: 19/30 blind and text-only, below
+24/30, so v9 stays behind `REDUCE_PROMPT` and the default is v5.2** (`docs/results/w13-reduce-v9.md`).
 
 #277 (plans/0277-stop-retry.md): **Stop and Retry on the Ask page.**
 - Cancel token (`cee.answer.cancel`): `ask(..., token=...)` makes it active in a context variable; every model call

@@ -17,10 +17,11 @@ caveats / gaps / coverage -> the full evidence list -> footer and feedback from 
   proven by `tests/test_answer_footnotes.py` (the mock cites only chunks of its evidence lines).
 - `list-form`: a window / recency answer (Q26) is a numbered list (`.cee-answer ol`); any other a paragraph.
 - `reduce-version` (#292): the newest `query_log` row's `filters.reduce.version` is the configured `REDUCE_PROMPT`
-  (default `v8` since #292; `v5.2` before); with `REDUCE_PROMPT=v7` set for the run, Q26 (list form) logs `v5.2` and Q5, Q8, Q24 log `v7`,
+  (default `v5.2`; `v8` from #292 to #297); with `REDUCE_PROMPT=v7` set for the run, Q26 (list form) logs `v5.2` and Q5, Q8, Q24 log `v7`,
   their paragraph opening with the mock's direct sentence "In short: ". With `REDUCE_PROMPT=v8` the same, plus
   `computability-box`: at most 5 answer sentences, and one `.cee-computability` box per entry of the row's
   `answer.computations`, each with footnotes that resolve (Q24 when its matrix has a derivation proposal).
+  With `REDUCE_PROMPT=v9` (#297) the same as v8 but with no sentence cap (the answer's length follows the question).
 - `rerun-keeps-evidence`: after Coverage -> Ask (top navigation, same session) the answer and the same evidence
   cards and footnotes are shown, and `query_log` has no new row.
 - `no-reserved-space`: the answer slot is a zero-height `st.empty()` (display none) until the first claim; the
@@ -39,7 +40,7 @@ Preconditions: baseline. Questions read from `evals/questions.yaml`: Q5, Q8, Q24
 - **Layout.** For each question: Ask; `.cee-answer` (or `.cee-behavior h2` when no claim) is above the first
   `.cee-claim[id^=cee-ev-]`; every `.cee-answer a[href^="#cee-ev-"]` has its element; Q26 is a list, the others
   a paragraph; no "Answer (in progress" left (screenshot). Then the reduce version of the newest row (#292).
-  To check v7, run the driver with `REDUCE_PROMPT=v7` in its environment (the app inherits it).
+  To check v7, v8 or v9, run the driver with `REDUCE_PROMPT=<version>` in its environment (the app inherits it).
 - **Footnote click.** On Q5, click the first footnote: `:target` is that card.
 - **Round trip.** Click "Coverage" in the top navigation, wait for the Coverage page, click "Ask": the same
   layout checks pass, with the same card and footnote counts, and `query_log` count unchanged (screenshot).

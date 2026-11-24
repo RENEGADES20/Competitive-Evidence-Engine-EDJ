@@ -1,0 +1,384 @@
+{
+  "question_id": "Q10",
+  "question": "Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?",
+  "reduce_version": "v9",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "MS-10K-2025#125",
+    "MS-10K-2025#190",
+    "MS-TRADE-2026-10-21-IN-01#3",
+    "MS-TR-2025Q1#56",
+    "MS-TR-2024Q4#50",
+    "MS-TR-2026Q1#9",
+    "MS-TR-2025Q4#9",
+    "MS-TR-2025Q2#15",
+    "MS-TR-2025Q4#23",
+    "SCHW-TR-2026Q2#9",
+    "SCHW-TR-2025Q4#11",
+    "SCHW-TR-2026Q3#11",
+    "SCHW-DECK-2026-investor-day#180",
+    "SCHW-TRADE-2026-10-27-IN-01#0",
+    "SCHW-DECK-2026Q2#16",
+    "SCHW-TR-2025Q3#14",
+    "SCHW-10K-2025#18",
+    "SCHW-TRADE-2026-10-28-WM-01#1",
+    "SCHW-TR-2024Q4#11",
+    "SCHW-TR-2025Q4#13",
+    "SCHW-DECK-2026Q2#22",
+    "EDJ-10K-2025#9",
+    "EDJ-10Q-2026Q2#53",
+    "EDJ-10K-2025#88",
+    "EDJ-10K-2025#10",
+    "EDJ-10Q-2025Q3#31",
+    "EDJ-10Q-2026Q1#48",
+    "BAC-DECK-2025-investor-day#12",
+    "BAC-DECK-2025-investor-day#9",
+    "BAC-DECK-2025-investor-day#8",
+    "BAC-10K-2025#246",
+    "BAC-DECK-2025-investor-day#18",
+    "BAC-TR-2026Q3#19",
+    "BAC-PR-2026-10-14-01#12",
+    "BAC-DECK-2026Q3#31",
+    "BAC-DECK-2026Q2#20",
+    "BAC-PR-2026-04-15-01#11",
+    "RJF-PR-web-independent-ria-custody-services#2",
+    "RJF-DECK-2025-investor-day#57",
+    "RJF-10K-2025#52",
+    "RJF-TR-2025Q4#5",
+    "RJF-TRADE-2026-09-29-IN-01#3",
+    "RJF-TRADE-2026-09-29-WM-01#0",
+    "RJF-TR-2025Q1#61",
+    "RJF-10K-2025#216",
+    "RJF-10Q-2025Q2#295",
+    "RJF-10Q-2025Q4#238",
+    "RJF-10Q-2025Q2#259"
+  ],
+  "schema_fallback": [],
+  "enum_values": 226,
+  "at": "2026-11-24T00:27:25.210893-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 18586,
+    "output_tokens": 17710,
+    "cache_hit_tokens": 1664,
+    "cache_miss_tokens": 16922,
+    "reasoning_tokens": 14209,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 2.7
+  },
+  "wall_s": 208.0,
+  "tokens_per_s": 85.14,
+  "ttft_s": 2.7,
+  "reasoning_content": "Let me analyze this task carefully.\n\nThe question asks: \"Which of the five has been most explicit about serving mass-affluent clients, and what exactly have they said?\"\n\nThe answer should identify Merrill (MER) as the most explicit, since Merrill explicitly names \"Mass Affluent ($500K - $1MM)\" as a segment in its Wealth Continuum.\n\nThe behavior says: answer. Why: the asked quantity in a2.SCHW, a5.SCHW, a6.SCHW, a2.MER, a3.MER, a4.MER, a5.MER, a6.MER.\n\nSo the fact cells with \"fact\" status are:\n- a2.SCHW (fact)\n- a5.SCHW (fact)\n- a6.SCHW (fact)\n- a2.MER (fact)\n- a3.MER (fact)\n- a4.MER (fact)\n- a5.MER (fact)\n- a6.MER (fact)\n- a1.MER (fact)\n\nAlso a1.MER is a fact.\n\nLet me look at the aspects and their statuses:\n- a1 [comparison]: needs exactly one comparison claim, part_id a1\n- a2 [fact]\n- a3 [fact]\n- a4 [fact]\n- a5 [fact]\n- a6 [recency]\n\nFor aspect a1, the firms:\n- a1.MS: adjacent only (different quantity)\n- a1.SCHW: adjacent only (different quantity)\n- a1.EDJ: not found (code gap)\n- a1.MER: fact\n- a1.RJF: adjacent only (different quantity)\n- a1.research: not found (code gap)\n\nSo the comparison claim for a1 should note that only Merrill explicitly names \"Mass Affluent\" as a segment; the others use adjacent terms (high/ultra-high net worth, affluent, etc.).\n\nNow let me plan the claims.\n\nFirst, the answer (Claim 1) directly answers: Merrill is the most explicit, explicitly naming \"Mass Affluent ($500K - $1MM)\" in its Wealth Continuum.\n\nThen I need to cover:\n- a1 comparison claim (part_id a1)\n- a2: for MER (fact), for SCHW (fact), others are adjacent/gaps\n- a3: MER (fact)\n- a4: MER (fact)\n- a5: SCHW (fact), MER (fact)\n- a6: SCHW (fact), MER (fact)\n\nWait, let me check which cells are \"fact\" (need claims) vs \"adjacent only\" vs \"not found\".\n\nAspect a2:\n- a2.MS: adjacent only\n- a2.SCHW: fact\n- a2.EDJ: adjacent only\n- a2.MER: fact\n- a2.RJF: adjacent only\n- a2.research: not found\n\nAspect a3:\n- a3.MS: adjacent only\n- a3.SCHW: adjacent only\n- a3.EDJ: adjacent only\n- a3.MER: fact\n- a3.RJF: adjacent only\n- a3.research: not found\n\nAspect a4:\n- a4.MS: not found\n- a4.SCHW: adjacent only\n- a4.EDJ: adjacent only\n- a4.MER: fact\n- a4.RJF: adjacent only\n- a4.research: not found\n\nAspect a5:\n- a5.MS: not found\n- a5.SCHW: fact\n- a5.EDJ: not found\n- a5.MER: fact\n- a5.RJF: adjacent only\n- a5.research: not found\n\nAspect a6:\n- a6.MS: adjacent only\n- a6.SCHW: fact\n- a6.EDJ: not found\n- a6.MER: fact\n- a6.RJF: not found\n- a6.research: not found\n\nSo fact cells that need claims:\na1.MER (fact), a2.SCHW, a2.MER, a3.MER, a4.MER, a5.SCHW, a5.MER, a6.SCHW, a6.MER.\n\nPlus the comparison claim for a1 (part_id a1).\n\nThe \"Why\" in behavior lists: a2.SCHW, a5.SCHW, a6.SCHW, a2.MER, a3.MER, a4.MER, a5.MER, a6.MER. That's 8 cells. Plus a1 comparison. Plus a1.MER is a fact too but not in the \"why\" list? Let me re-read.\n\n\"Why: 1a: the asked quantity in a2.SCHW, a5.SCHW, a6.SCHW, a2.MER, a3.MER, a4.MER, a5.MER, a6.MER\"\n\nHmm, a1.MER is a fact but not listed. Actually a1.MER has a fact (item 1 and 2). Wait, but the comparison aspect a1 needs one comparison claim. The a1.MER cell is a \"fact\" so it should have a claim too. But it's not in the \"why\" list.\n\nActually, let me think about this differently. The comparison aspect a1 requires exactly one comparison claim with part_id a1. The a1.MER fact items feed into that comparison. But actually the instruction says: \"For each aspect marked comparison, one sentence (part_id that aspect's id) says whether the comparison can be made on this evidence.\"\n\nSo for a1, I write one comparison claim with part_id \"a1\".\n\nBut a1.MER is marked \"fact\" - so it holds facts. Hmm. Actually, looking at the comparison instructions more carefully: \"one sentence per firm in its own terms, plus the comparison sentence below\". But a1 is marked [comparison], which means \"needs exactly one comparison claim, part_id a1\".\n\nSo for a1, I write a single comparison claim. The a1.MER fact would be folded into that comparison claim, or... Actually, let me reconsider.\n\nThe comparison claim should say whether the comparison can be made. It says: Merrill explicitly names \"Mass Affluent ($500K - $1MM)\" as a segment, while the others do not name \"mass-affluent\" (using adjacent terms like high/ultra-high net worth, affluent).\n\nLet me structure the answer.\n\nClaim 1 (headline): Merrill is the most explicit, naming \"Mass Affluent ($500K - $1MM)\" as a distinct client segment in its Wealth Continuum. Cite BAC-DECK-2025-investor-day#12.\n\nThen the comparison claim (part_id a1): The comparison can be made - Merrill is the only firm that explicitly names the \"Mass Affluent\" segment; the others use adjacent terms (high/ultra-high net worth, affluent). Cite the relevant chunks.\n\nActually, let me think about how to write this efficiently. The question is \"which has been most explicit... and what exactly have they said?\"\n\nLet me write:\n\nClaim 1: Merrill (within Bank of America's Global Wealth & Investment Management) is the most explicit, naming \"Mass Affluent ($500K - $1MM)\" as a distinct client segment in its \"Wealth Continuum.\" [BAC-DECK-2025-investor-day#12]\n\nComparison claim (a1): On this evidence, the comparison is valid for Merrill only \u2014 Merrill is the only one of the five that explicitly names a \"Mass Affluent\" client segment, while Morgan Stanley, Schwab, Edward Jones, and Raymond James name higher or broader tiers (high/ultra-high net worth, affluent, individual investors) instead. Cite multiple chunks.\n\nThen the details.\n\nNow let me write claims per cell. Each claim is one sentence with citation.\n\nFor a2.MER (what each firm said about serving mass-affluent clients):\n- Merrill's investor-day presentation defines the Wealth Continuum listing \"Mass Affluent ($500K - $1MM)\" and \"High Net Worth ($1MM - $10MM)\". [BAC-DECK-2025-investor-day#12]\n- Merrill states it is \"Serving the wealth continuum of clients.\" [BAC-DECK-2025-investor-day#9]\n- Merrill expresses belief that \"the Wealth Continuum allows us to deliver as one company and is our engine for lasting growth.\" [BAC-DECK-2025-investor-day#8]\n- Merrill Wealth Management's advisory business provides high-touch client experience through advisors focused on clients with over $250,000 in total investable assets. [BAC-10K-2025#246]\n\nFor a2.SCHW (what Schwab said - but note Schwab doesn't use \"mass-affluent\" term, uses \"affluent\"):\nActually a2.SCHW is \"fact\" meaning it has items. These items describe \"affluent\" clients. But wait - is Schwab's \"affluent\" the same as \"mass-affluent\"? The a1.SCHW says adjacent because Schwab uses \"affluent\" not \"mass-affluent\". But a2.SCHW is marked \"fact\", meaning the items are considered relevant facts.\n\nHmm, this is interesting. Let me just write claims from the fact cells as instructed. The a2.SCHW has 9 items. I should write one sentence per item? That's a lot. Actually the instruction says \"one cited sentence per asked item\". But also \"the main points, one per thing the question asks, each cited.\"\n\nWait, let me re-read the shape instructions:\n\n\"a comparison: one sentence per firm in its own terms, plus the comparison sentence below\"\n\n\"what do we know\", \"how\", \"what is the strategy\": the main points, one per thing the question asks, each cited.\n\nThe question is \"which has been most explicit... and what exactly have they said?\"\n\nThis is a mix. The aspects are a1 (comparison), a2-a6 (facts).\n\nI think the structure should be:\n1. Headline answer\n2. Comparison claim (a1)\n3. Claims for each fact cell (a2.MER, a2.SCHW, a3.MER, a4.MER, a5.MER, a5.SCHW, a6.MER, a6.SCHW)\n\nEach cell could have multiple items, so multiple sentences. But I should be reasonable and cover the main points.\n\nActually, let me re-read: \"Cover what was asked: every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence (its cell id as part_id, or the aspect id for a sentence spanning its firms).\"\n\nSo every fact cell needs at least one sentence citing it, with part_id = cell id.\n\nFor a2.SCHW, there are 9 items. But I think I need to cover the cell. The instruction says \"one cited sentence per asked item\" for \"list\" questions. But here it's more of a narrative.\n\nActually, let me think about the most important items to include. The question focuses on mass-affluent, and Merrill is the answer. Schwab uses \"affluent\" which is adjacent but a2.SCHW is marked fact.\n\nHmm wait, but actually the note says a2.SCHW is \"fact\" - meaning the items ARE the asked quantity (what each firm said about serving mass-affluent). But Schwab's items say \"affluent\" not \"mass-affluent\". There's a subtlety: Schwab's \"affluent\" clients with $1M-$5M assets - that's actually higher than typical mass-affluent.\n\nActually, let me not overthink. The code has decided these cells are \"fact\" and I write claims from them. I'll write one sentence per distinct fact, but consolidate where possible.\n\nLet me be pragmatic. I'll write one sentence per cell (or a few for the important ones), citing the key items.\n\nLet me organize:\n\nHeadline: Merrill most explicit.\n\nComparison (a1): The comparison is valid: Merrill is the only firm that explicitly names the \"Mass Affluent\" segment, while Morgan Stanley, Schwab, Edward Jones, and Raymond James describe higher or broader tiers (high/ultra-high net worth, affluent, individual investors) and do not use the \"mass-affluent\" name. Cite: BAC-DECK-2025-investor-day#12, MS-10K-2025#125, SCHW-TR-2026Q2#9, EDJ-10K-2025#88, RJF-TR-2025Q4#5.\n\nActually the comparison claim needs to cite items it rests on. Let me cite BAC-DECK-2025-investor-day#12 (Merrill names it) and maybe the adjacent items for the others. I'll cite the key ones.\n\nNow for the fact cells:\n\na2.MER (part_id a2.MER): what Merrill said about serving mass-affluent.\nLet me write a few sentences:\n- Merrill's investor-day presentation presents a \"Wealth Continuum\" that lists \"Mass Affluent ($500K - $1MM)\" and \"High Net Worth ($1MM - $10MM)\" as client segments. [BAC-DECK-2025-investor-day#12]\n- Merrill states it is \"Serving the wealth continuum of clients\" across Merrill and Private Bank. [BAC-DECK-2025-investor-day#9]\n- Merrill's foundational belief is that \"the Wealth Continuum allows us to deliver as one company and is our engine for lasting growth.\" [BAC-DECK-2025-investor-day#8]\n- Merrill Wealth Management's advisory business is described as providing a high-touch client experience through financial advisors focused on clients with over $250,000 in total investable assets. [BAC-10K-2025#246]\n\na2.SCHW (part_id a2.SCHW): Schwab's statements about \"affluent\" clients.\nActually, I need to be careful here. Schwab doesn't say \"mass-affluent\" but says \"affluent\". The cell is marked fact. Let me write the key statements:\n- Schwab CEO Rick Wurster said about one-third of new clients are affluent (2025). [SCHW-TR-2025Q4#11]\n- Schwab says households with $1M-$5M in assets using only one financial services firm rose to 22%. [SCHW-TR-2026Q2#9]\n- Schwab's 10-K states Schwab Private Client Services serves clients with $1M-$10M in qualifying assets. [SCHW-10K-2025#18]\n\nHmm, but wait - I should be careful. a2.SCHW is \"fact\" but the a1.SCHW and a3.SCHW etc. are \"adjacent\" because Schwab uses \"affluent\" (higher tier) not \"mass-affluent\". So why is a2.SCHW a fact?\n\nActually, looking more carefully: The question is about \"mass-affluent clients\". Schwab's \"affluent\" clients are actually a different/higher tier. But the code marked a2.SCHW as \"fact\" - meaning these items are considered directly relevant to \"what each firm has said about serving [mass-affluent-ish] clients\".\n\nHmm, actually I think there might be some nuance where Schwab's \"affluent\" is being treated as the closest equivalent. But the a1 note says Schwab's \"affluent\" is different from \"mass-affluent\".\n\nRegardless, my job is to write claims from the \"fact\" cells as given, and put \"adjacent only\" cells in the adjacent list. I'll write the fact cells' items as claims.\n\nBut wait - I should be careful about the distinction. The a2.SCHW cell contains items like \"about one-third of new clients are affluent\" and \"$1M-$5M in assets\". These are Schwab's statements, but they're about \"affluent\" not \"mass-affluent\". \n\nActually, I think the key realization: Schwab's \"affluent\" in these passages includes households with $1M-$5M in assets, which is actually ABOVE mass-affluent ($100K-$1M). But the code has decided to treat a2.SCHW and a5.SCHW and a6.SCHW as facts.\n\nLet me just follow the code's decision. Write claims from fact cells.\n\nActually, let me reconsider a5.SCHW. The items:\n- $1M-$5M households\n- \"affluent clients\" ages 25-44\n- \"affluent\" new clients\n- \"retail investor households with >$500K in investable assets\" [SCHW-DECK-2026Q2#22]\n\nThe last one ($500K+) is actually relevant to mass-affluent-ish threshold. And Merrill's $500K-$1MM is \"mass affluent\". So Schwab's >$500K threshold is comparable.\n\nOK let me just write it all out.\n\nLet me now write the full answer.\n\nClaims list (part_id for each):\n\n1. Headline (part_id? probably a1 or \"\"?). Actually claim 1 answers directly. What part_id? The instructions say \"Claim 1 answers the question directly\". Let me use part_id \"a1\" for the comparison? No.\n\nActually, let me think about part_id assignment. Each claim gets a part_id. The comparison claim gets \"a1\". Fact cell claims get their cell id (e.g., \"a2.MER\").\n\nFor the headline claim (claim 1), what part_id? It could be \"\" (empty) or a1. Hmm.\n\nThe part_id enum includes \"\" (empty). I think the headline answer can use part_id \"\" or a1.\n\nActually, let me think. The headline claim answers \"which is most explicit\". This is essentially the a1 comparison answer. So maybe I combine: the comparison claim (a1) is the headline.\n\nBut the instructions say:\n- \"Claim 1 answers the question directly (the headline fact, figure or verdict) and MUST cite the items it rests on.\"\n- \"a comparison: ... plus the comparison sentence below\" - part_id a1.\n\nSo I could make Claim 1 the headline, and then a separate comparison claim with part_id a1.\n\nLet me structure:\n\nClaim 1 (headline, part_id \"\"): Merrill (within Bank of America's Global Wealth & Investment Management) has been most explicit about serving mass-affluent clients, naming \"Mass Affluent ($500K - $1MM)\" as a distinct segment in its Wealth Continuum. [BAC-DECK-2025-investor-day#12]\n\nClaim 2 (comparison, part_id \"a1\"): The comparison is valid on this evidence: Merrill is the only firm that explicitly names the \"Mass Affluent\" segment, while Morgan Stanley, Schwab, Edward Jones, and Raymond James name higher or broader tiers (high/ultra-high net worth, affluent, individual investors) and never use the \"mass-affluent\" name. [BAC-DECK-2025-investor-day#12, MS-10K-2025#125, SCHW-TR-2026Q2#9, EDJ-10K-2025#88, RJF-TR-2025Q4#5]\n\nHmm wait, but actually I realize the comparison should say whether it's valid. Since Merrill names it and others don't, the comparison is \"valid\" - we can say Merrill is most explicit because it's the only one naming it.\n\nNow for the fact cells. Let me write one sentence per cell (covering the key items), possibly multiple sentences.\n\nActually, re-reading: \"Cover what was asked: every cell that holds a fact for an aspect and firm the question asks about is cited by a sentence.\"\n\nSo at minimum one sentence per fact cell. Let me write comprehensive but concise sentences.\n\nLet me enumerate the fact cells and their part_ids:\n- a1.MER (fact) - but this is folded into comparison a1. Actually a1.MER is a fact cell with 2 items. Should I write a claim for it with part_id a1.MER?\n\nHmm. The comparison aspect a1 requires \"exactly one comparison claim, part_id a1\". But a1.MER is a fact cell. Does it need its own claim?\n\nLet me look at the part_id enum: it includes \"a1.MS\", \"a1.SCHW\", ..., \"a1.MER\", \"a1.RJF\", \"a1.research\", and also \"a1\".\n\nThe instruction for comparison: \"For each aspect marked comparison, one sentence (part_id that aspect's id) says whether the comparison can be made on this evidence (valid, valid only for some firms or periods, or not valid) and why.\"\n\nSo for a1, exactly one claim with part_id \"a1\".\n\nBut a1.MER is a \"fact\" cell (has actual facts). How do I handle that? I think the a1.MER facts (Merrill names Mass Affluent segment) are the basis for the comparison claim. The comparison claim a1 can cite those chunks.\n\nActually, wait. Let me reconsider. The comparison instruction also says (from the general shape section): \"a comparison: one sentence per firm in its own terms, plus the comparison sentence below.\"\n\nBut a1 is specifically marked [comparison], which overrides with \"needs exactly one comparison claim, part_id a1\".\n\nSo I think for a1, I write ONE claim with part_id \"a1\". The a1.MER fact items are folded into this comparison claim (or I could also have a1.MER claim separately, but the instruction says \"exactly one comparison claim\").\n\nActually, the \"exactly one comparison claim\" refers to the comparison sentence itself. The a1.MER facts might still need coverage. But given \"exactly one\", I'll fold everything into the a1 claim.\n\nHmm, but actually the a1.MER cell is marked \"fact\" while other a1 cells are \"adjacent only\" or \"not found\". The fact cells normally get claims. But a1 is a comparison aspect.\n\nLet me reconsider the whole structure. I think the cleanest interpretation:\n\nThe comparison aspect a1 gets ONE claim (part_id \"a1\") that states the comparison result. This claim cites Merrill's \"Mass Affluent\" naming and notes the others don't name it.\n\nThen for a2-a6 fact aspects, I write claims per firm cell.\n\nActually, I realize I might be overcomplicating. Let me look at what the \"Why\" says: \"the asked quantity in a2.SCHW, a5.SCHW, a6.SCHW, a2.MER, a3.MER, a4.MER, a5.MER, a6.MER\".\n\nThis lists 8 cells. These are the cells where the \"asked quantity\" (mass-affluent statements) is found. Plus a1 comparison.\n\nNote a1.MER is NOT in this list. So the \"asked quantity\" for a1 is the comparison, not a1.MER specifically. The a1.MER fact items feed the comparison.\n\nAlso note a3.MER, a4.MER are in the list, and a2.SCHW, a5.SCHW, a6.SCHW.\n\nWait, but a1.MER is marked \"fact\" in the matrix, while a1.SCHW, a1.MS, a1.RJF are \"adjacent only\". So a1.MER fact items are the direct evidence for the comparison.\n\nOK here's my final plan:\n\nClaims:\n1. Headline (part_id \"\"): Merrill most explicit. Cite BAC-DECK-2025-investor-day#12.\n2. Comparison (part_id \"a1\"): valid comparison - only Merrill names \"Mass Affluent\". Cite BAC-DECK-2025-investor-day#12 + others.\n3. a2.MER (part_id \"a2.MER\"): Merrill's statements.\n4. a2.SCHW (part_id \"a2.SCHW\"): Schwab's \"affluent\" statements.\n5. a3.MER (part_id \"a3.MER\"): Merrill's targeting description.\n6. a4.MER (part_id \"a4.MER\"): Merrill's products/services for mass-affluent.\n7. a5.MER (part_id \"a5.MER\"): Merrill's definition of mass-affluent ($500K-$1MM).\n8. a5.SCHW (part_id \"a5.SCHW\"): Schwab's definition/description.\n9. a6.MER (part_id \"a6.MER\"): Merrill's most recent statements.\n10. a6.SCHW (part_id \"a6.SCHW\"): Schwab's most recent statements.\n\nEach may have multiple sentences but I'll keep it reasonable.\n\nNow, the adjacent list. The adjacent-only cells:\n- a1.MS (adjacent)\n- a1.SCHW (adjacent)\n- a1.RJF (adjacent)\n- a2.MS (adjacent)\n- a2.EDJ (adjacent)\n- a2.RJF (adjacent)\n- a3.MS (adjacent)\n- a3.SCHW (adjacent)\n- a3.EDJ (adjacent)\n- a3.RJF (adjacent)\n- a4.SCHW (adjacent)\n- a4.EDJ (adjacent)\n- a4.RJF (adjacent)\n- a5.RJF (adjacent)\n- a6.MS (adjacent)\n\nThat's a lot of adjacent items. Each \"one adjacent item per cell, each with differs_because\".\n\nHmm, this is a lot. But I need to follow the instructions. Let me write adjacent items for each adjacent-only cell.\n\nActually, wait. Let me reconsider. The instruction says: \"A cell marked 'adjacent only' goes in adjacent, never in claims, one adjacent item per cell, each with differs_because from the cell, in your words with the same meaning.\"\n\nSo each adjacent-only cell gets one adjacent item. There are 15 adjacent-only cells (not counting research). That's 15 adjacent items. Plus gaps are added by code.\n\nThis is a huge answer. Let me be efficient but complete.\n\nActually, let me recount adjacent-only cells:\n\na1: MS (adjacent), SCHW (adjacent), RJF (adjacent). EDJ = not found. research = not found.\na2: MS (adjacent), EDJ (adjacent), RJF (adjacent). SCHW = fact, MER = fact. research = not found.\na3: MS (adjacent), SCHW (adjacent), EDJ (adjacent), RJF (adjacent). MER = fact. research = not found.\na4: SCHW (adjacent), EDJ (adjacent), RJF (adjacent). MS = not found. MER = fact. research = not found.\na5: RJF (adjacent). MS = not found, EDJ = not found, SCHW = fact, MER = fact. research = not found.\na6: MS (adjacent). SCHW = fact, MER = fact. EDJ = not found, RJF = not found. research = not found.\n\nAdjacent cells total:\na1.MS, a1.SCHW, a1.RJF (3)\na2.MS, a2.EDJ, a2.RJF (3)\na3.MS, a3.SCHW, a3.EDJ, a3.RJF (4)\na4.SCHW, a4.EDJ, a4.RJF (3)\na5.RJF (1)\na6.MS (1)\n\nTotal: 15 adjacent items.\n\nThat's a lot but I need to do it. Each adjacent item gets a differs_because from the cell's note.\n\nActually, let me reconsider whether the adjacent items are truly needed. The instruction says adjacent cells go in adjacent. Yes.\n\nBut wait - there's a lot of redundancy. The question is specifically about mass-affluent. The adjacent cells are \"different quantity\" - meaning they discuss high-net-worth or affluent (different tier). These should go in adjacent with differs_because.\n\nLet me write them concisely.\n\nActually, I realize I should focus and produce a clean answer. Let me write everything.\n\nLet me draft each part.\n\nFirst, let me determine part_ids for claims. The enum includes the cell ids and \"\" and \"a1\"...\"a6\".\n\nFor the headline claim, I'll use part_id \"\" (empty).\n\nActually, let me reconsider - maybe the headline should be the a1 comparison itself. But I'll keep them separate for clarity. Actually, let me combine: I'll make the comparison claim (a1) the answer to \"which is most explicit\", and the headline claim also.\n\nHmm, let me simplify. I'll have:\n\nClaim 1 (headline, part_id \"a1\"): This can serve as both the headline answer AND the comparison. Actually no, the comparison needs to say \"whether the comparison can be made.\"\n\nLet me do:\n- Claim 1 (part_id \"\"): headline answer.\n- Claim 2 (part_id \"a1\"): comparison claim.\n\nActually, I think it's cleaner to just make the headline part_id \"\" and the comparison part_id \"a1\".\n\nLet me write now.\n\nClaim 1 (headline): Merrill (within Bank of America's Global Wealth & Investment Management) has been the most explicit about serving mass-affluent clients, as its investor-day presentation names \"Mass Affluent ($500K - $1MM)\" as a distinct client segment in its Wealth Continuum. [BAC-DECK-2025-investor-day#12]\n\nClaim 2 (comparison, part_id a1): The comparison is valid: Merrill is the only one of the five that explicitly names a \"Mass Affluent\" client segment, while Morgan Stanley, Schwab, Edward Jones, and Raymond James describe higher or broader wealth tiers (high/ultra-high net worth, affluent, individual investors) without using the \"mass-affluent\" name. [BAC-DECK-2025-investor-day#12, MS-10K-2025#125, SCHW-TR-2026Q2#9, EDJ-10K-2025#88, RJF-TR-2025Q4#5]\n\nWait, but I need to be careful about citing the adjacent items for the comparison. The comparison \"rests on\" the fact that Merrill names it and others don't. The evidence for \"others don't name it\" is that they name different tiers. I can cite MS-10K-2025#125 (high/ultra-high net worth), SCHW-TR-2026Q2#9 (affluent), EDJ-10K-2025#88 (high net worth), RJF-TR-2025Q4#5 (high-net-worth).\n\nActually, for EDJ, EDJ-10K-2025#88 says \"High Net Worth, focused on attracting and serving high net worth clients\". Good.\n\nFor the comparison, I'll cite: BAC-DECK-2025-investor-day#12, MS-10K-2025#125, SCHW-TR-2026Q2#9, EDJ-10K-2025#88, RJF-TR-2025Q4#5.\n\nNow the fact cells.\n\na2.MER (part_id a2.MER):\nSentence 1: Merrill's investor-day presentation presents a \"Wealth Continuum\" listing \"Mass Affluent ($500K - $1MM)\" and \"High Net Worth ($1MM - $10MM)\" as client segments. [BAC-DECK-2025-investor-day#12]\nSentence 2: Merrill states it is \"Serving the wealth continuum of clients\" across Merrill and Private Bank. [BAC-DECK-2025-investor-day#9]\nSentence 3: Merrill's foundational belief states that \"the Wealth Continuum allows us to deliver as one company and is our engine for lasting growth.\" [BAC-DECK-2025-investor-day#8]\nSentence 4: Merrill Wealth Management's advisory business is described as providing a high-touch client experience through financial advisors focused on clients with over $250,000 in total investable assets. [BAC-10K-2025#246]\n\na2.SCHW (part_id a2.SCHW):\nSince Schwab uses \"affluent\" not \"mass-affluent\", but the cell is fact. I'll write:\nSentence 1: Schwab CEO Rick Wurster said about one-third of new clients are affluent (in 2025). [SCHW-TR-2025Q4#11]\nSentence 2: Schwab said households with $1 million to $5 million in assets using only one financial services firm jumped 11 percentage points year-over-year to 22%. [SCHW-TR-2026Q2#9]\nSentence 3: Schwab's 10-K states Schwab Private Client Services serves clients with $1 million to $10 million in qualifying assets and Schwab Private Wealth Services serves clients with more than $10 million. [SCHW-10K-2025#18]\n\nActually, wait. I should be careful. The a2.SCHW items are about \"affluent\" clients, which is a different (higher) tier. But the code marked it \"fact\". So the items are considered to be what Schwab has \"said about serving [affluent, as their closest equivalent to mass-affluent] clients.\"\n\nHmm, but actually I think there might be a subtle point: the a5.SCHW item 4 mentions \"retail investor households with >$500K in investable assets with Schwab\" - this is actually a threshold comparable to mass-affluent.\n\nRegardless, I'll write claims from the fact cells as given.\n\nLet me keep a2.SCHW to the key items:\n- one-third affluent (2025) [SCHW-TR-2025Q4#11]\n- $1M-$5M households 22% [SCHW-TR-2026Q2#9]\n- Private Client Services $1M-$10M [SCHW-10K-2025#18]\n\nActually, I need to think about how many sentences. The instruction for \"what do we know\" type: \"the main points, one per thing the question asks, each cited.\"\n\nI'll write 2-3 sentences per cell, covering key items.\n\na3.MER (part_id a3.MER) - how Merrill describes targeting/attracting mass-affluent:\nSentence 1: Merrill's investor-day deck presents a \"Wealth Continuum\" that explicitly labels the mass-affluent segment as clients with $500K to $1MM in assets. [BAC-DECK-2025-investor-day#12]\nSentence 2: Merrill states the firm is \"Serving the wealth continuum of clients.\" [BAC-DECK-2025-investor-day#9]\nSentence 3: Merrill Wealth Management's advisory business focuses on clients with over $250,000 in total investable assets. [BAC-10K-2025#246]\n\na4.MER (part_id a4.MER) - products/services for mass-affluent:\nSentence 1: Merrill Wealth Management's advisory business provides a high-touch client experience through financial advisors focused on clients with over $250,000 in total investable assets, and provides tailored solutions through a full set of investment management, brokerage, banking and retirement products. [BAC-10K-2025#246]\nSentence 2: Merrill's investor-day deck defines the Mass Affluent segment as clients with $500K to $1MM. [BAC-DECK-2025-investor-day#12]\n\na5.MER (part_id a5.MER) - definition of mass-affluent:\nSentence 1: Bank of America's investor day presentation sets out a \"Wealth Continuum\" defining the Mass Affluent segment as clients with $500K to $1MM in assets, with High Net Worth defined as $1MM to $10MM. [BAC-DECK-2025-investor-day#12]\nSentence 2: Merrill Wealth Management's advisory business is described as focusing on clients with over $250,000 in total investable assets. [BAC-10K-2025#246]\n\na5.SCHW (part_id a5.SCHW) - Schwab's definition/description:\nSentence 1: Schwab's CEO described households with $1 million to $5 million in assets. [SCHW-TR-2026Q2#9]\nSentence 2: Schwab's materials describe a segment as \"retail investor households with >$500K in investable assets with Schwab.\" [SCHW-DECK-2026Q2#22]\nSentence 3: Schwab's CEO said about one-third of new clients are \"affluent.\" [SCHW-TR-2025Q4#11]\n\na6.MER (part_id a6.MER) - most recent Merrill statements:\nSentence 1: In 3Q26 (published 2026-10-14), Merrill reported adding about 4,200 net new households with at least $500,000 in assets, up 17%. [BAC-TR-2026Q3#19]\nSentence 2: Merrill's investor-day deck defines the \"Mass Affluent\" segment as clients with $500K to $1MM. [BAC-DECK-2025-investor-day#12]\n\nActually, the \"most recent\" should highlight the newest. The 3Q26 items are the most recent. Item 2 says \"Merrill's most recent statement (3Q26, published 2026-10-14) reports Merrill added about 4,200 net new households with at least $500,000 in assets, up 17%.\" That's the most recent.\n\nLet me write:\na6.MER Sentence 1: Merrill's most recent statement (3Q26, published 2026-10-14) reports Merrill added about 4,200 net new households with at least $500,000 in assets, up 17%. [BAC-TR-2026Q3#19]\na6.MER Sentence 2: In 3Q26 Merrill added ~4.2K net new $500K+ households, per the Merrill Wealth Management Highlights. [BAC-PR-2026-10-14-01#12]\n\na6.SCHW (part_id a6.SCHW) - most recent Schwab statements:\nSentence 1: Schwab CEO Rick Wurster stated that 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships, amid a \"bull market for convenience.\" [SCHW-TR-2026Q2#9]\nSentence 2: Wurster added that households with $1 million to $5 million in assets using only one financial services firm rose to 22%, up 11 points year-over-year. [SCHW-TR-2026Q2#9]\nSentence 3: Schwab Advisor Services head Jon Beatty said 68% of affluent Americans say they are willing to pay for advice today, up from 38% in 2010. [SCHW-TRADE-2026-10-27-IN-01#0]\n\nOK, that's the claims. Now the adjacent items.\n\nAdjacent items (each with differs_because):\n\n1. a1.MS: Morgan Stanley names \"high and ultra-high net worth individuals\" as its Wealth Management client segment and does not name a \"mass-affluent\" segment; its only \"mass-affluent\" mention is a third-party Cerulli Associates figure about 401(k) participants. [MS-10K-2025#125]\ndiffers_because: Morgan Stanley names 'high and ultra-high net worth individuals' (a higher wealth tier) as its wealth client segment, not a 'mass-affluent' segment; the only 'mass-affluent' mention is a third-party Cerulli Associates figure about 401(k) participants, not Morgan Stanley's own segment.\n\nActually, the differs_because should be in my own words with same meaning as the cell's note.\n\nLet me write these carefully but concisely.\n\nFor each adjacent cell, I write:\n- text: a summary of the item(s)\n- chunk_ids: the relevant chunks\n- part_id: the cell id\n- differs_because: in my words\n\nLet me go through them:\n\na1.MS:\ntext: Morgan Stanley describes the clients of its Wealth Management segment as individual investors including high and ultra-high net worth individuals and businesses and institutions, and does not name a mass-affluent segment. [MS-10K-2025#125]\ndiffers_because: Morgan Stanley names 'high and ultra-high net worth individuals' (a higher wealth tier) as its wealth client segment rather than a 'mass-affluent' segment; its only 'mass-affluent' mention is a third-party Cerulli Associates figure about 401(k) participants.\n\na1.SCHW:\ntext: Schwab references \"affluent\" clients and households with $1 million to $5 million in assets, rather than using the term \"mass-affluent.\" [SCHW-TR-2026Q2#9]\ndiffers_because: Schwab uses 'affluent' and wealth-tier labels ('high net worth', households with $1 million to $5 million) but does not use the specific 'mass-affluent' segment name.\n\na1.RJF:\ntext: Raymond James names high-net-worth and ultra-high-net-worth client segments (its Private Wealth Advisor program defines high-net-worth as at least $5 million in investable assets), not a mass-affluent segment. [RJF-TRADE-2026-09-29-IN-01#3]\ndiffers_because: RJF names the 'high-net-worth' and 'ultra-high-net-worth' client segments (defining high-net-worth as at least $5 million in investable assets), not the 'mass-affluent' segment.\n\na2.MS:\ntext: Morgan Stanley's Wealth Management segment describes its client base as individual investors including high and ultra-high net worth individuals, and an executive referenced a \"more democratized offering\" of alternatives to \"retail\" clients. [MS-10K-2025#125]\ndiffers_because: The firm describes serving 'individual investors' (specifically 'high and ultra-high net worth individuals') and 'retail' clients, but does not use the term 'mass-affluent'; these are different (wealthier or broader) segments.\n\na2.EDJ:\ntext: Edward Jones states it primarily serves individual investors in the U.S. and Canada and targets \"High Net Worth\" clients, not mass-affluent clients. [EDJ-10K-2025#9, EDJ-10K-2025#88]\ndiffers_because: No passage uses 'mass-affluent'; Edward Jones describes serving 'individual investors' and 'long-term investors' (broader categories) and explicitly targets 'high net worth' clients (a wealthier segment).\n\na2.RJF:\ntext: Tash Elwyn, president of Raymond James' Private Client Group, said the firm is committed to being a destination for private wealth advisors serving individuals and families with significant wealth. [RJF-TRADE-2026-09-29-WM-01#0]\ndiffers_because: The firm's statements concern high-net-worth, ultra-high-net-worth and private wealth clients (wealthier segments, generally $5M+ in investable assets), not mass-affluent clients.\n\na3.MS:\ntext: Ted Pick described serving clients across all three wealth channels including the \"everyday transaction offering\" and CashPlus in E*TRADE and the Workplace channel. [MS-TR-2024Q4#50]\ndiffers_because: Morgan Stanley describes targeting a broad base of retail/individual/'everyday' clients (via E*TRADE and Workplace) rather than using 'mass-affluent' terminology or naming a mass-affluent segment.\n\na3.SCHW:\ntext: Schwab states about one-third of its new clients are affluent and it is winning with investors of all wealth tiers. [SCHW-TR-2025Q4#11]\ndiffers_because: Schwab describes targeting 'affluent' and 'higher net worth' clients (wealth tiers above mass-affluent); the passages never use 'mass-affluent'.\n\na3.EDJ:\ntext: Edward Jones states its initiatives include a \"High Net Worth\" initiative focused on attracting and serving high net worth clients. [EDJ-10K-2025#88]\ndiffers_because: The passage describes targeting High Net Worth clients (a higher wealth tier) rather than mass-affluent clients.\n\na3.RJF:\ntext: Raymond James CEO Paul Shoukry states the firm's private wealth advisor program and expanded alternative investments platform support advisors who focus on high-net-worth clients. [RJF-TR-2025Q4#5]\ndiffers_because: Passages describe targeting high-net-worth and ultra-high-net-worth clients (a wealthier segment), not mass-affluent clients.\n\na4.SCHW:\ntext: Schwab states Schwab Private Client Services (for clients with $1 million to $10 million in qualifying assets) and Schwab Private Wealth Services (for clients with more than $10 million) provide enhanced experiences including dedicated service teams and specialized expertise. [SCHW-10K-2025#18]\ndiffers_because: These offerings are described for 'affluent'/high-net-worth tiers ($1 million+ in qualifying assets), a higher/broader segment than 'mass-affluent'; no passage describes a mass-affluent-specific product, service, or fee level.\n\na4.EDJ:\ntext: Edward Jones offers clients a variety of solutions including investment advisory programs, brokerage and retirement accounts, cash and lending solutions and financial planning offerings. [EDJ-10K-2025#10]\ndiffers_because: No passage mentions 'mass-affluent' clients; these products and fee structures are offered to clients/individual investors generally, a broader group.\n\na4.RJF:\ntext: Raymond James states that through its PCG segment it provides financial planning, investment advisory, and securities transaction services for which it charges asset-based fees or sales commissions. [RJF-10K-2025#216]\ndiffers_because: These products, services and fee structures are offered to the firm's clients generally (Private Client Group clients), a wider group than mass-affluent clients; no passage mentions 'mass-affluent'.\n\na5.RJF:\ntext: Raymond James' Private Wealth Advisor designation program is for advisors who specialize in high-net-worth clients, generally defined as those with at least $5 million in investable assets. [RJF-TRADE-2026-09-29-IN-01#3]\ndiffers_because: This defines the high-net-worth client segment (at least $5 million in investable assets), not the mass-affluent segment.\n\na6.MS:\ntext: Morgan Stanley said its strategy is to introduce and educate retail clients to the value of advice. [MS-TR-2025Q4#23]\ndiffers_because: The passage refers to 'retail clients' broadly, not specifically 'mass-affluent' clients; retail is a broader category.\n\nOK. Now the gaps. The code has already added gaps (listed in \"Gaps added by code\"). The instruction says \"Cells with code gaps get no claim; code adds those gaps. Add no gap of your own.\"\n\nSo I should NOT add gaps - the code adds them. But wait, the submit_answer tool has a \"gaps\" field. Do I need to populate it?\n\nRe-reading: \"Gaps added by code (do not repeat them)\" - this lists the gaps that code will add. So I should NOT include them in my gaps field. The gaps field should be empty (or I just don't add those).\n\nActually, the gaps are added by code separately. So my \"gaps\" field should be empty (or minimal). Let me leave gaps empty since code adds them.\n\nWait, but the tool requires \"gaps\" field (it's in required). So I provide an empty array.\n\nActually, re-reading: \"Cells with code gaps get no claim; code adds those gaps. Add no gap of your own unless those gaps miss something.\"\n\nSo I provide empty gaps array. The code will add its gaps separately.\n\nHmm, but actually, let me reconsider. The tool schema has \"gaps\" as required. I'll provide an empty array [] since code adds the gaps.\n\nActually wait, let me re-read more carefully. The \"Gaps added by code (do not repeat them)\" section lists gaps. And \"Caveats added by code (do not repeat them)\". These are things the code will add. So my answer should not include them.\n\nSo gaps = [] (empty), and I don't write caveats.\n\nLet me also double check: are there any \"fact\" cells I'm missing?\n\nFact cells:\n- a1.MER (fact) - but this is the comparison aspect. Hmm.\n\nLet me reconsider a1.MER. It's marked \"fact\" with 2 items. But a1 is a [comparison] aspect needing \"exactly one comparison claim, part_id a1\".\n\nSo the a1.MER facts (Merrill names \"Mass Affluent\") are the content of the comparison claim. The comparison claim a1 cites BAC-DECK-2025-investor-day#12 and #9.\n\nActually, I think the comparison claim should cover a1.MER's facts (since a1.MER is where Merrill's naming is). The comparison claim says \"Merrill is the only one that names Mass Affluent, others don't.\" This covers a1.MER.\n\nSo I don't need a separate a1.MER claim. The comparison claim (part_id a1) handles it.\n\nBut wait - the fact items in a1.MER are: item 1 (Wealth Continuum naming Mass Affluent $500K-$1MM) and item 2 (\"Serving the wealth continuum of clients\"). These need to be reflected. My comparison claim cites #12 which covers item 1. Item 2 (#9) is also cited in a2.MER/a3.MER claims.\n\nI think it's fine. The comparison claim a1 is the \"one comparison claim\" and it cites the Merrill naming.\n\nActually, let me reconsider whether I should have BOTH a headline claim AND a comparison claim, or just fold them.\n\nGiven the structure requirements, I'll have:\n1. Headline claim (part_id \"\") - answers \"which is most explicit\"\n2. Comparison claim (part_id \"a1\") - the required comparison sentence\n\nThese are somewhat redundant but both are required by the shape instructions (\"Claim 1 answers directly\" + \"comparison: ... plus the comparison sentence\").\n\nActually, let me merge them more elegantly. The headline could just be the comparison. But the shape says claim 1 answers directly. Let me keep them separate but make them non-redundant:\n\nHeadline: Merrill is most explicit, naming \"Mass Affluent ($500K - $1MM)\".\n\nComparison (a1): The comparison is valid - Merrill alone names \"Mass Affluent\"; the other four name higher/broader tiers.\n\nOK let me finalize. Also I need to double-check the \"quote not verbatim\" handling - never put in quotation marks for those. And \"figure not found in its passage\" - keep figure out.\n\nFor BAC-10K-2025#246, it says \"[quote not verbatim: never put it in quotation marks]\". So I write without quotes.\n\nFor BAC-DECK-2025-investor-day#12, the quote is \"Wealth Continuum Mass Affluent ($500K - $1MM) High Net Worth ($1MM - $10MM)\" - this is a direct quote, so I can use quotes. But actually it's a deck bullet, so \"Mass Affluent ($500K - $1MM)\" is verbatim. I can quote \"Mass Affluent ($500K - $1MM)\".\n\nLet me be careful with quotes. I'll use quotes only where the item doesn't say \"quote not verbatim\".\n\nFor BAC-DECK-2025-investor-day#12: quote verbatim, so I can quote \"Mass Affluent ($500K - $1MM)\".\n\nFor BAC-DECK-2025-investor-day#9: \"Serving the wealth continuum of clients\" - verbatim, can quote.\n\nFor BAC-DECK-2025-investor-day#8: \"the Wealth Continuum allows us to deliver as one company and is our engine for lasting growth\" - verbatim, can quote.\n\nFor BAC-10K-2025#246: quote not verbatim, no quotes.\n\nFor SCHW-TR-2026Q2#9: verbatim quotes available.\n\nOK let me also reconsider: for a5.SCHW item 4, SCHW-DECK-2026Q2#22 quote \"vs retail investor households with >$500K in investable assets with Schwab, excluding Trader\". This is a definition of a segment. I can say: Schwab's materials describe a segment as retail investor households with more than $500K in investable assets with Schwab.\n\nLet me write it as: Schwab's materials describe a comparison segment as \"retail investor households with >$500K in investable assets with Schwab.\" [SCHW-DECK-2026Q2#22]\n\nNow let me finalize all claims and write the answer.\n\nLet me also reconsider part_ids. For claims about specific cells, part_id = cell id like \"a2.MER\". For the headline, part_id = \"\". For comparison, part_id = \"a1\".\n\nLet me write the final JSON.\n\nActually, I realize I should double-check the number of claims and keep them focused. Let me also make sure each claim cites at least one chunk id.\n\nLet me also reconsider: should the headline claim and the a1 comparison be separate, or should I merge? The instruction \"Claim 1 answers the question directly\" and then \"Then the length follows the question... a comparison: one sentence per firm in its own terms, plus the comparison sentence below.\"\n\nThe question \"which has been most explicit... and what exactly have they said\" is a comparison + facts.\n\nI think:\n- Claim 1: headline (Merrill most explicit).\n- Comparison claim (a1): the required comparison sentence.\n- Then fact claims for a2-a6.\n\nLet me write it all now.\n\nFor the comparison claim a1, I'll write:\n\"The comparison can be made on this evidence: Merrill is the only firm that explicitly names a 'Mass Affluent' client segment ($500K\u2013$1MM), while Morgan Stanley, Schwab, Edward Jones, and Raymond James name higher or broader tiers (high and ultra-high net worth, affluent, individual investors) and never use the 'mass-affluent' name.\"\n\ncite: BAC-DECK-2025-investor-day#12, MS-10K-2025#125, SCHW-TR-2026Q2#9, EDJ-10K-2025#88, RJF-TR-2025Q4#5\n\nNow writing everything.\n\nLet me finalize the claims array order:\n1. Headline (part_id \"\")\n2. a1 comparison\n3. a2.MER\n4. a2.SCHW\n5. a3.MER\n6. a4.MER\n7. a5.MER\n8. a5.SCHW\n9. a6.MER\n10. a6.SCHW\n\nI'll write multiple sentences per cell where there are distinct items.\n\nLet me write it all out now in final form.\n\nFor the headline, I'll cite BAC-DECK-2025-investor-day#12.\n\nLet me make the headline concise and directly answer.\n\nActually, I want to reconsider part_id for headline. Looking at the enum, \"\" is an option (empty string). I'll use \"\".\n\nLet me write final.\n\nFor a2.MER, I'll consolidate into maybe 3 sentences:\n- Merrill's investor-day presentation names \"Mass Affluent ($500K - $1MM)\" and \"High Net Worth ($1MM - $10MM)\" as client segments in its Wealth Continuum. [BAC-DECK-2025-investor-day#12]\n- Merrill states it is \"Serving the wealth continuum of clients\" and that \"the Wealth Continuum allows us to deliver as one company and is our engine for lasting growth.\" [BAC-DECK-2025-investor-day#9, BAC-DECK-2025-investor-day#8]\n\nHmm, but one sentence per item, one cited sentence per item. Actually the instruction says \"Each claim is ONE sentence\" and \"never run a list of items inside one sentence; write one sentence per item.\"\n\nSo I should write one sentence per item, not combine. Let me write:\n\na2.MER:\n1. Merrill's investor-day presentation presents a \"Wealth Continuum\" that lists \"Mass Affluent ($500K - $1MM)\" and \"High Net Worth ($1MM - $10MM)\" as client segments. [BAC-DECK-2025-investor-day#12]\n2. Merrill states it is \"Serving the wealth continuum of clients\" across Merrill and Private Bank. [BAC-DECK-2025-investor-day#9]\n3. Merrill's foundational belief is that \"the Wealth Continuum allows us to deliver as one company and is our engine for lasting growth.\" [BAC-DECK-2025-investor-day#8]\n4. Merrill Wealth Management's advisory business is described as providing a high-touch client experience through financial advisors focused on clients with over $250,000 in total investable assets. [BAC-10K-2025#246]\n\nThat's 4 sentences for a2.MER. OK.\n\nThis is getting very long. Let me be judicious. The question is focused, and the answer should be comprehensive but not bloated. I'll include the key items.\n\nActually, I need to balance \"every cell cited by a sentence\" with \"don't bloat\". Each fact cell needs at least one sentence. I'll write 1-3 sentences per cell covering the most important items.\n\nLet me finalize with reasonable coverage.\n\nFinal claims:\n\n1. Headline (\"\"): Merrill (within Bank of America's Global Wealth & Investment Management) has been the most explicit about serving mass-affluent clients, as its investor-day presentation names \"Mass Affluent ($500K - $1MM)\" as a distinct segment in its Wealth Continuum. [BAC-DECK-2025-investor-day#12]\n\n2. a1 comparison: The comparison is valid: Merrill is the only firm that explicitly names a \"Mass Affluent\" client segment, while Morgan Stanley, Schwab, Edward Jones, and Raymond James name higher or broader tiers (high and ultra-high net worth, affluent, individual investors) and never use the \"mass-affluent\" name. [BAC-DECK-2025-investor-day#12, MS-10K-2025#125, SCHW-TR-2026Q2#9, EDJ-10K-2025#88, RJF-TR-2025Q4#5]\n\n3. a2.MER (4 sentences as above)\n\n4. a2.SCHW:\n- Schwab CEO Rick Wurster said about one-third of new clients are affluent, in 2025. [SCHW-TR-2025Q4#11]\n- Schwab said households with $1 million to $5 million in assets using only one financial services firm jumped 11 percentage points year-over-year to 22%. [SCHW-TR-2026Q2#9]\n- Schwab's 10-K states Schwab Private Client Services serves clients with $1 million to $10 million in qualifying assets and Schwab Private Wealth Services serves clients with more than $10 million. [SCHW-10K-2025#18]\n\n5. a3.MER:\n- Merrill's investor-day deck presents a \"Wealth Continuum\" that explicitly labels the mass-affluent segment as clients with $500K to $1MM in assets. [BAC-DECK-2025-investor-day#12]\n- Merrill Wealth Management's advisory business is described as focusing on clients with over $250,000 in total investable assets. [BAC-10K-2025#246]\n\n6. a4.MER:\n- Merrill Wealth Management's advisory business provides a high-touch client experience through financial advisors focused on clients with over $250,000 in total investable assets, and provides tailored solutions through a full set of investment management, brokerage, banking and retirement products. [BAC-10K-2025#246]\n- Merrill's investor-day deck defines the Mass Affluent segment as clients with $500K to $1MM. [BAC-DECK-2025-investor-day#12]\n\n7. a5.MER:\n- Bank of America's investor day presentation sets out a \"Wealth Continuum\" defining the Mass Affluent segment as clients with $500K to $1MM in assets, with High Net Worth defined as $1MM to $10MM. [BAC-DECK-2025-investor-day#12]\n- Merrill Wealth Management's advisory business is described as focusing on clients with over $250,000 in total investable assets. [BAC-10K-2025#246]\n\n8. a5.SCHW:\n- Schwab's CEO described households with $1 million to $5 million in assets. [SCHW-TR-2026Q2#9]\n- Schwab's materials describe a segment as retail investor households with more than $500K in investable assets with Schwab. [SCHW-DECK-2026Q2#22]\n- Schwab's CEO said about one-third of new clients are \"affluent.\" [SCHW-TR-2025Q4#11]\n\n9. a6.MER:\n- Merrill's most recent statement (3Q26, published 2026-10-14) reports Merrill added about 4,200 net new households with at least $500,000 in assets, up 17%. [BAC-TR-2026Q3#19]\n- In 3Q26 Merrill added ~4.2K net new $500K+ households, per the Merrill Wealth Management Highlights. [BAC-PR-2026-10-14-01#12]\n\n10. a6.SCHW:\n- Schwab CEO Rick Wurster stated that 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships, amid a \"bull market for convenience.\" [SCHW-TR-2026Q2#9]\n- Wurster added that households with $1 million to $5 million in assets using only one financial services firm rose to 22%, up 11 percentage points year-over-year. [SCHW-TR-2026Q2#9]\n- Schwab Advisor Services head Jon Beatty said 68% of affluent Americans say they are willing to pay for advice today, up from 38% in 2010. [SCHW-TRADE-2026-10-27-IN-01#0]\n\nThat's a comprehensive set. Now the adjacent items (15).\n\nLet me write the adjacent items concisely.\n\nActually, I need to double check the SCHW-TR-2026Q2#9 quote for the \"bull market for convenience\". The item says: \"which he cited amid a 'bull market for convenience' driving investors to consolidate their financial lives.\" This appears in a6.SCHW item 1. So \"bull market for convenience\" is a quote from the transcript. I can use it.\n\nActually, the item text for a6.SCHW item 1 says: 'which he cited amid a \"bull market for convenience\"'. So that phrase is in the source. I'll attribute carefully. Actually the quote given in the item is \"61% of affluent clients ages 25 to 44, so they prefer to consolidate their wealth and banking relationships.\" The \"bull market for convenience\" is described in the item summary but not in the \"quote\" field. To be safe, I'll just say he cited this amid a bull market for convenience without quoting it, or just state the 61% figure.\n\nLet me simplify: \"Schwab CEO Rick Wurster stated that 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships.\" [SCHW-TR-2026Q2#9]\n\nOK, let me write the final answer now.\n\nFor the adjacent list, I'll write each item.\n\nLet me finalize the differs_because text for each (in my own words, same meaning).\n\nNow writing the final tool call.\n\nLet me make sure I use the correct part_ids. For adjacent items, part_id = the cell id (e.g., \"a1.MS\").\n\nLet me write everything out.\n\nI'll write the claims in order, then adjacent, then gaps (empty).\n\nActually, let me reconsider the number of adjacent items and whether to include all. The instruction is clear: \"A cell marked 'adjacent only' goes in adjacent, never in claims, one adjacent item per cell.\"\n\nSo 15 adjacent items. Let me write them.\n\nLet me finalize.\n\nFor a2.MS adjacent, I'll cite MS-10K-2025#125 (and maybe MS-TR-2025Q1#56). Let me use MS-10K-2025#125.\n\nActually, let me write a concise adjacent for each, choosing the most representative item.\n\nLet me write the complete final answer.\n\nOne more consideration: the \"answerable\" field should be true.\n\nLet me write the final JSON now.\n\nFor part_id of headline, I'll use \"\".\n\nActually, let me reconsider - is \"\" a valid part_id for the headline? The enum includes \"\". Yes.\n\nLet me write it all.\n\nI'll now compose the final answer carefully.\n\nFor quotes, let me be careful:\n- \"Mass Affluent ($500K - $1MM)\" - from BAC-DECK-2025-investor-day#12, verbatim. Quote it.\n- \"Serving the wealth continuum of clients\" - BAC-DECK-2025-investor-day#9, verbatim. Quote.\n- \"the Wealth Continuum allows us to deliver as one company and is our engine for lasting growth\" - BAC-DECK-2025-investor-day#8, verbatim. Quote.\n- BAC-10K-2025#246 - not verbatim, no quotes.\n\nOK writing final.\n\nLet me write the adjacent items' text concisely, using the firm's own terms.\n\nFinal answer below.",
+  "first_claim_s": 178.86,
+  "stream_items": {
+    "first_claim_s": 178.86,
+    "shown": 23,
+    "held": 15
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Merrill (within Bank of America's Global Wealth & Investment Management) has been the most explicit about serving mass-affluent clients, as its investor-day presentation names \"Mass Affluent ($500K - $1MM)\" as a distinct client segment in its Wealth Continuum.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12"
+        ],
+        "part_id": ""
+      },
+      {
+        "text": "The comparison is valid: Merrill is the only one of the five that explicitly names a \"Mass Affluent\" client segment, while Morgan Stanley, Schwab, Edward Jones, and Raymond James name higher or broader tiers (high and ultra-high net worth, affluent, individual investors) and never use the \"mass-affluent\" name.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12",
+          "MS-10K-2025#125",
+          "SCHW-TR-2026Q2#9",
+          "EDJ-10K-2025#88",
+          "RJF-TR-2025Q4#5"
+        ],
+        "part_id": "a1"
+      },
+      {
+        "text": "Merrill's investor-day presentation presents a \"Wealth Continuum\" that lists \"Mass Affluent ($500K - $1MM)\" and \"High Net Worth ($1MM - $10MM)\" as client segments.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill states it is \"Serving the wealth continuum of clients\" across Merrill and Private Bank.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#9"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill's foundational belief is that \"the Wealth Continuum allows us to deliver as one company and is our engine for lasting growth.\"",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#8"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Merrill Wealth Management's advisory business is described as providing a high-touch client experience through a network of financial advisors focused on clients with over $250,000 in total investable assets.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a2.MER"
+      },
+      {
+        "text": "Schwab CEO Rick Wurster said about one-third of new clients are affluent, in 2025.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#11"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab said households with $1 million to $5 million in assets using only one financial services firm jumped 11 percentage points year-over-year to 22%.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#9"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Schwab's 10-K states that Schwab Private Client Services serves clients with $1 million to $10 million in qualifying assets and Schwab Private Wealth Services serves clients with more than $10 million, offering dedicated service teams and specialized expertise.",
+        "chunk_ids": [
+          "SCHW-10K-2025#18"
+        ],
+        "part_id": "a2.SCHW"
+      },
+      {
+        "text": "Merrill's investor-day deck presents a \"Wealth Continuum\" that explicitly labels the mass-affluent segment as clients with $500K to $1MM in assets, above which sits High Net Worth ($1MM\u2013$10MM).",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill Wealth Management's advisory business is described as focused on clients with over $250,000 in total investable assets.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a3.MER"
+      },
+      {
+        "text": "Merrill Wealth Management's advisory business provides a high-touch client experience through financial advisors focused on clients with over $250,000 in total investable assets, and provides tailored solutions through a full set of investment management, brokerage, banking and retirement products.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a4.MER"
+      },
+      {
+        "text": "Merrill's investor-day deck defines the Mass Affluent segment as clients with $500K to $1MM in assets.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12"
+        ],
+        "part_id": "a4.MER"
+      },
+      {
+        "text": "Bank of America's investor day presentation sets out a \"Wealth Continuum\" that defines the Mass Affluent segment as clients with $500K to $1MM in assets, with High Net Worth defined as $1MM to $10MM.",
+        "chunk_ids": [
+          "BAC-DECK-2025-investor-day#12"
+        ],
+        "part_id": "a5.MER"
+      },
+      {
+        "text": "Merrill Wealth Management's advisory business is described as focusing on clients with over $250,000 in total investable assets.",
+        "chunk_ids": [
+          "BAC-10K-2025#246"
+        ],
+        "part_id": "a5.MER"
+      },
+      {
+        "text": "Schwab's CEO described households with $1 million to $5 million in assets, noting this group's use of a single financial services firm rose to 22%.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#9"
+        ],
+        "part_id": "a5.SCHW"
+      },
+      {
+        "text": "Schwab's materials describe a comparison segment as retail investor households with more than $500K in investable assets with Schwab.",
+        "chunk_ids": [
+          "SCHW-DECK-2026Q2#22"
+        ],
+        "part_id": "a5.SCHW"
+      },
+      {
+        "text": "Schwab's CEO said about one-third of new clients are \"affluent.\"",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#11"
+        ],
+        "part_id": "a5.SCHW"
+      },
+      {
+        "text": "Merrill's most recent statement (3Q26, published 2026-10-14) reports that Merrill added about 4,200 net new households with at least $500,000 in assets, up 17%.",
+        "chunk_ids": [
+          "BAC-TR-2026Q3#19"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "In 3Q26 Merrill added ~4.2K net new $500K+ households, per the Merrill Wealth Management Highlights.",
+        "chunk_ids": [
+          "BAC-PR-2026-10-14-01#12"
+        ],
+        "part_id": "a6.MER"
+      },
+      {
+        "text": "Schwab CEO Rick Wurster stated that 61% of affluent clients ages 25 to 44 prefer to consolidate their wealth and banking relationships.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#9"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "Wurster added that households with $1 million to $5 million in assets using only one financial services firm rose to 22%, up 11 percentage points year-over-year.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#9"
+        ],
+        "part_id": "a6.SCHW"
+      },
+      {
+        "text": "Schwab Advisor Services head Jon Beatty said 68% of affluent Americans say they are willing to pay for advice today, up from 38% in 2010.",
+        "chunk_ids": [
+          "SCHW-TRADE-2026-10-27-IN-01#0"
+        ],
+        "part_id": "a6.SCHW"
+      }
+    ],
+    "adjacent": [
+      {
+        "text": "Morgan Stanley describes the clients of its Wealth Management segment as individual investors, including high and ultra-high net worth individuals, and businesses and institutions, and does not name a mass-affluent segment.",
+        "chunk_ids": [
+          "MS-10K-2025#125"
+        ],
+        "part_id": "a1.MS",
+        "differs_because": "Morgan Stanley names 'high and ultra-high net worth individuals' (a higher wealth tier) as its wealth client segment rather than a 'mass-affluent' segment; its only 'mass-affluent' mention is a third-party Cerulli Associates figure about 401(k) participants."
+      },
+      {
+        "text": "Schwab references \"affluent\" clients and households with $1 million to $5 million in assets, rather than using the term \"mass-affluent.\"",
+        "chunk_ids": [
+          "SCHW-TR-2026Q2#9"
+        ],
+        "part_id": "a1.SCHW",
+        "differs_because": "Schwab uses 'affluent' and wealth-tier labels ('high net worth', 'ultra-high net worth', households with $1 million to $5 million) but does not use the specific 'mass-affluent' segment name."
+      },
+      {
+        "text": "Raymond James names high-net-worth and ultra-high-net-worth client segments, with its Private Wealth Advisor program defining high-net-worth as at least $5 million in investable assets.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#3"
+        ],
+        "part_id": "a1.RJF",
+        "differs_because": "RJF names the 'high-net-worth' and 'ultra-high-net-worth' client segments (defining high-net-worth as at least $5 million in investable assets), not the 'mass-affluent' segment."
+      },
+      {
+        "text": "Morgan Stanley's Wealth Management segment describes its client base as individual investors including high and ultra-high net worth individuals, and an executive referenced a more democratized offering of alternatives to retail clients.",
+        "chunk_ids": [
+          "MS-10K-2025#125",
+          "MS-TR-2025Q1#56"
+        ],
+        "part_id": "a2.MS",
+        "differs_because": "The firm describes serving 'individual investors' (specifically 'high and ultra-high net worth individuals') and 'retail' clients, but does not use the term 'mass-affluent'; these are different (wealthier or broader) segments."
+      },
+      {
+        "text": "Edward Jones states it primarily serves individual investors in the U.S. and Canada and targets \"High Net Worth\" clients.",
+        "chunk_ids": [
+          "EDJ-10K-2025#9",
+          "EDJ-10K-2025#88"
+        ],
+        "part_id": "a2.EDJ",
+        "differs_because": "No passage uses 'mass-affluent'; Edward Jones describes serving 'individual investors' and 'long-term investors' (broader categories) and explicitly targets 'high net worth' clients (a wealthier segment)."
+      },
+      {
+        "text": "Tash Elwyn, president of Raymond James' Private Client Group, said the firm is committed to being a destination for private wealth advisors serving individuals and families with significant wealth.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-WM-01#0"
+        ],
+        "part_id": "a2.RJF",
+        "differs_because": "The firm's statements concern high-net-worth, ultra-high-net-worth and private wealth clients (wealthier segments, generally $5M+ in investable assets), not mass-affluent clients."
+      },
+      {
+        "text": "Ted Pick described serving clients across all three wealth channels, including the everyday transaction offering and CashPlus in E*TRADE, and the Workplace channel.",
+        "chunk_ids": [
+          "MS-TR-2024Q4#50"
+        ],
+        "part_id": "a3.MS",
+        "differs_because": "Morgan Stanley describes targeting a broad base of retail/individual/'everyday' clients (via E*TRADE and Workplace) rather than using 'mass-affluent' terminology or naming a mass-affluent segment."
+      },
+      {
+        "text": "Schwab states that about one-third of its new clients are affluent and that it is winning with investors of all wealth tiers.",
+        "chunk_ids": [
+          "SCHW-TR-2025Q4#11"
+        ],
+        "part_id": "a3.SCHW",
+        "differs_because": "Schwab describes targeting 'affluent' and 'higher net worth' clients (wealth tiers above mass-affluent); the passages never use the specific term 'mass-affluent'."
+      },
+      {
+        "text": "Edward Jones states that its initiatives include a \"High Net Worth\" initiative focused on attracting and serving high net worth clients.",
+        "chunk_ids": [
+          "EDJ-10K-2025#88"
+        ],
+        "part_id": "a3.EDJ",
+        "differs_because": "The passage describes targeting High Net Worth clients (a higher wealth tier) rather than mass-affluent clients."
+      },
+      {
+        "text": "Raymond James CEO Paul Shoukry states that the firm's private wealth advisor program and expanded alternative investments platform support advisors who focus on high-net-worth clients.",
+        "chunk_ids": [
+          "RJF-TR-2025Q4#5"
+        ],
+        "part_id": "a3.RJF",
+        "differs_because": "Passages describe targeting high-net-worth and ultra-high-net-worth clients (a wealthier segment than mass-affluent), not mass-affluent clients."
+      },
+      {
+        "text": "Schwab states that Schwab Private Client Services (for clients with $1 million to $10 million in qualifying assets) and Schwab Private Wealth Services (for clients with more than $10 million) provide enhanced experiences including dedicated service teams, specialized expertise, and pricing advantages.",
+        "chunk_ids": [
+          "SCHW-10K-2025#18"
+        ],
+        "part_id": "a4.SCHW",
+        "differs_because": "These offerings are described for 'affluent'/high-net-worth tiers ($1 million to $10 million and above $10 million in qualifying assets), a higher/broader segment than 'mass-affluent'; no passage describes a mass-affluent-specific product, service, or fee level."
+      },
+      {
+        "text": "Edward Jones offers clients a variety of solutions including investment advisory programs, brokerage and retirement accounts, cash and lending solutions and financial planning offerings.",
+        "chunk_ids": [
+          "EDJ-10K-2025#10"
+        ],
+        "part_id": "a4.EDJ",
+        "differs_because": "No passage mentions 'mass-affluent' clients; these products, services, and fee structures are offered to the firm's clients/individual investors generally, a broader group than the mass-affluent segment."
+      },
+      {
+        "text": "Raymond James states that through its Private Client Group segment it provides financial planning, investment advisory, and securities transaction services for which it charges asset-based fees or sales commissions.",
+        "chunk_ids": [
+          "RJF-10K-2025#216"
+        ],
+        "part_id": "a4.RJF",
+        "differs_because": "These products, services, and fee structures are offered to the firm's clients generally (Private Client Group clients), a wider group than mass-affluent clients; no passage mentions 'mass-affluent' clients."
+      },
+      {
+        "text": "Raymond James' Private Wealth Advisor designation program is for advisors who specialize in high-net-worth clients, which the firm generally defines as those with at least $5 million in investable assets.",
+        "chunk_ids": [
+          "RJF-TRADE-2026-09-29-IN-01#3"
+        ],
+        "part_id": "a5.RJF",
+        "differs_because": "This defines the high-net-worth client segment (at least $5 million in investable assets), not the mass-affluent segment asked about."
+      },
+      {
+        "text": "Morgan Stanley said its strategy is to introduce and educate retail clients to the value of advice.",
+        "chunk_ids": [
+          "MS-TR-2025Q4#23"
+        ],
+        "part_id": "a6.MS",
+        "differs_because": "The passage refers to 'retail clients' broadly, not specifically 'mass-affluent' clients; retail is a broader category that includes mass-affluent and other client tiers."
+      }
+    ],
+    "gaps": []
+  }
+}

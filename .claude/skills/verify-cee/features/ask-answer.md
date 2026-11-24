@@ -35,6 +35,10 @@ A user types a question and gets an answer whose claims each link to a stored pa
   whose chunk it cites (`part_coverage` state `aspect`); the driver reads the cells from `filters.map.cells`.
   With `REDUCE_PROMPT=v8` a holding cell the answer does not cite is covered by the evidence list (no part gap;
   `part_coverage` state `evidence_list`); the driver treats every fact or derived cell as covered.
+  With `REDUCE_PROMPT=v9` (#297) only a holding cell the question did not ask for is covered by the evidence list
+  (`validate.asked_cell`: a comparison or proxy aspect, or a competitor firm outside the aspect's `asked_firms`); an
+  asked cell no sentence covers (by cell id, or an aspect-id sentence citing its chunks) gets a part gap. The driver
+  reads the aspects from `filters.plan.aspects` and the cells from `filters.map.cells`.
 - `ask-theme-gap`: a question about several firms on one theme (Q21) gets a coverage line
   "No passages on the theme (...) for X" naming each firm with no passage on it (#117).
 
