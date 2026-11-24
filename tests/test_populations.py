@@ -54,6 +54,12 @@ A3 = Aspect("a3", "Number of financial advisors.", metric="advisor_headcount", p
 A4 = Aspect("a4", "Whether the comparison is valid.", kind="comparison")
 
 
+@pytest.fixture(autouse=True)
+def _reduce_v52(monkeypatch):
+    """These tests pin the list-form reduce v5.2 (the default is v8 since #292)."""
+    monkeypatch.setenv("REDUCE_PROMPT", "v5.2")
+
+
 def it(cid, value, quote, period="2025-09-30", scope="", unit=""):
     return Item(text=f"t {value}", quote=quote, chunk_ids=[cid], value=value, unit=unit, period=period, scope=scope)
 

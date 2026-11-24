@@ -1,0 +1,97 @@
+{
+  "question_id": "Q8",
+  "question": "Compare how Schwab and Raymond James describe their value proposition to independent advisors.",
+  "reduce_version": "v8",
+  "snapshot": "corpus-2026-11-19",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "max_tokens": 128000,
+  "request_version": "ds-strict-2-reduce-low-c128000-s1",
+  "behavior": "answer",
+  "chunk_ids": [
+    "SCHW-TR-2026Q3#10",
+    "SCHW-10K-2025#23",
+    "SCHW-DECK-2026-investor-day#35",
+    "SCHW-TRADE-2026-08-26-WM-01#1",
+    "SCHW-TRADE-2026-10-28-WM-01#0",
+    "SCHW-DECK-2026Q3#21",
+    "SCHW-TR-2025Q3#13",
+    "SCHW-TR-2026Q1#48",
+    "SCHW-TR-2026Q3#52",
+    "SCHW-TR-2025Q4#45",
+    "SCHW-TRADE-2026-10-29-WM-01#0",
+    "SCHW-TRADE-2026-10-29-WM-01#2",
+    "SCHW-TR-2024Q4#13",
+    "RJF-PR-web-independent-advisor#0",
+    "RJF-TR-2025Q4#5",
+    "RJF-TR-2025Q2#7",
+    "RJF-TR-2026Q1#5",
+    "RJF-PR-web-affiliation-options#0",
+    "RJF-TR-2025Q4#27",
+    "RJF-TR-2025Q3#31",
+    "RJF-DECK-2025-investor-day#110",
+    "RJF-TR-2026Q2#59",
+    "RJF-TR-2025Q3#26",
+    "RJF-TRADE-2026-10-29-WM-01#0",
+    "RJF-10K-2025#11",
+    "RJF-TR-2025Q1#26"
+  ],
+  "schema_fallback": [],
+  "enum_values": 77,
+  "at": "2026-11-23T20:25:32.924723-06:00",
+  "stop_reason": "tool_calls",
+  "usage": {
+    "input_tokens": 8540,
+    "output_tokens": 2120,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 8540,
+    "reasoning_tokens": 1771,
+    "tool_calls": 1,
+    "thinking": "on",
+    "effort": "low",
+    "model": "deepseek-v4-pro",
+    "streamed": true,
+    "ttft_s": 1.34
+  },
+  "wall_s": 24.67,
+  "tokens_per_s": 85.93,
+  "ttft_s": 1.34,
+  "reasoning_content": "Let me analyze the task. I need to write a brief answer comparing how Schwab and Raymond James describe their value proposition to independent advisors.\n\nClaims:\n1. a1 (fact) - Schwab's value proposition\n2. a2 (fact) - Raymond James's value proposition\n3. a3 (comparison) - comparison\n\nAt most 5 sentences. The first claim answers directly. Then comparison claim (a3) needs exactly one.\n\nLet me structure:\n- Claim 1 (part_id a1): Schwab's value proposition\n- Claim 2 (part_id a2): Raymond James's value proposition\n- Claim 3 (part_id a3): comparison\n\nActually, the aspects a1 and a2 are facts but they span firms? Wait, looking at part_id enum: \"a1.SCHW\", \"a3.SCHW\", \"a2.RJF\", \"a3.RJF\", \"a1\", \"a2\", \"a3\", \"\".\n\nSo a1 (fact about Schwab) uses part_id a1. a2 (fact about RJF) uses part_id a2. a3 (comparison) uses part_id a3.\n\nThe aspect a1 cell id is a1.SCHW? Wait, the matrix says \"a1.SCHW The Charles Schwab Corporation: fact\" - that's the cell. But part_id enum includes \"a1.SCHW\" and \"a1\". Hmm.\n\nLet me re-read. The aspects:\n- a1 [fact]: How Schwab describes its value proposition\n- a2 [fact]: How Raymond James describes\n- a3 [comparison]: comparison -> needs exactly one comparison claim, part_id a3\n\nThe evidence matrix: \"a1.SCHW\" is the cell id. \"a2.RJF\" is cell id. \"a3.SCHW\" and \"a3.RJF\" are cells for a3.\n\nSo claims for a1 fact should have part_id \"a1.SCHW\"? Or \"a1\"? The instruction says \"part_id: the cell id for a sentence about one cell; the aspect id for a sentence spanning firms or cells.\"\n\nSo a sentence about one cell (a1.SCHW) uses part_id a1.SCHW. A sentence spanning firms uses a3.\n\nActually wait, let me think. Aspect a1 is \"How Schwab describes its value proposition\" - single firm (SCHW). Aspect a2 is single firm (RJF). Aspect a3 is comparison spanning firms.\n\nFor a1, there's a cell a1.SCHW. So claim about that cell uses part_id a1.SCHW.\n\nHmm but the enum has both \"a1.SCHW\" and \"a1\". And \"a2.RJF\" and \"a2\". And \"a3.SCHW\", \"a3.RJF\", \"a3\".\n\nLet me think about what makes sense. The a1 fact has one cell (a1.SCHW). So I write one claim with part_id \"a1.SCHW\". Actually, could also be \"a1\" as the aspect id. The instruction says aspect id for spanning firms/cells.\n\na1 is not really spanning - it's just Schwab. But it could be considered the aspect. Hmm.\n\nLet me look at the required parts. The comparison aspect a3 \"needs exactly one comparison claim, part_id a3\".\n\nFor a1 and a2, I think I should use part_id \"a1.SCHW\" and \"a2.RJF\" since those are the cell ids. Actually, re-reading: \"part_id: the cell id for a sentence about one cell; the aspect id for a sentence spanning firms or cells.\"\n\na1 aspect = single firm Schwab. The cell is a1.SCHW. So part_id = a1.SCHW.\n\nActually wait, let me reconsider. The a1 aspect is defined as fact about Schwab only. So there's only one cell (a1.SCHW). The sentence is about that one cell. So part_id should be \"a1.SCHW\".\n\nSimilarly a2.RJF.\n\nFor a3 comparison, the sentence spans both firms, so part_id \"a3\".\n\nLet me write the claims.\n\nClaim 1 (a1.SCHW): Schwab describes its value proposition to independent advisors as a platform and support ecosystem that helps advisors grow, compete and succeed, combining custody, trading, banking and lending, technology, and dedicated service and support. Cite SCHW-TR-2026Q3#10.\n\nClaim 2 (a2.RJF): Raymond James frames its independent advisor value proposition as a partnership in independence, offering a best-of-both-worlds combination of advisor- and client-focused culture with leading technology and solutions. Cite RJF-PR-web-independent-advisor#0 and RJF-TR-2025Q2#7.\n\nClaim 3 (a3 comparison): Both firms emphasize breadth and support, but Schwab leads with scale and breadth of capabilities (custody, trading, banking, lending) while Raymond James leads with culture and capabilities rather than the highest check. \n\nLet me make the comparison concrete. Schwab's platform brings together custody, trading, banking, lending, technology, service. Raymond James leads with culture and capabilities, not the highest check.\n\nComparison claim: \"Both firms pitch support and capabilities to independent advisors, but Schwab emphasizes scale and breadth of custody, trading, banking and lending capabilities, while Raymond James emphasizes its advisor- and client-focused culture and independence.\" \n\nCite: SCHW-TR-2026Q3#10, RJF-TR-2025Q2#7 (or RJF-TR-2026Q2#59 for the culture/capabilities point).\n\nActually I can add one more sentence for a pattern/change. Let me keep it concise. Total max 5 sentences. I have 3 claims already (a1, a2, a3). I can add up to 2 more.\n\nMaybe I don't need more. But let me consider adding a sentence about the distinct emphasis. Actually the comparison claim already does that.\n\nLet me write clearly.\n\nFor a1, I should combine items into one sentence. Schwab: \"We have built our adviser business around helping independent advisers grow, compete and succeed... platform that brings together custody, trading, banking and lending capabilities, technology and dedicated service and support.\"\n\nClaim 1: \"Schwab describes its value proposition to independent advisors as a platform and support ecosystem that helps them grow, compete and succeed, combining custody, trading, banking and lending capabilities, technology, and dedicated service and support.\" Cite SCHW-TR-2026Q3#10.\n\nClaim 2: \"Raymond James frames its independent advisor value proposition as a partnership in independence, offering an advisor- and client-focused culture coupled with leading technology and solutions.\" Cite RJF-PR-web-independent-advisor#0, RJF-TR-2025Q2#7.\n\nClaim 3 (a3): \"Both firms pitch support and capabilities, but Schwab leads with the scale and breadth of its custody, trading, banking and lending platform, while Raymond James leads with culture and capabilities rather than the highest check.\" Cite SCHW-TR-2026Q3#10, RJF-TR-2026Q2#59.\n\nThat's good. Let me make sure I'm using part_id correctly.\n\nActually, I want to double check: for a1, is part_id \"a1\" or \"a1.SCHW\"? The enum lists both. The instruction: \"the cell id for a sentence about one cell; the aspect id for a sentence spanning firms or cells.\"\n\nThe cell for a1 is \"a1.SCHW\". So sentence about that cell \u2192 part_id \"a1.SCHW\".\n\nBut wait, could also argue a1 is the aspect (single firm). Hmm. The phrase \"spanning firms or cells\" suggests aspect id is used when spanning multiple cells. a1 only has one cell (a1.SCHW), so it's about one cell \u2192 \"a1.SCHW\".\n\nActually, I realize I'm overthinking. Let me use the cell ids: a1.SCHW, a2.RJF, and a3 for comparison.\n\nLet me finalize.\n\nFor adjacent and gaps: no adjacent items needed (no \"adjacent only\" cells marked). Gaps: code adds none, I add none.\n\nLet me write the answer.",
+  "first_claim_s": 23.14,
+  "stream_items": {
+    "first_claim_s": 23.14,
+    "shown": 3,
+    "held": 0
+  },
+  "raw": {
+    "answerable": true,
+    "behavior": "answer",
+    "claims": [
+      {
+        "text": "Schwab describes its value proposition to independent advisors as a platform and support ecosystem that helps them grow, compete and succeed, combining custody, trading, banking and lending capabilities, technology, and dedicated service and support.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10"
+        ],
+        "part_id": "a1.SCHW"
+      },
+      {
+        "text": "Raymond James frames its independent advisor value proposition as a partnership in independence, offering an advisor- and client-focused culture coupled with leading technology and solutions.",
+        "chunk_ids": [
+          "RJF-PR-web-independent-advisor#0",
+          "RJF-TR-2025Q2#7"
+        ],
+        "part_id": "a2.RJF"
+      },
+      {
+        "text": "Both firms pitch support and capabilities to independent advisors, but Schwab leads with the scale and breadth of its custody, trading, banking and lending platform, while Raymond James leads with culture and capabilities rather than the highest check.",
+        "chunk_ids": [
+          "SCHW-TR-2026Q3#10",
+          "RJF-TR-2026Q2#59"
+        ],
+        "part_id": "a3"
+      }
+    ],
+    "adjacent": [],
+    "gaps": []
+  }
+}

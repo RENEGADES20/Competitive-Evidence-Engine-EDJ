@@ -18,6 +18,12 @@ from tests.test_llm_deepseek import FakeDeepSeek, _strict_problems, response, to
 NO_SOURCES = lambda entity: ""   # noqa: E731
 
 
+@pytest.fixture(autouse=True)
+def _reduce_v52(monkeypatch):
+    """These tests pin the list-form reduce v5.2 (the default is v8 since #292)."""
+    monkeypatch.setenv("REDUCE_PROMPT", "v5.2")
+
+
 def H(cid, entity="EDJ", published="2026-08-05", period="2026-06-26", text="Edward Jones had 20,514 advisors.",
       origin="search"):
     return Hit(chunk_id=cid, doc_id=cid.split("#")[0], entity_id=entity, segment=None, doc_type="10-Q",

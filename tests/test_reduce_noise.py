@@ -2,6 +2,7 @@
 window items and never restating, the recency-only re-sort, the context line. Fakes only, 0 calls."""
 import datetime as dt
 
+import pytest
 from cee.answer import prompt as P
 from cee.answer import reduce as R
 from cee.answer.matrix import Cell, EvidenceMatrix, Item, finish
@@ -10,6 +11,12 @@ from cee.retrieve.fts import Hit, Query
 from cee.retrieve.planner import Aspect
 
 NO_SOURCES = lambda entity: ""   # noqa: E731
+
+
+@pytest.fixture(autouse=True)
+def _reduce_v52(monkeypatch):
+    """These tests pin the list-form reduce v5.2 (the default is v8 since #292)."""
+    monkeypatch.setenv("REDUCE_PROMPT", "v5.2")
 
 
 def H(cid, published="2026-11-12", text="Raymond James will add $18.7 billion in client assets to its FID as an "

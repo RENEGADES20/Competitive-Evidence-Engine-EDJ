@@ -872,7 +872,7 @@ def test_mock_record_has_plan_and_zero_calls(monkeypatch, tmp_path):
     r = _record(tmp_path)["questions"][0]
     assert r["parts"] == 2 and [p["firms"] for p in r["plan"]["parts"]] == [["MS"], ["RJF"]]
     assert {k: r["llm_calls"][k] for k in ("planner", "answer")} == {"planner": 0, "answer": 0}   # #247: + map counts
-    assert r["plan"]["source"] == "rules" and r["reduce"]["version"] == "v5.2"   # the mock reduce ran (0 calls)
+    assert r["plan"]["source"] == "rules" and r["reduce"]["version"] == "v8"   # the mock reduce ran (0 calls)
     assert _record(tmp_path)["meta"]["planner_version"] == planner.PLANNER_VERSION and seen[0].source == "rules"
 
 
@@ -1448,7 +1448,7 @@ def test_mock_run_maps_and_reduces_unless_legacy(monkeypatch, tmp_path):
     er.main(["--questions", "Q7", "--out", str(tmp_path / "run")])
     rep = _record(tmp_path / "run")
     r = rep["questions"][0]
-    assert r["reduce"]["version"] == "v5.2" and r["answer_behavior"] == r["map_behavior"]
+    assert r["reduce"]["version"] == "v8" and r["answer_behavior"] == r["map_behavior"]
     assert rep["meta"]["map"] is True and rep["meta"]["map_setting"] is False and rep["meta"]["real_calls"] == 0
     monkeypatch.setattr(extract, "run_map", lambda *a, **k: pytest.fail("map ran"))
     er.main(["--questions", "Q7", "--legacy", "--out", str(tmp_path / "legacy")])

@@ -68,7 +68,7 @@ Built, checked and run (4 calls); not adopted. Files, checks and results: `docs/
 
 ## Acceptance
 - [x] v7: pytest, mock eval (Q26, Q27 byte-identical), 4 real calls compared, verify-cee on mock, default rule applied.
-- [ ] v8: pytest green (CI), mock checks above, verify-cee on mock with v8, 8 real calls compared, pass rule applied.
+- [x] v8: pytest green (CI), mock checks above, verify-cee on mock with v8, 8 real calls compared, pass rule applied.
 
 ## Progress log
 - 2026-11-23 17:30 - plan written; local DB at corpus-2026-11-19.
@@ -89,3 +89,6 @@ Built, checked and run (4 calls); not adopted. Files, checks and results: `docs/
   verify-cee v8 and default: ask-answer, ask-layout, ask-progress PASS.
 - 2026-11-24 00:50 UTC - count at gate 1718230: low 42 reused + 4 new; off 42 reused + 4 new (= plan). Paid runs held
   until the 04:00 UTC off-peak window (peak 01:00-04:00).
+- 2026-11-24 02:25-02:37 UTC - TL: do not wait for off-peak. Paid runs g8-low and g8-off: 8 calls, $0.280 at peak, none
+  failed. Rule: v8-low passes all four; v8-off fails Q24 (comparison_missing). Default switched to v8
+  (`REDUCE_PROMPT_DEFAULT`); v5.2-specific tests pin `REDUCE_PROMPT=v5.2`; Gate 3 proposed in the PR.

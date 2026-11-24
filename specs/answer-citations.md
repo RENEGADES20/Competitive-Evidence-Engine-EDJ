@@ -246,7 +246,8 @@ no lists inside a sentence, the most important evidence only (the evidence list 
 one comparison sentence per comparison aspect; no why-lines. Code, v8 only: a holding cell the answer does not cite
 gets no part gap (`part_coverage` state `evidence_list`); empty cells and code gaps keep theirs; computability
 statements go to the Computability box (see "Computation claims"); other checks as v7. The mock writes claim 1, the
-comparison claims, then one sentence per further aspect, at most 5.
+comparison claims, then one sentence per further aspect, at most 5. **Default since #292: v8** (it passed the plan rule
+at reduce effort `low`; effort `off` failed Q24, see the results doc).
 
 #277 (plans/0277-stop-retry.md): **Stop and Retry on the Ask page.**
 - Cancel token (`cee.answer.cancel`): `ask(..., token=...)` makes it active in a context variable; every model call

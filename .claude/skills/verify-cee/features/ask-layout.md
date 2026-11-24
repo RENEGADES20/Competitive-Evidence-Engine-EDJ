@@ -17,7 +17,7 @@ caveats / gaps / coverage -> the full evidence list -> footer and feedback from 
   proven by `tests/test_answer_footnotes.py` (the mock cites only chunks of its evidence lines).
 - `list-form`: a window / recency answer (Q26) is a numbered list (`.cee-answer ol`); any other a paragraph.
 - `reduce-version` (#292): the newest `query_log` row's `filters.reduce.version` is the configured `REDUCE_PROMPT`
-  (default `v5.2`); with `REDUCE_PROMPT=v7` set for the run, Q26 (list form) logs `v5.2` and Q5, Q8, Q24 log `v7`,
+  (default `v8` since #292; `v5.2` before); with `REDUCE_PROMPT=v7` set for the run, Q26 (list form) logs `v5.2` and Q5, Q8, Q24 log `v7`,
   their paragraph opening with the mock's direct sentence "In short: ". With `REDUCE_PROMPT=v8` the same, plus
   `computability-box`: at most 5 answer sentences, and one `.cee-computability` box per entry of the row's
   `answer.computations`, each with footnotes that resolve (Q24 when its matrix has a derivation proposal).

@@ -45,7 +45,7 @@ def v7(monkeypatch):
 def test_form_rule_per_version(monkeypatch):
     fact, rec = Aspect("a1", "x"), Aspect("a2", "y", kind="recency")
     plain, windowed = Query(question="q"), Query(question="q", window=WINDOW)
-    monkeypatch.delenv("REDUCE_PROMPT", raising=False)   # v5.2: #291's rule, unchanged
+    monkeypatch.setenv("REDUCE_PROMPT", "v5.2")   # v5.2: #291's rule, unchanged
     assert R.list_form([fact, rec], plain) and R.list_form([fact], windowed) and not R.list_form([fact], plain)
     monkeypatch.setenv("REDUCE_PROMPT", "v7")
     assert not R.list_form([fact, rec], plain)           # one recency aspect among facts: synthesis
@@ -64,8 +64,10 @@ def test_ask_page_uses_the_same_rule_for_the_streamed_and_the_final_answer(v7):
 
 # --- version, prompt and message --------------------------------------------------------------------
 
-def test_default_request_is_unchanged(monkeypatch):
+def test_v52_request_is_unchanged_and_the_default_is_v8(monkeypatch):
     monkeypatch.delenv("REDUCE_PROMPT", raising=False)
+    assert R.prompt_version() == "v8"   # #292: v8 passed the plan rule at reduce effort low
+    monkeypatch.setenv("REDUCE_PROMPT", "v5.2")
     m = two_firm()
     assert R.prompt_version(m, query_of(m)) == "v5.2" and R.system_prompt(m, query_of(m)) == P.SYSTEM_PROMPT_V5
     assert "every item needs a why-line" in R.reduce_message(m.question, m, query_of(m))
@@ -85,7 +87,7 @@ def test_v7_synthesis_prompt_and_message(v7):
 def test_v7_list_form_question_is_v52_byte_for_byte(monkeypatch):
     m = two_firm()
     q = query_of(m, WINDOW)
-    monkeypatch.delenv("REDUCE_PROMPT", raising=False)
+    monkeypatch.setenv("REDUCE_PROMPT", "v5.2")
     old = (R.prompt_version(m, q), json.dumps(R.requests(m.question, m, q, "deepseek"), sort_keys=True),
            json.dumps(R.mock_reduce(m, q), sort_keys=True))
     monkeypatch.setenv("REDUCE_PROMPT", "v7")

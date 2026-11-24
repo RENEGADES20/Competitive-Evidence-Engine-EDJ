@@ -172,8 +172,8 @@ def test_map_and_reduce_run_by_default_on_the_mock(monkeypatch):
     logged = pipeline.log_filters(result)
     assert logged["map"]["behavior"] == "answer" and logged["map"]["cells"]["a1.MER"]["label"] == "fact"
     assert logged["llm_calls"] == {"planner": 0, "map": 0, "remap": 0, "answer": 0}   # the mock is not a paid call
-    assert logged["reduce"]["version"] == "v5.2" and logged["reduce"]["outside_matrix"] == 0
-    assert result.answer.behavior == "answer" and result.answer.claims[0].part_id == "a1.MER"
+    assert logged["reduce"]["version"] == "v8" and logged["reduce"]["outside_matrix"] == 0
+    assert result.answer.behavior == "answer" and result.answer.claims[0].part_id == "a1"   # v8 mock: claim 1 takes the aspect id
     assert result.answer.claims[0].chunk_ids == ["BAC-10K-2025#244"] and not result.answer.claims[0].flags
 
 
