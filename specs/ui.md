@@ -73,6 +73,29 @@ Page "Architecture" (#270; replaced the Design component gallery)
   inline HTML and CSS only: no script, no network fetch, no firm figures
 ```
 
+## Demo mode (#299)
+
+For on-site demos: the Ask page replays a prepared answer for one of the 30 eval questions (Q1-Q30), with no model
+call, no search and no `cee.ask.ask` at demo time. Live mode is unchanged.
+
+- **Switch.** A small, muted "Demo" toggle at the bottom of the sidebar (after the filters). It starts on with
+  `?demo=1` in the address or `CEE_DEMO=1` (`scripts/run_demo.ps1` / `scripts/run_demo.sh` set it and
+  `LLM_PROVIDER=mock`). Filters are ignored while it is on (the sidebar says so).
+- **Question.** A dropdown of the 30 prepared questions fills the question box; typed text is matched to the closest
+  one (id such as `Q4`, exact text, or close wording: `difflib` ratio or content-word overlap of at least 0.6).
+  Text with no close match gets "Demo mode answers the prepared question set only ..." and nothing is replayed.
+- **Replay.** Ask draws the live layout in the live order: progress bar and step trace through `STAGES`, the plan
+  line, the evidence cards one by one, then the answer above the evidence: a heading for the expected behavior, a
+  narrative markdown answer (direct answer, then Comparison / Trend as the evidence allows, then Caveats and gaps)
+  whose `[n]` footnotes jump to evidence card n, then the code's caveat and gap boxes. Each card's chip opens the
+  stored passage (`?chunk=`). The whole replay takes 5 s or less (stages add up to about 3.6 s). The footer says it
+  is a prepared answer and that 0 model calls are made. A rerun redraws it from `st.session_state["last_answer_demo"]`.
+- **Fixture.** `src/cee/app/demo/fixture.json`, built once offline by `scripts/build_demo_fixture.py` from the W12 fts
+  run (`docs/results/w12-latency/b-fts/`, evidence matrix cells and their chunk ids) and the stored chunks (snapshot
+  `corpus-2026-11-19`; the fixture holds passage excerpts, ADR-007), with one Claude Opus call per question. Code
+  checks that every `[n]` resolves to a card of that question and every number in an answer appears in its cards.
+  The answers are a show-the-target artifact, not a scored result. Plan: `plans/0299-demo-mode.md`.
+
 ## Acceptance
 
 - Every citation opens the stored document at the right chunk/page (no external URL composed).
@@ -131,6 +154,9 @@ Page "Architecture" (#270; replaced the Design component gallery)
   (another click interrupted the run).
 - Architecture page: every module of the diagram shows its explanation on hover and on keyboard
   focus, and the list under the diagram holds the same text (#270).
+- Demo mode (#299): with the toggle on, a prepared question replays plan, evidence cards and a cited narrative answer
+  in 5 s or less with no model call; an unprepared question gets the "prepared question set only" message; with it
+  off, the Ask page is the live one.
 - Screenshot of each page attached to the PR.
 
 ## Linked questions

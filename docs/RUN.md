@@ -143,6 +143,16 @@ sent any more.
 
 In each pair, the first block is Windows (PowerShell), the second is Mac (Terminal).
 
+**Demo mode (#299).** For a demo, start the app with prepared answers for the 30 eval questions (no model call; the
+database must be running so citations open). The muted "Demo" toggle at the bottom of the sidebar switches it off
+and on; `?demo=1` in the address also turns it on.
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run_demo.ps1
+```
+```bash
+bash scripts/run_demo.sh
+```
+
 To download a raw document from the source view, the file must be in `data\raw\` (download it
 from the Box link's `raw/` folder). The source view always shows the stored passage itself.
 

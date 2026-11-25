@@ -63,6 +63,7 @@ user-facing feature, how a user reaches it, how the script drives it, what prove
 | `invalid-chunk` | An unknown chunk ID shows a clear error |
 | `coverage` | The Coverage page shows per-firm, per-type counts and dates that match the database |
 | `download-document` | The stored document downloads with the right sha256 |
+| `ask-demo` | Demo mode replays plan, evidence and a cited answer for a prepared question in 5 s or less, with no model call |
 | `architecture-page` | The Architecture page draws every module; hover and Tab focus show each explanation |
 
 ## Reading the result

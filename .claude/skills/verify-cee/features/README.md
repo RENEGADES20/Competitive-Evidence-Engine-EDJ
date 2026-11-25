@@ -46,6 +46,7 @@ Each file: an H1, one paragraph of user-visible behavior, then exactly these H2s
 - [filters](filters.md): sidebar filters (firm, date range, keywords) narrow retrieval in SQL.
 - [feedback](feedback.md): rate an answer and comment; one query_feedback row per query.
 - [architecture-page](architecture-page.md): the pipeline diagram; hover and keyboard focus explain each module.
+- [ask-demo](ask-demo.md): demo mode replays prepared answers for the 30 questions in 5 s or less, no model call.
 - [ask-stop-retry](ask-stop-retry.md): Stop a run mid-way; Retry after a stop or a failure reuses finished calls.
 
 Every user feature in specs/ui.md is mapped. Add a file here in the PR that builds a new one.

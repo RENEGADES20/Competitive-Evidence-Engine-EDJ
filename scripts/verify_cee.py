@@ -71,7 +71,11 @@ LAYOUT_QS = [("Q5", False), ("Q8", False), ("Q24", False), ("Q26", True)]
 # ask-stop-retry (#277) runs last: it leaves query_log rows with no answer (the other features read the newest
 # answered row anyway)
 FEATURES = ["ask-answer", "ask-layout", "ask-progress", "open-citation", "gap-path", "invalid-chunk", "download-document", "coverage", "filters", "feedback",
-            "architecture-page", "ask-stop-retry"]
+            "architecture-page", "ask-demo", "ask-stop-retry"]
+# ask-demo (#299): the replay of prepared answers (?demo=1); the trap question and the decline question it shows
+DEMO_TRAP_Q, DEMO_DECLINE_Q = "Q4", "Q30"
+DEMO_NO_MATCH_Q = "What is the weather in Paris tomorrow?"
+DEMO_MAX_S = 5.0
 ASSETS = REPO / "docs" / "assets"
 
 
@@ -1231,12 +1235,139 @@ def feature_ask_stop_retry(page, base, rec, ctx):
              f"retry_of={run.get('retry_of')}, reused={run.get('reused')}, made={run.get('made')}")
 
 
+# ---------- ask-demo (#299) ----------
+
+DEMO_CAPTION = "Demo mode: a prepared answer is replayed"
+DEMO_DONE = "model calls now: 0"
+
+
+def demo_pick(page, qid: str) -> str:
+    """Choose a prepared question in the dropdown; returns the text the question box then holds."""
+    pick = page.locator(".st-key-demo_pick input").first
+    pick.wait_for(state="visible", timeout=RENDER_TIMEOUT_S * 1000)
+    pick.click()
+    page.keyboard.type(f"{qid} ·")   # the list is long and virtualised: filter it first
+    page.get_by_role("option", name=re.compile(rf"^{qid} ·")).click()
+    page.wait_for_function("() => { const b = [...document.querySelectorAll('input')].find(i => "
+                           "i.getAttribute('aria-label') === 'Question'); return b && b.value.length > 0; }",
+                           timeout=RENDER_TIMEOUT_S * 1000)
+    wait_idle(page)
+    return page.get_by_role("textbox", name="Question").input_value()
+
+
+def demo_wait_done(page, qid: str) -> float:
+    """Wait for the replay's footer of that question; the seconds since window.__ceeT0 (set just before the Ask
+    click), measured in the browser."""
+    page.wait_for_function("t => document.body.innerText.includes(t)", arg=f"prepared answer {qid} |",
+                           timeout=RENDER_TIMEOUT_S * 1000)
+    took = page.evaluate("() => (performance.now() - window.__ceeT0) / 1000")
+    wait_idle(page)
+    return took
+
+
+def demo_click_ask(page) -> None:
+    page.evaluate("() => { window.__ceeT0 = performance.now(); }")
+    page.get_by_role("button", name="Ask").click()
+
+
+def query_log_count() -> int:
+    return int(psql(VERIFY_DB, "SELECT count(*) FROM query_log").strip() or 0)
+
+
+def feature_ask_demo(page, base, rec, ctx):
+    from cee.app.demo.replay import load_fixture
+    fx = {e["id"]: e for e in load_fixture()["questions"]}
+    rows_before = query_log_count()
+    page.goto(base + "?demo=1")
+    wait_for_text(page, [DEMO_CAPTION], "the demo page")
+    toggle = page.locator(".st-key-cee-demo")
+    keywords = page.locator("[data-testid='stSidebar']").get_by_role("textbox", name="Keywords")
+    style = toggle.evaluate("e => ({o: getComputedStyle(e).opacity, y: e.getBoundingClientRect().top})")
+    below = style["y"] > keywords.bounding_box()["y"]
+    checked = toggle.locator("input[type=checkbox]").is_checked()
+    rec.step("Open the app with ?demo=1", "the Demo toggle is on, muted (opacity < 1) and below the filters",
+             checked and float(style["o"]) < 1 and below,
+             f"checked={checked}, opacity={style['o']}, below the filters={below}")
+    text = demo_pick(page, DEMO_TRAP_Q)
+    rec.step(f"Pick {DEMO_TRAP_Q} in the dropdown", "the question box holds its text",
+             text == fx[DEMO_TRAP_Q]["text"], text[:120])
+    demo_click_ask(page)
+    page.wait_for_function("() => document.querySelector('[data-testid=\"stProgress\"]') && "
+                           "document.body.innerText.includes('Plan:')", timeout=RENDER_TIMEOUT_S * 1000)
+    body = page.locator("body").inner_text()
+    bar = page.locator("[data-testid='stProgress']").count()
+    answer_now = page.locator(".cee-behavior").count()
+    rec.step("Look while the replay runs", "the progress bar and the plan line, no answer yet",
+             bar > 0 and "Plan:" in body and answer_now == 0 and DEMO_DONE not in body,
+             f"bar={bar}, plan={'Plan:' in body}, answer shown={answer_now > 0}")
+    page.wait_for_function("() => document.querySelectorAll('.cee-claim').length > 0", timeout=RENDER_TIMEOUT_S * 1000)
+    cards = page.locator(".cee-claim").count()
+    answer_now = page.locator(".cee-behavior").count()
+    body = page.locator("body").inner_text()
+    page.locator(".cee-claim").first.scroll_into_view_if_needed()   # the screenshot shows the first card
+    rec.step("Look again as the evidence lands", "'Evidence so far' with at least one card; the answer not yet shown",
+             cards > 0 and answer_now == 0 and "Evidence so far" in body,
+             f"cards={cards}, answer shown={answer_now > 0}")
+    took = demo_wait_done(page, DEMO_TRAP_Q)
+    page.locator(".cee-behavior").first.scroll_into_view_if_needed()   # the screenshot shows the answer
+    links = page.locator(".st-key-cee-demo-answer a[href^='#cee-ev-']")
+    hrefs = [links.nth(i).get_attribute("href") for i in range(links.count())]
+    missing = sorted({h for h in hrefs if not page.locator(f"[id='{h[1:]}']").count()})
+    n_cards = len(fx[DEMO_TRAP_Q]["cards"])
+    shown = page.locator("[id^='cee-ev-']").count()
+    rec.step("Wait for the full answer", f"the narrative answer with [n] links to existing cards; {n_cards} evidence "
+             f"cards; Ask to full answer <= {DEMO_MAX_S:g} s",
+             bool(hrefs) and not missing and shown == n_cards and took <= DEMO_MAX_S,
+             f"Ask to full answer {took:.2f} s; footnote links={len(hrefs)}, without a card={missing}, cards={shown}")
+    link = links.first
+    href = link.get_attribute("href")
+    link.click()
+    page.wait_for_timeout(300)
+    target = page.evaluate("() => (document.querySelector(':target') || {}).id || null")
+    rec.step("Click the first footnote", f"the page jumps to its evidence card ({href})", target == href[1:],
+             f"location target={target}")
+    page.locator(".st-key-cee-demo-answer").first.scroll_into_view_if_needed()
+    body = page.locator("body").inner_text()
+    rec.step(f"Read the {DEMO_TRAP_Q} trap answer (Merrill only)",
+             "the caveat 'GWIM is not Merrill' is shown and the answer opens on Merrill",
+             "GWIM is not Merrill" in body and fx[DEMO_TRAP_Q]["answer_md"].startswith("Merrill"),
+             next((ln for ln in body.splitlines() if "GWIM is not Merrill" in ln), "")[:160])
+    demo_pick(page, DEMO_DECLINE_Q)
+    demo_click_ask(page)
+    took = demo_wait_done(page, DEMO_DECLINE_Q)
+    heads = page.locator(".cee-behavior h2")
+    heading = heads.first.inner_text() if heads.count() else ""
+    paras = page.locator(".st-key-cee-demo-answer p")
+    first = paras.first.inner_text() if paras.count() else ""
+    page.locator(".cee-behavior").first.scroll_into_view_if_needed()
+    rec.step(f"Ask {DEMO_DECLINE_Q} (Merrill's standalone profitability)",
+             "'Not in the corpus': the answer opens by saying the standalone figure is not reported",
+             heading == "Not in the corpus" and " not " in first and took <= DEMO_MAX_S,
+             f"heading={heading!r}; {took:.2f} s; first sentence: {first[:160]}")
+    box = page.get_by_role("textbox", name="Question")
+    box.fill(DEMO_NO_MATCH_Q)
+    box.press("Enter")
+    wait_idle(page)
+    page.get_by_role("button", name="Ask").click()
+    wait_for_text(page, ["prepared question set only"], "the no-match message")
+    rec.step("Ask a question that is not prepared", "the 'prepared question set only' message, no answer",
+             page.locator(".cee-behavior").count() == 0, "message shown")
+    page.locator(".st-key-cee-demo").get_by_text("Demo", exact=True).click()
+    wait_for_text(page, ["No question yet"], "the live Ask page")
+    live = page.locator(".st-key-demo_pick").count() == 0
+    rec.step("Switch the Demo toggle off", "the live Ask page (no prepared-question dropdown)", live,
+             f"dropdown gone={live}")
+    rows_after = query_log_count()
+    rec.step("Count query_log rows", "no new row: demo mode never ran the answer flow",
+             rows_after == rows_before, f"before={rows_before}, after={rows_after}")
+
 DRIVERS = {"ask-answer": feature_ask_answer, "ask-layout": feature_ask_layout, "ask-progress": feature_ask_progress,
            "open-citation": feature_open_citation,
            "gap-path": feature_gap_path, "invalid-chunk": feature_invalid_chunk,
            "download-document": feature_download_document, "coverage": feature_coverage,
            "filters": feature_filters, "feedback": feature_feedback,
-           "architecture-page": feature_architecture_page, "ask-stop-retry": feature_ask_stop_retry}
+           "architecture-page": feature_architecture_page, "ask-demo": feature_ask_demo,
+           "ask-stop-retry": feature_ask_stop_retry}
 
 
 def drive(features: list[str]) -> bool:
