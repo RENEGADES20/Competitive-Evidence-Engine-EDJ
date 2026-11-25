@@ -51,7 +51,7 @@ answer, comparison, trend, caveats) with clickable `[n]` citations, in <= 5 s, w
   note 2); the builder with a fake client (cap checked before any call, saved outputs reused).
 - [x] Q4, Q27, Q30 decline or flag the trap per `expected_behavior`; Q24, Q25, Q28, Q29 give the gap + adjacent.
 - [x] Sonnet spot-check: no claim unsupported by its cards (report saved in `.eval-runs/demo-fixture/review/`).
-- [ ] `tests/test_no_paid_calls.py`, existing ask-progress / ask-answer tests pass; `gh pr checks` green.
+- [x] `tests/test_no_paid_calls.py`, existing ask-progress / ask-answer tests pass; `gh pr checks` green.
 - [x] verify-cee `ask-demo` PASS (mock provider, snapshot `corpus-2026-11-19`) with screenshots: muted sidebar toggle;
   bar mid-progress; evidence before answer; final answer with working `[n]` links; Q4 declining; step log <= 5 s
   from Ask to full answer. verify-cee `ask-progress` PASS (live unchanged).
@@ -88,3 +88,4 @@ and cost logged. Pre-approved by the user 2026-11-24. Zero calls at demo time.
 - 2026-11-24 20:20 - verify-cee ask-demo PASS (Ask to full answer 4.05 s Q4, 4.19 s Q30, browser-measured) and
   ask-progress PASS (live unchanged). Open: answers run 330-440 words, over the ~150-300 target (demo-1 asked for
   150-300); shortening all 30 needs a new 30-call run, over this plan's cap.
+- 2026-11-24 20:55 - final head bec7b90: verify-cee ask-demo PASS + ask-progress PASS (.verify-runs/20261124-195218-bec7b90). One earlier combined run had ask-progress step 2 FAIL (a card read mid-render, chips=0); ask-progress alone passed twice on the same head and the re-run passed: a timing flake of that existing step, live code unchanged.
