@@ -178,6 +178,7 @@ prefix, e.g. `c1/...`). Only merged work appears here, and PRs never conflict on
 | 2026-11-24 | #292 reduce prompt v8 (brief cited answer, at most 5 sentences, computability box) is the default; v7 stays behind REDUCE_PROMPT; 12 real calls (#294) | ADR-021 rule 5 amendment and default switch need TL sign-off | Gate 3: 30-question scored run on v8 (TL go-ahead); reduce effort off as a latency lever (failed Q24 comparison part_id) |
 | 2026-11-24 | #295 closed as a finding: v8 at reduce effort off scored 14/30 (Gate 3), effort off rejected, code not merged (#296) | v8 (main default) unscored at 30q | v9 reduce prompt at effort low, length follows the question, Gate 3 |
 | 2026-11-24 | Reduce prompt v9 (length follows the question, asked-cell coverage) built and scored: Gate 3 19/30 (< 24), so the default reduce prompt is back to v5.2 and v8/v9 stay behind REDUCE_PROMPT (#298) | none | TL decides the next answer-form step (results doc findings) |
+| 2026-11-25 | #299 demo mode: Ask-page toggle replays prepared Opus answers for Q1-Q30 in about 4 s with 0 calls (35 build-time calls, $2.31); verify-cee ask-demo PASS (#300) | Answers run 330-440 words (target about 150-300); Q18 generalises from one card | Optional: a shorter-answer re-run of all 30 (about 30 calls, about $2) if the demo needs tighter answers |
 
 ## Weekly score (from W6)
 
