@@ -18,6 +18,8 @@ answer, comparison, trend, caveats) with clickable `[n]` citations, in <= 5 s, w
 - `scripts/run_demo.ps1`, `scripts/run_demo.sh` - `CEE_DEMO=1`, `LLM_PROVIDER=mock`, start the app.
 - `specs/ui.md` - "Demo mode" section. `.claude/skills/verify-cee/features/ask-demo.md`, `scripts/verify_cee.py` step.
 - `tests/test_demo_mode.py` - new.
+- Added while building (review notes and UI): `src/cee/app/components.py` (CSS for the muted toggle and the demo
+  answer), `docs/RUN.md` (run_demo block), verify-cee `SKILL.md` and `features/README.md` rows.
 
 ## Steps
 1. **Cards.** Per question read `docs/results/w12-latency/b-fts/report.json` `matrix.cells[*].items` (+ `chunk_ids`).
@@ -42,14 +44,15 @@ answer, comparison, trend, caveats) with clickable `[n]` citations, in <= 5 s, w
 6. **Launchers, spec, recipe, tests**, then verify-cee.
 
 ## Acceptance
-- [ ] `fixture.json` has 30 entries (Q1-Q30), snapshot `corpus-2026-11-19`; every card's chunk_id exists in the DB.
-- [ ] `pytest tests/test_demo_mode.py`: every `[n]` in every `answer_md` resolves to a card of that question; demo on
+- [x] `fixture.json` has 30 entries (Q1-Q30), snapshot `corpus-2026-11-19`; every card's chunk_id exists in the DB.
+- [x] `pytest tests/test_demo_mode.py`: every `[n]` in every `answer_md` resolves to a card of that question; demo on
   -> pick question -> Ask shows cards and answer; `cee.ask.ask` monkeypatched to raise, never called; fuzzy match +
-  no-match message; replay total <= 5 s for every entry.
-- [ ] Q4, Q27, Q30 decline or flag the trap per `expected_behavior`; Q24, Q25, Q28, Q29 give the gap + adjacent.
-- [ ] Sonnet spot-check: no claim unsupported by its cards (report saved in `.eval-runs/demo-fixture/review/`).
+  no-match message; replay total <= 5 s for every entry; every number in an answer appears in its cards (review
+  note 2); the builder with a fake client (cap checked before any call, saved outputs reused).
+- [x] Q4, Q27, Q30 decline or flag the trap per `expected_behavior`; Q24, Q25, Q28, Q29 give the gap + adjacent.
+- [x] Sonnet spot-check: no claim unsupported by its cards (report saved in `.eval-runs/demo-fixture/review/`).
 - [ ] `tests/test_no_paid_calls.py`, existing ask-progress / ask-answer tests pass; `gh pr checks` green.
-- [ ] verify-cee `ask-demo` PASS (mock provider, snapshot `corpus-2026-11-19`) with screenshots: muted sidebar toggle;
+- [x] verify-cee `ask-demo` PASS (mock provider, snapshot `corpus-2026-11-19`) with screenshots: muted sidebar toggle;
   bar mid-progress; evidence before answer; final answer with working `[n]` links; Q4 declining; step log <= 5 s
   from Ask to full answer. verify-cee `ask-progress` PASS (live unchanged).
 
@@ -71,3 +74,17 @@ and cost logged. Pre-approved by the user 2026-11-24. Zero calls at demo time.
 
 ## Progress log
 - 2026-11-24 19:14 - plan written; branch `tl/299-demo-mode` from main 1329bde; DB up to date (corpus-2026-11-19).
+- 2026-11-24 19:25 - plan approved by the reviewer agent (issue comment 7149385974); notes: Opus pricing row,
+  number-in-cards check, ADR-007 note on passages in the fixture, run_demo block in docs/RUN.md.
+- 2026-11-24 19:35 - builder, replay, toggle, tests on mock; mock dry run of all 30 and full pytest pass (0 calls).
+- 2026-11-24 19:50 - real run: 30 Opus calls ($1.94). Number check flagged quarter labels ("3Q25"): the check now reads
+  a quarter label as its year. Sonnet spot-check: 26 PASS, 4 FAIL (Q16, Q18, Q22, Q27); my read of Q4, Q27, Q30,
+  Q12, Q19, Q22, Q24, Q28, Q29 agreed (Q27 took a UBS figure from a passage as Merrill's; Q29 "2020" came from the
+  W12 differs_because text, now counted as card text and shown on the card).
+- 2026-11-24 20:00 - re-runs with prompt `demo-2` (passage facts only when tied to the firm, no unsupported negatives,
+  200-300 words) for Q16, Q18, Q22 (20 cards: a by-quarter series), Q27, Q29: 5 calls ($0.38). Q27 fixed, Q22 now
+  lists the quarterly series, Q16 fixed; Q18 still generalises "regulation" from one card (left as a finding).
+  Total 35 real calls, $2.31; raw outputs in `.eval-runs/demo-fixture/raw/`, review in `.eval-runs/demo-fixture/review/`.
+- 2026-11-24 20:20 - verify-cee ask-demo PASS (Ask to full answer 4.05 s Q4, 4.19 s Q30, browser-measured) and
+  ask-progress PASS (live unchanged). Open: answers run 330-440 words, over the ~150-300 target (demo-1 asked for
+  150-300); shortening all 30 needs a new 30-call run, over this plan's cap.

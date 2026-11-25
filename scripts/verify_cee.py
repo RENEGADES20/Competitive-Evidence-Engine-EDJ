@@ -1243,7 +1243,10 @@ DEMO_DONE = "model calls now: 0"
 
 def demo_pick(page, qid: str) -> str:
     """Choose a prepared question in the dropdown; returns the text the question box then holds."""
-    page.locator(".st-key-demo_pick [data-baseweb='select']").click()
+    pick = page.locator(".st-key-demo_pick input").first
+    pick.wait_for(state="visible", timeout=RENDER_TIMEOUT_S * 1000)
+    pick.click()
+    page.keyboard.type(f"{qid} ·")   # the list is long and virtualised: filter it first
     page.get_by_role("option", name=re.compile(rf"^{qid} ·")).click()
     page.wait_for_function("() => { const b = [...document.querySelectorAll('input')].find(i => "
                            "i.getAttribute('aria-label') === 'Question'); return b && b.value.length > 0; }",
@@ -1252,9 +1255,11 @@ def demo_pick(page, qid: str) -> str:
     return page.get_by_role("textbox", name="Question").input_value()
 
 
-def demo_wait_done(page) -> float:
-    """Wait for the replay's footer; the seconds since window.__ceeT0 (set just before the Ask click), in the browser."""
-    page.wait_for_function("t => document.body.innerText.includes(t)", arg=DEMO_DONE, timeout=RENDER_TIMEOUT_S * 1000)
+def demo_wait_done(page, qid: str) -> float:
+    """Wait for the replay's footer of that question; the seconds since window.__ceeT0 (set just before the Ask
+    click), measured in the browser."""
+    page.wait_for_function("t => document.body.innerText.includes(t)", arg=f"prepared answer {qid} |",
+                           timeout=RENDER_TIMEOUT_S * 1000)
     took = page.evaluate("() => (performance.now() - window.__ceeT0) / 1000")
     wait_idle(page)
     return took
@@ -1279,7 +1284,7 @@ def feature_ask_demo(page, base, rec, ctx):
     keywords = page.locator("[data-testid='stSidebar']").get_by_role("textbox", name="Keywords")
     style = toggle.evaluate("e => ({o: getComputedStyle(e).opacity, y: e.getBoundingClientRect().top})")
     below = style["y"] > keywords.bounding_box()["y"]
-    checked = toggle.get_by_role("checkbox").is_checked()
+    checked = toggle.locator("input[type=checkbox]").is_checked()
     rec.step("Open the app with ?demo=1", "the Demo toggle is on, muted (opacity < 1) and below the filters",
              checked and float(style["o"]) < 1 and below,
              f"checked={checked}, opacity={style['o']}, below the filters={below}")
@@ -1299,10 +1304,12 @@ def feature_ask_demo(page, base, rec, ctx):
     cards = page.locator(".cee-claim").count()
     answer_now = page.locator(".cee-behavior").count()
     body = page.locator("body").inner_text()
+    page.locator(".cee-claim").first.scroll_into_view_if_needed()   # the screenshot shows the first card
     rec.step("Look again as the evidence lands", "'Evidence so far' with at least one card; the answer not yet shown",
              cards > 0 and answer_now == 0 and "Evidence so far" in body,
              f"cards={cards}, answer shown={answer_now > 0}")
-    took = demo_wait_done(page)
+    took = demo_wait_done(page, DEMO_TRAP_Q)
+    page.locator(".cee-behavior").first.scroll_into_view_if_needed()   # the screenshot shows the answer
     links = page.locator(".st-key-cee-demo-answer a[href^='#cee-ev-']")
     hrefs = [links.nth(i).get_attribute("href") for i in range(links.count())]
     missing = sorted({h for h in hrefs if not page.locator(f"[id='{h[1:]}']").count()})
@@ -1327,7 +1334,7 @@ def feature_ask_demo(page, base, rec, ctx):
              next((ln for ln in body.splitlines() if "GWIM is not Merrill" in ln), "")[:160])
     demo_pick(page, DEMO_DECLINE_Q)
     demo_click_ask(page)
-    took = demo_wait_done(page)
+    took = demo_wait_done(page, DEMO_DECLINE_Q)
     heads = page.locator(".cee-behavior h2")
     heading = heads.first.inner_text() if heads.count() else ""
     paras = page.locator(".st-key-cee-demo-answer p")
