@@ -115,6 +115,11 @@ CSS = f"""
 .cee-trace{{font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.9;color:{INK}}}
 .cee-trace .m{{display:inline-block;width:1.5rem;font-weight:700}}
 .cee-trace .running .m{{color:{ORANGE}}} .cee-trace .done .m{{color:#3F6212}}
+.st-key-cee-demo{{margin-top:3.5rem;padding-top:.5rem;border-top:1px solid {LINE};opacity:.55}}
+.st-key-cee-demo:hover{{opacity:1}} .st-key-cee-demo label p{{font-size:.78rem !important;color:{MUTED} !important}}
+.st-key-cee-demo-answer{{color:{INK};font-size:1.02rem;line-height:1.7;margin:.4rem 0 .9rem}}
+.st-key-cee-demo-answer h3{{font-size:1.02rem;font-weight:700;margin:1rem 0 .3rem;padding:0}}
+.st-key-cee-demo-answer ul{{margin:.2rem 0 .4rem}} .st-key-cee-demo-answer li{{margin:.1rem 0 .3rem}}
 .cee-trace .skipped{{color:{MUTED}}} .cee-trace .failed{{color:#B91C1C;font-weight:700}} .cee-trace .stopped{{color:#92400E;font-weight:700}}
 </style>
 """

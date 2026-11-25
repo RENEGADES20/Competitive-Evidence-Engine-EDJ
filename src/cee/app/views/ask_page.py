@@ -483,9 +483,76 @@ def has_failed_calls(r: Result | None) -> bool:
     return plan_failed or any(c.get("failed_call") or c.get("invalid") for c in calls)
 
 
+DEMO_KEY = "demo_mode"   # #299: the sidebar's Demo toggle (default from ?demo=1 or CEE_DEMO=1)
+DEMO_HELP = ("Replays prepared answers for the 30 evaluation questions; no model is called. "
+             "Also on with ?demo=1 in the address or CEE_DEMO=1.")
+
+
+def demo_toggle() -> bool:
+    """#299: a small, muted toggle at the bottom of the sidebar (after the filters)."""
+    from cee.app.demo.replay import demo_default
+    if DEMO_KEY not in st.session_state:
+        st.session_state[DEMO_KEY] = demo_default(st.query_params)
+    with st.sidebar.container(key="cee-demo"):
+        on = st.toggle("Demo", key=DEMO_KEY, help=DEMO_HELP)
+        if on:
+            st.caption("Demo mode is on: the filters above are ignored.")
+    return bool(on)
+
+
+def _on_demo_pick() -> None:
+    from cee.app.demo.replay import entries
+    pick = st.session_state.get("demo_pick")
+    text = next((e["text"] for e in entries() if e["id"] == pick), None)
+    if text:
+        st.session_state["demo_question"] = text
+
+
+def demo_page() -> None:
+    """#299: the Ask page in demo mode. A dropdown of the 30 prepared questions fills the box; Ask replays the
+    prepared result (no call to cee.ask.ask, no model, no search). Filters are ignored. The replayed answer is kept in
+    st.session_state["last_answer_demo"], so a rerun redraws it without replaying."""
+    from cee.app.demo import replay as demo
+    fx = demo.load_fixture()
+    by_id = {e["id"]: e for e in demo.entries(fx)}
+    left, right = st.columns([3, 2], gap="large")
+    with left:
+        ui.eyebrow("Evidence, not opinion")
+        ui.hero("What is known, and", "where", "it was said.")
+        st.caption(demo.DEMO_CAPTION)
+        st.selectbox("Prepared question", list(by_id), index=None, key="demo_pick", on_change=_on_demo_pick,
+                     placeholder="Pick one of the 30 prepared questions",
+                     format_func=lambda i: f"{i} · {by_id[i]['text']}")
+        question = st.text_input("Question", key="demo_question",
+                                 placeholder="Or type one of them; close wording is matched")
+        asked = st.button("Ask", type="primary")
+    with right:
+        s = ui.corpus_stats()
+        ui.snapshot_card(s["snapshot"], [("DOCUMENTS", f"{s['docs']:,}"), ("PASSAGES", f"{s['chunks']:,}"),
+                                         ("FIRMS", str(s["firms"]))])
+    if asked:
+        entry = demo.match(question, fx)
+        if entry is None:
+            st.session_state["last_answer_demo"] = None
+            st.info(demo.NO_MATCH_TEXT)
+            return
+        took = demo.replay(entry, fx)
+        st.session_state["last_answer_demo"] = (entry["id"], took)
+        return
+    last = st.session_state.get("last_answer_demo")
+    if last and last[0] in by_id:
+        demo.show(by_id[last[0]], fx, last[1])
+        return
+    ui.empty_state("Demo mode. Pick a prepared question above and click Ask; the answer is replayed with the "
+                   "evidence it cites.")
+
+
 def render() -> None:
     _ticker()
     filters = filters_sidebar()
+    if demo_toggle():   # #299: demo mode replays prepared answers; live mode below is unchanged
+        demo_page()
+        return
     run: Run | None = st.session_state.get("ask_run")
     if run is not None and run.status != "running" and run.alive():
         run.thread.join(GRACE_S)   # the usual case: the stopped worker ends within a second
